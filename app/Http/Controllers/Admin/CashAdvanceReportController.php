@@ -1,0 +1,177 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Exports\Admin\CashAdvanceReport as AdminCashAdvanceReport;
+use App\Http\Controllers\Controller;
+use App\Models\Admin\Cash_Advance;
+use App\Models\Admin\CashAdvanceReport;
+use App\Models\Admin\CashAdvanceReportDetail;
+use DateTime;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use Intervention\Image\ImageManagerStatic as Image;
+
+
+class CashAdvanceReportController extends Controller
+{
+    public function index()
+    {
+        $title = 'Cash Advance Report';
+        $dataCashAdvanceReport = DB::table('admin_cash_advance_report')
+            ->orderBy('no_doku', 'desc')
+            ->paginate(10);
+        return view('halaman_admin.admin.cash_advance_report.index', [
+            'title' => $title,
+            'cashAdvance' => $dataCashAdvanceReport
+        ]);
+    }
+    public function tambah_CAR()
+    {
+        $title = 'Cash Advance Report';
+        $AWAL = 'CAR';
+        $bulanRomawi = array("", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12");
+        $noUrut = CashAdvanceReport::max('id');
+        //$no_dokumen = date('y') . '/' . $bulanRomawi[date('n')] . '/' . $AWAL . '/' . sprintf("%05s", abs($noUrut + 1));
+
+        $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . sprintf("%05s", abs($noUrut + 1));
+
+        $accounting = DB::select('SELECT * FROM accounting');
+        $kasir = DB::select('SELECT * from kasir');
+        $menyetujui = DB::select('SELECT * from menyetujui');
+
+        $cash_advance = DB::select('SELECT * FROM admin_cash_advance');
+
+        $currency = DB::select('SELECT * FROM kurs');
+        $karyawan = DB::select('SELECT * FROM karyawan');
+        return view('halaman_admin.admin.cash_advance_report.tambah_cash_advance_report', [
+            'title' => $title,
+            'no_dokumen' => $no_dokumen,
+            'accounting' => $accounting,
+            'kasir' => $kasir,
+            'menyetujui' => $menyetujui,
+            'kurs' => $currency,
+            'cash_advance' => $cash_advance,
+            'karyawan' => $karyawan
+        ]);
+    }
+    public function getNominal(Request $request)
+    {
+        $tipe_ca_id = $request->input('tipe_ca_id');
+
+        $result = DB::select('SELECT * FROM admin_cash_advance WHERE no_doku = ?', [$tipe_ca_id]);
+
+        return response()->json(
+            [
+                'nominal_ca' => $result[0]->nominal,
+                'pemohon' => $result[0]->pemohon,
+                'nama_menyetujui' => $result[0]->menyetujui,
+            ]
+        );
+    }
+    public function simpan_CAR(Request $request)
+    {
+        $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+        $tgl_diajukan = $tanggal->format('Y-m-d');
+
+        $cashAdvance = new CashAdvanceReport();
+        $cashAdvance->no_doku = $request->no_doku;
+        $cashAdvance->tgl_diajukan = $tgl_diajukan;
+        $cashAdvance->tipe_ca = $request->tipe_ca_id;
+        $cashAdvance->nominal_ca = $request->nominal_ca;
+        $cashAdvance->judul_doku = $request->judul_doku;
+        $cashAdvance->pemohon = $request->pemohon;
+        $cashAdvance->accounting = $request->accounting;
+        $cashAdvance->kasir = $request->kasir;
+        $cashAdvance->menyetujui = $request->nama_menyetujui;
+        $cashAdvance->save();
+
+        foreach ($request->deskripsi as $deskripsi => $value) {
+            $CA_detail =  new CashAdvanceReportDetail();
+            $CA_detail->deskripsi = $value;
+
+            if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
+                $file = $request->file('foto')[$deskripsi];
+                // Menggunakan Intervention Image untuk memuat gambar
+                $image = Image::make($file);
+
+                // Mengatur ukuran maksimum yang diinginkan (misalnya 800 piksel lebar dan 600 piksel tinggi)
+                $image->resize(800, 600, function ($constraint) {
+                    $constraint->aspectRatio(); // Mempertahankan aspek rasio gambar
+                    $constraint->upsize(); // Memastikan gambar tidak diperbesar jika lebih kecil dari ukuran yang ditentukan
+                });
+
+                // Menyimpan gambar yang telah dikompresi
+                $filePath = public_path('bukti_CAR_admin/') . time() . '.' . $file->getClientOriginalExtension();
+                $image->save($filePath);
+                $fileName = basename($filePath);
+                $CA_detail->bukti_ca = $fileName;
+            }
+
+            $CA_detail->no_bukti = $request->nobu[$deskripsi];
+            $CA_detail->curr = $request->kurs[$deskripsi];
+            $CA_detail->nominal = $request->nom[$deskripsi];
+            $CA_detail->tanggal_1 = $request->tgl1[$deskripsi];
+            $CA_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
+            $CA_detail->keperluan = $request->keperluan[$deskripsi];
+            $CA_detail->fk_ca = $cashAdvance->id;
+            $CA_detail->save();
+        }
+        return redirect()->route('admin.cash_advance_report')->with('success', 'Data Cash Advance Report Berhasil Diajukan!');
+    }
+    public function excel_cash_advance_report($id)
+    {
+        return Excel::download(new AdminCashAdvanceReport($id), 'cash_advance_report_' . $id . '.xlsx');
+    }
+    public function view_cash_advance_report($id)
+    {
+        $title = 'Lihat Cash Advance Report';
+        $cashAdvanceReport = CashAdvanceReport::find($id);
+        $CAR_Detail = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->get();
+        $nominal = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->sum('nominal');
+        return view('halaman_admin.admin.cash_advance_report.view_cash_advance_report', [
+            'title' => $title,
+            'cash_advance_report' => $cashAdvanceReport,
+            'car_detail' => $CAR_Detail,
+            'nominal' => $nominal
+        ]);
+    }
+    public function setujui_cash_advance_report($id)
+    {
+        try {
+            DB::table('admin_cash_advance_report')->where('id', $id)->update([
+                'status_approved' => 'pending',
+                'status_paid' => 'pending'
+            ]);
+            $data = DB::table('admin_cash_advance_report')->find($id);
+            $no_doku = $data->no_doku;
+            return redirect()->route('admin.cash_advance_report')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil Diajukan! Mohon Menunggu Kepastian ya... Semoga diterima!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.cash_advance_report')->with('gagal', $e->getMessage());
+        }
+    }
+    public function print_cash_advance_report($id)
+    {
+        $title = 'Cetak Cash Advance Report';
+        $cash_advance_report = DB::table('admin_cash_advance_report')->find($id);
+        $cash_advance_report_detail = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->get();
+        $nominal_CAR = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->sum('nominal');
+
+        return view('halaman_admin.admin.cash_advance_report.print_cash_advance_report', [
+            'title' => $title,
+            'cash_advance_report' => $cash_advance_report,
+            'CAR_Detail' => $cash_advance_report_detail,
+            'nominal' => $nominal_CAR
+        ]);
+    }
+    public function print_bukti_cash_advance_report($id)
+    {
+        $title = 'Cetak Bukti Cash Advance Report';
+        $bukti_CAR = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->get();
+        return view('halaman_admin.admin.cash_advance_report.print_bukti_cash_advance_report', [
+            'title' => $title,
+            'bukti_CAR' => $bukti_CAR
+        ]);
+    }
+}
