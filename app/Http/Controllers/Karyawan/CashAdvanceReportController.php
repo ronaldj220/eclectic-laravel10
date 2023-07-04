@@ -32,10 +32,17 @@ class CashAdvanceReportController extends Controller
         $title = 'Cash Advance Report';
         $AWAL = 'CAR';
         $bulanRomawi = array("", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12");
-        $noUrut = DB::table('admin_cash_advance_report')->max('id');
-        //$no_dokumen = date('y') . '/' . $bulanRomawi[date('n')] . '/' . $AWAL . '/' . sprintf("%05s", abs($noUrut + 1));
+        $noUrutAkhir = DB::table('admin_cash_advance_report')->whereMonth('tgl_diajukan', '=', date('m'))->count();
+        $no = 1;
+        // dd($noUrutAkhir);
+        $no_dokumen = null;
+        $currentMonth = date('n');
 
-        $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . sprintf("%05s", abs($noUrut + 1));
+        if ($noUrutAkhir) {
+            $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
+        } else {
+            $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($no));
+        }
 
         $accounting = DB::select('SELECT * FROM accounting');
         $kasir = DB::select('SELECT * from kasir');

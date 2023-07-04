@@ -32,7 +32,7 @@ class PurchaseRequestController extends Controller
         $AWAL = 'PR';
 
         $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
-        $noUrutAkhir = DB::table('admin_purchase_request')->max('id');
+        $noUrutAkhir = DB::table('admin_purchase_request')->whereMonth('tgl_diajukan', '=', date('m'))->count();
         $no = 1;
         // dd($noUrutAkhir);
         $no_dokumen = null;

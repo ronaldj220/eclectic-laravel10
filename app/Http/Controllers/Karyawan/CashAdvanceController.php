@@ -31,8 +31,17 @@ class CashAdvanceController extends Controller
         $title = 'Tambah Cash Advance';
         $AWAL = 'CA';
         $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
-        $noUrut = DB::table('admin_cash_advance')->max('id');
-        $no_dokumen = date('y') . '/' . $bulanRomawi[date('n')] . '/' . $AWAL . '/' . sprintf("%05s", abs($noUrut + 1));
+        $noUrutAkhir = DB::table('admin_cash_advance')->whereMonth('tgl_diajukan', '=', date('m'))->count();
+        $no = 1;
+        // dd($noUrutAkhir);
+        $no_dokumen = null;
+        $currentMonth = date('n');
+
+        if ($noUrutAkhir) {
+            $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
+        } else {
+            $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($no + 1));
+        }
         $accounting = DB::select('SELECT * FROM accounting');
         $kasir = DB::select('SELECT * from kasir');
         $menyetujui = DB::select('SELECT * from menyetujui');

@@ -32,9 +32,17 @@ class Cash_AdvanceController extends Controller
         $title = 'Tambah Cash Advance';
         $AWAL = 'CA';
         $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
-        $noUrut = Cash_Advance::max('id');
-        // $no_dokumen = sprintf("%05s", abs($noUrut + 1)) . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . date('y');
-        $no_dokumen = date('y') . '/' . $bulanRomawi[date('n')] . '/' . $AWAL . '/' . sprintf("%05s", abs($noUrut + 1));
+        $noUrutAkhir = DB::table('admin_cash_advance')->whereMonth('tgl_diajukan', '=', date('m'))->count();
+        $no = 1;
+        // dd($noUrutAkhir);
+        $no_dokumen = null;
+        $currentMonth = date('n');
+
+        if ($noUrutAkhir) {
+            $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
+        } else {
+            $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($no + 1));
+        }
         $accounting = DB::select('SELECT * FROM accounting');
         $kasir = DB::select('SELECT * from kasir');
         $menyetujui = DB::select('SELECT * from menyetujui');
@@ -126,5 +134,26 @@ class Cash_AdvanceController extends Controller
             'kurs' => $currency,
             'menyetujui' => $menyetujui
         ]);
+    }
+    public function update_CA($id, Request $request)
+    {
+        $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+        $tgl_diajukan = $tanggal->format('Y-m-d');
+        $tgl_diajukan2 = isset($request->tgl_diajukan2) ? $request->tgl_diajukan2 : null;
+
+        DB::table('admin_cash_advance')->where('id', $id)
+            ->update([
+                'no_doku' => $request->no_doku,
+                'tgl_diajukan' => $tgl_diajukan,
+                'tgl_diajukan2' => $tgl_diajukan2,
+                'judul_doku' => $request->judul_doku,
+                'curr' => $request->kurs,
+                'nominal' => $request->nominal,
+                'pemohon' => $request->pemohon,
+                'accounting' => $request->accounting,
+                'kasir' => $request->kasir,
+                'menyetujui' => $request->nama_menyetujui
+            ]);
+        return redirect()->route('admin.cash_advance')->with('success', 'Data Cash Advance Berhasil Diperbarui!');
     }
 }

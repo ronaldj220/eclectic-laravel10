@@ -157,8 +157,8 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function () {
     Route::get('/reimbursement/print_reimbursement/{id}', [ReimbursementController::class, 'print_reimbursement'])->name('admin.reimbursement.print_reimbursement');
     Route::get('/reimbursement/print_bukti_reimbursement/{id}', [ReimbursementController::class, 'print_bukti_reimbursement'])->name('admin.reimbursement.print_bukti_reimbursement');
 
-    Route::post('/reimbursement/bulan', [ReimbursementController::class, 'search_by_date'])->name('admin.reimbursement.bulan');
-    Route::post('/reimbursement', [ReimbursementController::class, 'search'])->name('admin.reimbursement');
+    Route::get('/reimbursement/bulan', [ReimbursementController::class, 'search_by_date'])->name('admin.reimbursement.bulan');
+    // Route::get('/reimbursement', [ReimbursementController::class, 'search'])->name('admin.reimbursement');
 
     // Route untuk Edit Reimbursement
     Route::get('reimbursement/edit_reimbursement/{id}', [ReimbursementController::class, 'edit_reimbursement'])->name('admin.reimbursement.edit_reimbursement');
@@ -173,6 +173,7 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function () {
     Route::get('/cash_advance/print_cash_advance/{id}', [Cash_AdvanceController::class, 'print_CA'])->name('admin.cash_advance.print_cash_advance');
     Route::get('/cash_advance/excel_cash_advance/{id}', [Cash_AdvanceController::class, 'excel_CA'])->name('admin.cash_advance.excel_cash_advance');
     Route::get('/cash_advance/edit_CA/{id}', [Cash_AdvanceController::class, 'edit_CA'])->name('admin.cash_advance.edit_CA');
+    Route::post('/cash_advance/update_CA/{id}', [Cash_AdvanceController::class, 'update_CA'])->name('admin.cash_advance.update_CA');
 
     // Route Cash Advance Report untuk Admin
     Route::get('/cash_advance_report', [CashAdvanceReportController::class, 'index'])->name('admin.cash_advance_report');
@@ -183,6 +184,8 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function () {
     Route::post('/cash_advance_report/setujui_cash_advance_report/{id}', [CashAdvanceReportController::class, 'setujui_cash_advance_report'])->name('admin.cash_advance_report.setujui_cash_advance_report');
     Route::get('/cash_advance_report/print_cash_advance_report/{id}', [CashAdvanceReportController::class, 'print_cash_advance_report'])->name('admin.cash_advance_report.print_cash_advance_report');
     Route::get('/cash_advance_report/print_bukti_cash_advance_report/{id}', [CashAdvanceReportController::class, 'print_bukti_cash_advance_report'])->name('admin.cash_advance_report.print_bukti_cash_advance_report');
+    Route::get('/cash_advance_report/edit_CAR/{id}', [CashAdvanceReportController::class, 'edit_CAR'])->name('admin.cash_advance_report.edit_CAR');
+    Route::post('/cash_advance_report/update_CAR/{id}', [CashAdvanceReportController::class, 'update_CAR'])->name('admin.cash_advance_report.update_CAR');
 
     // Route untuk mendapatkan nominal CA
     Route::get('cash_advance_report/get-nominal', [CashAdvanceReportController::class, 'getNominal']);

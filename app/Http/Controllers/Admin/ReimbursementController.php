@@ -24,23 +24,15 @@ class ReimbursementController extends Controller
     {
         $title = 'Reimbursement';
         $dataReimbursement = DB::table('admin_reimbursement')
-            ->orderByRaw("DATEDIFF(NOW(), tgl_diajukan)") // Mengurutkan tgl_diajukan berdasarkan tanggal sekarang
-            ->orderBy('no_doku', 'desc') // Mengurutkan no_doku berdasarkan nilai terbesar desc
-            ->orderByRaw("
-            CASE
-                WHEN status_approved = 'approved' THEN 1
-                WHEN status_approved = 'pending' THEN 2
-                WHEN status_approved = 'rejected' THEN 3
-                ELSE 4
-            END
-        ")
+            ->orderBy('tgl_diajukan', 'desc')
+            ->orderBy('no_doku', 'desc')
             ->paginate(10);
 
-        $dataRBMenyetujui = DB::table('admin_reimbursement')->first();
+        // $dataRBMenyetujui = DB::table('admin_reimbursement')->first();
         return view('halaman_admin.admin.reimbursement.index', [
             'title' => $title,
             'reimbursement' => $dataReimbursement,
-            'menyetujui' => $dataRBMenyetujui
+            // 'menyetujui' => $dataRBMenyetujui
         ]);
     }
     public function search_by_date(Request $request)
@@ -71,50 +63,46 @@ class ReimbursementController extends Controller
             'reimbursement' => $dataReimbursement
         ]);
     }
-    public function search(Request $request)
-    {
-        $title = 'Reimbursement';
-        $query = DB::table('admin_reimbursement')
-            ->orderBy('no_doku', 'asc')
-            ->orderByRaw("
-            CASE
-                WHEN status_approved = 'approved' THEN 1
-                WHEN status_approved = 'pending' THEN 2
-                WHEN status_approved = 'rejected' THEN 3
-                ELSE 4
-            END
-        ");
+    // public function search(Request $request)
+    // {
+    //     $title = 'Reimbursement';
+    //     $query = DB::table('admin_reimbursement')
+    //         ->orderBy('no_doku', 'desc');
 
-        // Memeriksa apakah parameter bulan dikirimkan dalam request POST
-        if ($request->has('cari')) {
-            $cari = $request->cari;
-            $query->where('judul_doku', 'LIKE', '%' . $cari . '%');
-        } else {
-            $query->paginate(10);
-        }
+    //     // Memeriksa apakah parameter bulan dikirimkan dalam request POST
+    //     if ($request->has('cari')) {
+    //         $cari = $request->cari;
+    //         $query->where('judul_doku', 'LIKE', '%' . $cari . '%');
+    //     } else {
+    //         $query->paginate(10);
+    //     }
 
-        $dataReimbursement = $query->paginate(10);
+    //     $dataReimbursement = $query->paginate(10);
 
-        return view('halaman_admin.admin.reimbursement.index', [
-            'title' => $title,
-            'reimbursement' => $dataReimbursement
-        ]);
-    }
+    //     return view('halaman_admin.admin.reimbursement.index', [
+    //         'title' => $title,
+    //         'reimbursement' => $dataReimbursement
+    //     ]);
+    // }
     public function tambah_reimbursement()
     {
         $title = 'Tambah Reimbursement';
         $AWAL = 'RB';
 
         $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
-        $noUrutAkhir = DB::table('admin_reimbursement')->max('id');
+        $noUrutAkhir = DB::table('admin_reimbursement')->whereMonth('tgl_diajukan', '=', date('m'))->count();
         $no = 1;
         // dd($noUrutAkhir);
         $no_dokumen = null;
+        $currentMonth = date('n');
+
         if ($noUrutAkhir) {
-            $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . date('y');
+            $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
         } else {
-            $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . date('y');
+            $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
         }
+
+
         $accounting = DB::select('SELECT * FROM accounting');
         $kasir = DB::select('SELECT * from kasir');
         $menyetujui = DB::select('SELECT * from menyetujui');
@@ -124,7 +112,7 @@ class ReimbursementController extends Controller
         $nominal_awal = DB::select('SELECT * FROM fee_timesheet');
         $nominal_project = DB::select('SELECT * FROM fee_project');
         $aliases = DB::select('SELECT * FROM client');
-
+        // dd($no_dokumen);
 
         return view('halaman_admin.admin.reimbursement.tambah_reimbursement', [
             'title' => $title,
@@ -583,7 +571,7 @@ class ReimbursementController extends Controller
     }
     public function update_reimbursement(Request $request, $id)
     {
-        $tanggal = DateTime::createFromFormat('Y-m-d', $request->tgl_diajukan);
+        $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
         $tgl_diajukan = $tanggal->format('Y-m-d');
 
         DB::table('admin_reimbursement')

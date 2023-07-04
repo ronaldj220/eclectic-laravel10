@@ -191,7 +191,7 @@
                                 </a>
 
                                 <form id="formBulan" action="{{ route('admin.reimbursement.bulan') }}"
-                                    method="POST" class="ml-auto">
+                                    method="GET" class="ml-auto">
                                     {{ csrf_field() }}
                                     <div class="form-group">
                                         <label for="bulan">Bulan</label>
@@ -200,15 +200,6 @@
                                     </div>
                                 </form>
 
-
-                                &nbsp; &nbsp; &nbsp;
-                                <form action="{{ route('admin.reimbursement') }}" method="POST" id="formCari">
-                                    {{ csrf_field() }}
-                                    <div class="form-group">
-                                        <label for="cari">Cari</label>
-                                        <input type="search" class="form-control" name="cari" id="cari">
-                                    </div>
-                                </form>
                             </div>
 
                             @if (Session::has('success'))

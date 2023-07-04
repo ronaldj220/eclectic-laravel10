@@ -86,14 +86,16 @@ class ReimbursementController extends Controller
         $AWAL = 'RB';
 
         $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
-        $noUrutAkhir = DB::table('admin_reimbursement')->max('id');
+        $noUrutAkhir = DB::table('admin_reimbursement')->whereMonth('tgl_diajukan', '=', date('m'))->count();
         $no = 1;
         // dd($noUrutAkhir);
         $no_dokumen = null;
+        $currentMonth = date('n');
+
         if ($noUrutAkhir) {
-            $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . date('y');
+            $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
         } else {
-            $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . date('y');
+            $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
         }
         $accounting = DB::select('SELECT * FROM accounting');
         $kasir = DB::select('SELECT * from kasir');

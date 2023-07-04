@@ -64,7 +64,7 @@ class PurchaseOrderController extends Controller
         $AWAL = 'PO';
 
         $bulanRomawi = array("", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12");
-        $noUrutAkhir = DB::table('admin_purchase_order')->max('id');
+        $noUrutAkhir = DB::table('admin_purchase_order')->whereMonth('tgl_purchasing', '=', date('m'))->count();
         $no = 1;
         // dd($noUrutAkhir);
         $no_dokumen = null;

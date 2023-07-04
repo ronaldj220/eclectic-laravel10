@@ -187,11 +187,11 @@
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary text-center">Tambah Cash Advance
+                                    <h6 class="m-0 font-weight-bold text-primary text-center">Edit Cash Advance
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <form action="{{ route('admin.cash_advance.simpan_cash_advance') }}"
+                                    <form action="{{ route('admin.cash_advance.update_CA', $CA->id) }}"
                                         method="POST">
                                         @csrf
                                         <div class="form-group">

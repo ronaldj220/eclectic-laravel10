@@ -295,8 +295,9 @@
                                                             <i class="fa-solid fa-eye" style="color: #900C3F"></i>
                                                         </a>
                                                         &nbsp;
-                                                        <a href="#" data-toggle="tooltip"
-                                                            data-placement="bottom" title="Edit">
+                                                        <a href="{{ route('admin.cash_advance_report.edit_CAR', $item->id) }}"
+                                                            data-toggle="tooltip" data-placement="bottom"
+                                                            title="Edit">
                                                             <i class="fa-solid fa-pen-to-square"
                                                                 style="color: #900C3F"></i>
                                                         </a>

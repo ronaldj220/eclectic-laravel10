@@ -32,10 +32,17 @@ class CashAdvanceReportController extends Controller
         $title = 'Cash Advance Report';
         $AWAL = 'CAR';
         $bulanRomawi = array("", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12");
-        $noUrut = CashAdvanceReport::max('id');
-        //$no_dokumen = date('y') . '/' . $bulanRomawi[date('n')] . '/' . $AWAL . '/' . sprintf("%05s", abs($noUrut + 1));
+        $noUrutAkhir = DB::table('admin_cash_advance_report')->whereMonth('tgl_diajukan', '=', date('m'))->count();
+        $no = 1;
+        // dd($noUrutAkhir);
+        $no_dokumen = null;
+        $currentMonth = date('n');
 
-        $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . sprintf("%05s", abs($noUrut + 1));
+        if ($noUrutAkhir) {
+            $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
+        } else {
+            $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($no));
+        }
 
         $accounting = DB::select('SELECT * FROM accounting');
         $kasir = DB::select('SELECT * from kasir');
@@ -173,5 +180,70 @@ class CashAdvanceReportController extends Controller
             'title' => $title,
             'bukti_CAR' => $bukti_CAR
         ]);
+    }
+    public function edit_CAR($id)
+    {
+        $title = 'Edit Cash Advance Report';
+        $CAR = DB::table('admin_cash_advance_report')->where('id', $id)->first();
+        $menyetujui = DB::select('SELECT * from menyetujui');
+        $currency = DB::select('SELECT * FROM kurs');
+        $cash_advance = DB::select('SELECT * FROM admin_cash_advance');
+
+
+        return view('halaman_admin.admin.cash_advance_report.edit_CAR', [
+            'title' => $title,
+            'CAR' => $CAR,
+            'menyetujui' => $menyetujui,
+            'kurs' => $currency,
+            'cash_advance' => $cash_advance
+        ]);
+    }
+    public function update_CAR(Request $request, $id)
+    {
+        $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+        $tgl_diajukan = $tanggal->format('Y-m-d');
+
+        DB::table('admin_cash_advance_report')
+            ->where('id', $id)
+            ->update([
+                'no_doku' => $request->no_doku,
+                'tgl_diajukan' => $tgl_diajukan,
+                'judul_doku' => $request->judul_doku,
+                'tipe_ca' => $request->tipe_ca_id,
+                'nominal_ca' => $request->nominal_ca,
+                'pemohon' => $request->pemohon,
+                'accounting' => $request->accounting,
+                'kasir' => $request->kasir,
+                'menyetujui' => $request->nama_menyetujui
+            ]);
+
+        foreach ($request->deskripsi as $deskripsi => $value) {
+            $CAR_detail = [
+                'deskripsi' => $value,
+                'no_bukti' => $request->nobu[$deskripsi],
+                'curr' => $request->kurs[$deskripsi],
+                'nominal' => $request->nom[$deskripsi],
+                'tanggal_1' => $request->tgl1[$deskripsi],
+                'tanggal_2' => isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null,
+                'keperluan' => $request->keperluan[$deskripsi],
+                'fk_ca' => $id
+            ];
+
+            if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
+                $files = $request->file('foto');
+
+                $file = $files[$deskripsi];
+                $fileExtension = $file->getClientOriginalExtension();
+                $fileName = time() . '_' . $deskripsi . '.' . $fileExtension;
+                $filePath = public_path('bukti_ca/') . $fileName;
+
+                $file->move(public_path('bukti_ca/'), $filePath);
+
+                $CAR_Detail['bukti_ca'] = $fileName;
+            }
+            DB::table('admin_cash_advance_report_detail')
+                ->where('fk_ca', $id)
+                ->update($CAR_detail);
+        }
     }
 }

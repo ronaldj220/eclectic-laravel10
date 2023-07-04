@@ -211,19 +211,19 @@
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary text-center">Tambah Cash Advance
+                                    <h6 class="m-0 font-weight-bold text-primary text-center">Edit Cash Advance
                                         Report
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <form action="{{ route('admin.cash_advance_report.simpan_cash_advance_report') }}"
+                                    <form action="{{ route('admin.cash_advance_report.edit_CAR', $CAR->id) }}"
                                         method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">No Dokumen</label>
                                             <input type="text" class="form-control" id="exampleInputEmail1"
                                                 aria-describedby="emailHelp" name="no_doku"
-                                                value="{{ $no_dokumen }}">
+                                                value="{{ $CAR->no_doku }}">
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Tanggal Diajukan</label>
@@ -258,12 +258,12 @@
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Accounting</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="accounting" value="{{ $accounting[0]->nama }}" readonly>
+                                                name="accounting" value="{{ $CAR->accounting }}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Kasir</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="kasir" value="{{ $kasir[0]->nama }}" readonly>
+                                                name="kasir" value="{{ $CAR->kasir }}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Menyetujui</label>
