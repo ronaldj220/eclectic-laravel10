@@ -16,14 +16,20 @@
 <body>
     <!-- Begin Page Content -->
     <div class="container" style="margin-right: 60px">
-        <figure class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+        <figure class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
             <b><a style="text-transform: uppercase;">reimbursement</a></b>
             <br>
             <b><a style="text-transform: uppercase;">PT. Eclectic Consulting</a></b>
         </figure>
-        <br>
+        @if ($reimbursement->status_approved == 'rejected' && $reimbursement->status_paid == 'pending')
+            <thead>
+                <div class="alert alert-danger" role="alert">
+                    Alasan : {{ $reimbursement->alasan }}
+                </div>
+            </thead>
+        @endif
         <table class="table table-borderless table-sm"
-            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 12px">
+            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
             <tr>
                 <td>No<br>Tanggal</td>
                 <td>: {{ $reimbursement->no_doku }}<br>: {{ date('d.m.Y', strtotime($reimbursement->tgl_diajukan)) }}
@@ -32,7 +38,7 @@
         </table>
         @if ($reimbursement->halaman == 'RB')
             <table class="table is-striped table-bordered border-dark table-sm"
-                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                 <thead>
                     <tr>
                         <th class="text-center" style="width: 3%">No.</th>
@@ -74,33 +80,27 @@
             <!-- /.container-fluid -->
             <div>
                 <table class="table is-striped table-bordered border-dark text-center"
-                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                     <tr style="height:3cm;">
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Pemohon,</div>
-                            @if ($karyawan->signature)
-                                <div style="text-align: center;">
-                                    <img id="ttdImage" src="{{ asset('ttd_karyawan/' . $karyawan->signature) }}"
-                                        alt="" width="50%" style="margin-bottom: 5px; margin-right: -30px;">
-                                </div>
-                            @else
-                                <div class="center"></div>
-                            @endif
+                            <div style="margin-top: 70px"></div>
+
                             <div class="center">{{ $reimbursement->pemohon }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Accounting,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->accounting }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Kasir,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->kasir }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Menyetujui,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->menyetujui }}</div>
                         </td>
                     </tr>
@@ -109,7 +109,7 @@
             <br>
         @elseif ($reimbursement->halaman == 'TS')
             <table class="table is-striped table-bordered border-dark table-sm"
-                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                 <thead>
                     <tr>
                         <th class="text-center" style="width: 3%">No.</th>
@@ -146,26 +146,26 @@
             <!-- /.container-fluid -->
             <div>
                 <table class="table is-striped table-bordered border-dark text-center"
-                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                     <tr style="height:3cm;">
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Pemohon,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->pemohon }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Accounting,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->accounting }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Kasir,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->kasir }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Menyetujui,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->menyetujui }}</div>
                         </td>
                     </tr>
@@ -174,7 +174,7 @@
             <br>
         @elseif ($reimbursement->halaman == 'ST')
             <table class="table is-striped table-bordered border-dark table-sm"
-                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                 <thead>
                     <tr>
                         <th class="text-center" style="width: 3%">No.</th>
@@ -214,26 +214,26 @@
             <!-- /.container-fluid -->
             <div>
                 <table class="table is-striped table-bordered border-dark text-center"
-                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                     <tr style="height:3cm;">
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Pemohon,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->pemohon }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Accounting,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->accounting }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Kasir,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->kasir }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Menyetujui,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->menyetujui }}</div>
                         </td>
                     </tr>
@@ -242,7 +242,7 @@
             <br>
         @elseif ($reimbursement->halaman == 'SL')
             <table class="table is-striped table-bordered border-dark table-sm"
-                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                 <thead>
                     <tr>
                         <th class="text-center" style="width: 3%">No.</th>
@@ -281,26 +281,26 @@
             <!-- /.container-fluid -->
             <div>
                 <table class="table is-striped table-bordered border-dark text-center"
-                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                     <tr style="height:3cm;">
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Pemohon,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->pemohon }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Accounting,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->accounting }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Kasir,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->kasir }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Menyetujui,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->menyetujui }}</div>
                         </td>
                     </tr>

@@ -202,24 +202,41 @@
                     <table class="table table-borderless table-lg"
                         style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 16px; margin-right: 150px">
                         <tr>
-                            <th class="text-center"><a href="#" data-toggle="tooltip" data-placement="bottom"
-                                    title="Buat Reimbursement"><img src="{{ asset('cashback.png') }}"
-                                        width="80"></a>
+                            <th class="text-center"><a href="{{ route('direksi.reimbursement.tambah_RB') }}"
+                                    data-toggle="tooltip" data-placement="bottom" title="Buat Reimbursement"><img
+                                        src="{{ asset('cashback.png') }}" width="80"></a>
                                 <br>
                                 <p style="text-align: center">RB</p>
                             </th>
                             <br>
-                            <th class="text-center"><a href="" data-toggle="tooltip" data-placement="bottom"
-                                    title="Buat Cash Advance"><img src="{{ asset('cash.png') }}" width="80"></a>
+                            <th class="text-center"><a href="{{ route('direksi.cash_advance.tambah_CA') }}"
+                                    data-toggle="tooltip" data-placement="bottom" title="Buat Cash Advance"><img
+                                        src="{{ asset('cash.png') }}" width="80"></a>
                                 <br>
                                 <label class="text-center">CA</label>
                             </th>
 
-                            <th><a href="" data-toggle="tooltip" data-placement="bottom"
-                                    title="Buat Cash Advance Report"><img src="{{ asset('4318314.png') }}"
-                                        width="80"></a>
+                            <th><a href="{{ route('direksi.cash_advance_report.tambah_CAR') }}" data-toggle="tooltip"
+                                    data-placement="bottom" title="Buat Cash Advance Report"><img
+                                        src="{{ asset('4318314.png') }}" width="80"></a>
                                 <br>
                                 <p style="text-align: center">CA Report</p>
+                            </th>
+                            <th>
+                                <!-- Nav Item - Tables -->
+                                <a href="#" data-toggle="tooltip" data-placement="bottom"
+                                    title="Buat Purchase Request"><img src="{{ asset('123.png') }}"
+                                        width="80"></a>
+                                <br>
+                                <p style="text-align: center">PR</p>
+                            </th>
+                            <th>
+                                <!-- Nav Item - Tables -->
+                                <a href="#" data-toggle="tooltip" data-placement="bottom"
+                                    title="Buat Purchase Order"><img src="{{ asset('images.png') }}"
+                                        width="65"></a>
+                                <br>
+                                <p style="text-align: center">PO</p>
                             </th>
                         </tr>
                     </table>

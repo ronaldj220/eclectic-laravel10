@@ -39,16 +39,6 @@ use App\Http\Controllers\Kasir\ReimbursementController as KasirReimbursementCont
 
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 Route::get('/', function () {
     return view('welcome');
@@ -158,11 +148,13 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function () {
     Route::get('/reimbursement/print_bukti_reimbursement/{id}', [ReimbursementController::class, 'print_bukti_reimbursement'])->name('admin.reimbursement.print_bukti_reimbursement');
 
     Route::get('/reimbursement/bulan', [ReimbursementController::class, 'search_by_date'])->name('admin.reimbursement.bulan');
-    // Route::get('/reimbursement', [ReimbursementController::class, 'search'])->name('admin.reimbursement');
 
     // Route untuk Edit Reimbursement
     Route::get('reimbursement/edit_reimbursement/{id}', [ReimbursementController::class, 'edit_reimbursement'])->name('admin.reimbursement.edit_reimbursement');
     Route::post('reimbursement/update_reimbursement/{id}', [ReimbursementController::class, 'update_reimbursement'])->name('admin.reimbursement.update_reimbursement');
+
+    // Route Kirim WA ke Direksi untuk Reimbursement
+    Route::get('/reimbursement/kirim_WA/{id}', [ReimbursementController::class, 'kirim_WA'])->name('admin.reimbursement.kirim_WA');
 
     // Route Cash Advance 
     Route::get('/cash_advance', [Cash_AdvanceController::class, 'index'])->name('admin.cash_advance');
@@ -188,7 +180,7 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function () {
     Route::post('/cash_advance_report/update_CAR/{id}', [CashAdvanceReportController::class, 'update_CAR'])->name('admin.cash_advance_report.update_CAR');
 
     // Route untuk mendapatkan nominal CA
-    Route::get('cash_advance_report/get-nominal', [CashAdvanceReportController::class, 'getNominal']);
+    Route::get('cash_advance_report/get-nominal', [CashAdvanceReportController::class, 'getNominal'])->name('admin.CAR.getNominal');
 
     // Route Purchase Request untuk Admin
     Route::get('/purchase_request', [PurchaseRequestController::class, 'index'])->name('admin.purchase_request');
@@ -198,6 +190,7 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function () {
     Route::get('/purchase_request/print_purchase_request/{id}', [PurchaseRequestController::class, 'print_purchase_request'])->name('admin.purchase_request.print_purchase_request');
     Route::get('/purchase_request/view_PR/{id}', [PurchaseRequestController::class, 'view_PR'])->name('admin.purchase_request.view_PR');
     Route::post('/purchase_request/setujui_PR/{id}', [PurchaseRequestController::class, 'setujui_PR'])->name('admin.purchase_request.setujui_PR');
+    Route::get('/purchase_request/edit_PR/{id}', [PurchaseRequestController::class, 'edit_PR'])->name('admin.purchase_request.edit_PR');
 
     // Route Purchase Order untuk Admin
     Route::get('/purchase_order', [PurchaseOrderController::class, 'index'])->name('admin.purchase_order');
@@ -211,6 +204,8 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function () {
     Route::get('/purchase_order/print_purchase_order/{id}', [PurchaseOrderController::class, 'print_PO'])->name('admin.purchase_order.print_PO');
     Route::get('/purchase_order/view_PO/{id}', [PurchaseOrderController::class, 'view_PO'])->name('admin.purchase_order.view_PO');
     Route::get('/purchase_order/setujui_PO/{id}', [PurchaseOrderController::class, 'setujui_PO'])->name('admin.purchase_order.setujui_PO');
+    Route::get('/purchase_order/edit_PO/{id}', [PurchaseOrderController::class, 'edit_PO'])->name('admin.purchase_order.edit_PO');
+    Route::post('/purchase_order/update_PO/{id}', [PurchaseOrderController::class, 'update_PO'])->name('admin.purchase_order.update_PO');
 
     // Route Laporan RB untuk Admin
 
@@ -247,7 +242,7 @@ Route::prefix('karyawan')->middleware(['auth:karyawan'])->group(function () {
     Route::post('/cash_advance_report/simpan_CAR', [KaryawanCashAdvanceReportController::class, 'simpan_CAR'])->name('karyawan.cash_advance_report.simpan_CAR');
     Route::get('/cash_advance_report/view_cash_advance_report/{id}', [KaryawanCashAdvanceReportController::class, 'view_CAR'])->name('karyawan.cash_advance_report.view_CAR');
 
-    Route::get('cash_advance_report/get-nominal', [KaryawanCashAdvanceReportController::class, 'getNominal']);
+    Route::get('cash_advance_report/get-nominal', [KaryawanCashAdvanceReportController::class, 'getNominal'])->name('karyawan.CAR.get-nominal');
 
     // Route untuk karyawan yang ingin mengajukan Purchase Request
     Route::get('/purchase_request', [KaryawanPurchaseRequestController::class, 'index'])->name('karyawan.purchase_request');
@@ -261,8 +256,8 @@ Route::prefix('karyawan')->middleware(['auth:karyawan'])->group(function () {
     Route::get('/purchase_order/tambah_PO', [KaryawanPurchaseOrderController::class, 'tambah_PO'])->name('karyawan.purchase_order.tambah_PO');
     Route::post('/purchase_order/simpan_PO', [KaryawanPurchaseOrderController::class, 'simpan_PO'])->name('karyawan.purchase_order.simpan_PO');
 
-    Route::get('/get-data-by-supplier', [KaryawanPurchaseOrderController::class, 'getDataBySupplier'])->name('getDataBySupplier');
-    Route::get('/admin/getDetailByTipePR', [KaryawanPurchaseOrderController::class, 'getDataByPR'])->name('getDetailByTipePR');
+    Route::get('/get-data-by-supplier', [KaryawanPurchaseOrderController::class, 'getDataBySupplier'])->name('karyawan.getDataBySupplier');
+    Route::get('/admin/getDetailByTipePR', [KaryawanPurchaseOrderController::class, 'getDataByPR'])->name('karyawan.getDetailByTipePR');
 });
 
 Route::prefix('direksi')->middleware(['auth:direksi'])->group(function () {
@@ -278,12 +273,20 @@ Route::prefix('direksi')->middleware(['auth:direksi'])->group(function () {
     Route::get('/reimbursement/setujui_reimbursement/{id}', [DireksiReimbursementController::class, 'setujui_reimbursement'])->name('direksi.reimbursement.setujui_reimbursement');
     Route::post('/reimbursement/tolak_reimbursement/{id}', [DireksiReimbursementController::class, 'tolak_reimbursement'])->name('direksi.reimbursement.tolak_reimbursement');
 
+    // Route untuk Direksi buat Reimbursement Baru
+    Route::get('/reimbursement/tambah_RB', [DireksiReimbursementController::class, 'tambah_RB'])->name('direksi.reimbursement.tambah_RB');
+    Route::post('/reimbursement/simpan_RB', [DireksiReimbursementController::class, 'simpan_RB'])->name('direksi.reimbursement.simpan_RB');
+
     // Route untuk Cash Advance
     Route::get('/cash_advance', [CashAdvanceController::class, 'index'])->name('direksi.cash_advance');
     Route::get('/cash_advance/view_cash_advance/{id}', [CashAdvanceController::class, 'view_cash_advance'])->name('direksi.cash_advance.view_cash_advance');
     Route::get('/cash_advance/print_cash_advance/{id}', [CashAdvanceController::class, 'print_cash_advance'])->name('direksi.cash_advance.print_cash_advance');
     Route::get('/cash_advance/setujui_cash_advance/{id}', [CashAdvanceController::class, 'setujui_cash_advance'])->name('direksi.cash_advance.setujui_cash_advance');
     Route::post('/cash_advance/tolak_cash_advance/{id}', [CashAdvanceController::class, 'tolak_cash_advance'])->name('direksi.cash_advance.tolak_cash_advance');
+
+    // Route untuk tambah CA
+    Route::get('/cash_advance/tambah_CA', [CashAdvanceController::class, 'tambah_CA'])->name('direksi.cash_advance.tambah_CA');
+    Route::post('/cash_advance/simpan_CA', [CashAdvanceController::class, 'simpan_CA'])->name('direksi.cash_advance.simpan_CA');
 
     // Route untuk Cash Advance Report
     Route::get('/cash_advance_report', [DireksiCashAdvanceReportController::class, 'index'])->name('direksi.cash_advance_report');
@@ -293,17 +296,36 @@ Route::prefix('direksi')->middleware(['auth:direksi'])->group(function () {
     Route::get('/cash_advance_report/setujui_cash_advance_report/{id}', [DireksiCashAdvanceReportController::class, 'setujui_cash_advance_report'])->name('direksi.cash_advance_report.setujui_cash_advance_report');
     Route::post('/cash_advance_report/tolak_cash_advance_report/{id}', [DireksiCashAdvanceReportController::class, 'tolak_cash_advance_report'])->name('direksi.cash_advance_report.tolak_cash_advance_report');
 
+    // Route untuk dapatkan nominal CA
+    Route::get('cash_advance_report/get-nominal', [DireksiCashAdvanceReportController::class, 'getNominal'])->name('direksi.CAR.getNominal');
+
+    // Route untuk tambah CAR
+    Route::get('/cash_advance_report/tambah_CAR', [DireksiCashAdvanceReportController::class, 'tambah_CAR'])->name('direksi.cash_advance_report.tambah_CAR');
+    Route::post('/cash_advance_report/simpan_CAR', [DireksiCashAdvanceReportController::class, 'simpan_CAR'])->name('direksi.cash_advance_report.simpan_CAR');
+
     // Route untuk Purchase Request
     Route::get('/purchase_request', [DireksiPurchaseRequestController::class, 'index'])->name('direksi.purchase_request');
     Route::get('/purchase_request/view_PR/{id}', [DireksiPurchaseRequestController::class, 'view_PR'])->name('direksi.purchase_request.view_PR');
     Route::get('/purchase_request/setujui_PR/{id}', [DireksiPurchaseRequestController::class, 'setujui_PR'])->name('direksi.purchase_request.setujui_PR');
     Route::post('/purchase_request/tolak_PR/{id}', [DireksiPurchaseRequestController::class, 'tolak_PR'])->name('direksi.purchase_request.tolak_PR');
 
+    // Route untuk buat PR
+    Route::get('/purchase_request/tambah_PR', [DireksiPurchaseRequestController::class, 'tambah_PR'])->name('direksi.purchase_request.tambah_PR');
+    Route::post('/purchase_request/simpan_PR', [DireksiPurchaseRequestController::class, 'simpan_PR'])->name('direksi.purchase_request.simpan_PR');
+
     // Route untuk Purchase Order
     Route::get('/purchase_order', [DireksiPurchaseOrderController::class, 'index'])->name('direksi.purchase_order');
     Route::get('/purchase_order/view_PO/{id}', [DireksiPurchaseOrderController::class, 'view_PO'])->name('direksi.purchase_order.view_PO');
+    Route::get('/purchase_order/print_PO/{id}', [DireksiPurchaseOrderController::class, 'print_PO'])->name('direksi.purchase_order.print_PO');
     Route::get('/purchase_order/setujui_PO/{id}', [DireksiPurchaseOrderController::class, 'setujui_PO'])->name('direksi.purchase_order.setujui_PO');
     Route::post('/purchase_order/tolak_PO/{id}', [DireksiPurchaseOrderController::class, 'tolak_PO'])->name('direksi.purchase_order.tolak_PO');
+
+    Route::get('/get-data-by-supplier', [DireksiPurchaseOrderController::class, 'getDataBySupplier'])->name('direksi.getDataBySupplier');
+    Route::get('/admin/getDetailByTipePR', [DireksiPurchaseOrderController::class, 'getDataByPR'])->name('direksi.getDetailByTipePR');
+
+    // Route untuk Direksi tambah PO
+    Route::get('/purchase_order/tambah_PO', [DireksiPurchaseOrderController::class, 'tambah_PO'])->name('direksi.purchase_order.tambah_PO');
+    Route::post('/purchase_order/simpan_PO', [DireksiPurchaseOrderController::class, 'simpan_PO'])->name('direksi.purchase_order.simpan_PO');
 });
 Route::prefix('kasir')->middleware(['auth:kasir'])->group(function () {
     Route::get('/beranda', [KasirBerandaController::class, 'index'])->name('kasir.beranda');

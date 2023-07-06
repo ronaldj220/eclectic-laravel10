@@ -186,9 +186,14 @@
                 <div class="container-fluid">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary text-center">Lihat Purchase Request</h6>
+                            <h6 class="m-0 font-weight-bold text-primary text-center">Daftar dan Lihat Purchase Request
+                            </h6>
                         </div>
                         <div class="card-body">
+                            <a href="{{ route('direksi.purchase_request.tambah_PR') }}" class="btn btn-success"
+                                style="margin-bottom: 20px">
+                                <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Ajukan PR
+                            </a>
                             @if (Session::has('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     {{ Session::get('success') }}
@@ -242,7 +247,7 @@
 
                                                     @if ($item->status_approved == 'rejected' && $item->status_paid == 'rejected')
                                                         <td style="text-align: center; color: #FF3131">
-                                                            <label style="font-weight: bold">Rejected</label>
+                                                            <label style="font-weight: bold">Submitted</label>
                                                         </td>
                                                         <td style="text-align: center;">
                                                             <div style="display: flex; justify-content: center;">

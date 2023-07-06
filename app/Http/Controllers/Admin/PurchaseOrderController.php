@@ -18,6 +18,7 @@ class PurchaseOrderController extends Controller
     {
         $title = 'Purchase Order';
         $dataPO = DB::table('admin_purchase_order')
+            ->orderBy('tgl_purchasing', 'desc')
             ->orderBy('no_doku', 'desc')
             ->paginate(10);
         return view('halaman_admin.admin.purchase_order.index', [
@@ -230,5 +231,58 @@ class PurchaseOrderController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('admin.purchase_order')->with('gagal', $e->getMessage());
         }
+    }
+    public function edit_PO($id)
+    {
+        $title = 'Edit Purchase Order';
+        $PO = DB::table('admin_purchase_order')->where('id', $id)->first();
+        $menyetujui = DB::select('SELECT * from menyetujui');
+        $tipe_pr = DB::select('SELECT * FROM admin_purchase_request');
+        $supplier = DB::select('SELECT * FROM supplier');
+        $kurs = DB::select('SELECT * FROM kurs');
+
+        return view('halaman_admin.admin.purchase_order.edit_PO', [
+            'title' => $title,
+            'PO' => $PO,
+            'menyetujui' => $menyetujui,
+            'tipe_pr' => $tipe_pr,
+            'supplier' => $supplier,
+            'kurs' => $kurs
+        ]);
+    }
+    public function update_PO(Request $request, $id)
+    {
+        $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+        $tgl_diajukan = $tanggal->format('Y-m-d');
+
+        DB::table('admin_purchase_order')->where('id', $id)->update([
+            'no_doku' => $request->no_doku,
+            'tgl_purchasing' => $tgl_diajukan,
+            'tipe_pr' => $request->tipe_pr,
+            'supplier' => $request->supplier,
+            'pemohon' => $request->pemohon,
+            'accounting' => $request->accounting,
+            'kasir' => $request->kasir,
+            'menyetujui' => $request->menyetujui
+        ]);
+
+        foreach ($request->ket as $keterangan => $value) {
+            DB::table('admin_purchase_order_detail')->where('fk_po', $id)->update([
+                'judul' => $value,
+                'jumlah' => $request->jum[$keterangan],
+                'satuan' => $request->qty[$keterangan],
+                'curr' => $request->kurs[$keterangan],
+                'nominal' => $request->nom[$keterangan],
+                'PPN' => isset($request->vat[$keterangan]) ? ($request->vat[$keterangan]) : null,
+                'PPH' => isset($request->pph[$keterangan]) ? ($request->pph[$keterangan]) : null,
+                'PPH_4' => isset($request->pph_4[$keterangan]) ? ($request->pph_4[$keterangan]) : null,
+                'PPH_21' => isset($request->pph_21[$keterangan]) ? ($request->pph_21[$keterangan]) : null,
+                'diskon' => isset($request->diskon[$keterangan]) ? ($request->diskon[$keterangan]) : null,
+                'ctm_1' => isset($request->lain_lain[$keterangan]) ? ($request->lain_lain[$keterangan]) : null,
+                'ctm_2' =>  isset($request->lain_lain_nom[$keterangan]) ? ($request->lain_lain_nom[$keterangan]) : null,
+                'fk_po' => $id
+            ]);
+        }
+        return redirect()->route('admin.purchase_order')->with('success', 'Data Purchase Order berhasil diperbarui.');
     }
 }

@@ -198,7 +198,7 @@
                                             <label for="exampleInputEmail1">No Dokumen</label>
                                             <input type="text" class="form-control" id="exampleInputEmail1"
                                                 aria-describedby="emailHelp" name="no_doku"
-                                                value="{{ $no_dokumen }}">
+                                                value="{{ $PO->no_doku }}">
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Tanggal Purchasing</label>
@@ -239,12 +239,12 @@
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Accounting</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="accounting" value="{{ $accounting[0]->nama }}" readonly>
+                                                name="accounting" value="{{ $PO->accounting }}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Kasir</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="kasir" value="{{ $kasir[0]->nama }}" readonly>
+                                                name="kasir" value="{{ $PO->kasir }}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Menyetujui</label>

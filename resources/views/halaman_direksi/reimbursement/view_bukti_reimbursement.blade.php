@@ -30,17 +30,11 @@
                         @endif
                         <td class="text-center">
                             <p>{{ $no++ . '.' }}</p>
-                            @if (Auth::user()->jabatan == 'Admin')
-                                <div class="image-container">
-                                    <img src="{{ asset('bukti_reim/' . $item->bukti_reim) }}" alt=""
-                                        style="max-width: 110%">
-                                </div>
-                            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Konsultan')
-                                <div class="image-container">
-                                    <img src="{{ asset('bukti_reim/' . $item->bukti_reim) }}" alt=""
-                                        style="max-width: 110%">
-                                </div>
-                            @endif
+                            <div class="image-container">
+                                <img src="{{ asset('bukti_reim/' . $item->bukti_reim) }}" alt=""
+                                    style="max-width: 110%">
+                            </div>
+
 
                             <div class="text-container">
                                 @if ($item->curr == 'IDR')

@@ -37,11 +37,14 @@ class CashAdvanceReportController extends Controller
         // dd($noUrutAkhir);
         $no_dokumen = null;
         $currentMonth = date('n');
-
-        if ($noUrutAkhir) {
-            $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
-        } else {
+        if (date('j') == 1) {
             $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($no));
+        } else {
+            if ($noUrutAkhir) {
+                $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
+            } else {
+                $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($no));
+            }
         }
 
         $accounting = DB::select('SELECT * FROM accounting');

@@ -92,23 +92,24 @@ class ReimbursementController extends Controller
         $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
         $noUrutAkhir = DB::table('admin_reimbursement')->whereMonth('tgl_diajukan', '=', date('m'))->count();
         $no = 1;
-        // dd($noUrutAkhir);
         $no_dokumen = null;
         $currentMonth = date('n');
 
-        if ($noUrutAkhir) {
-            $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
-        } else {
+        if (date('j') == 1) { // Cek jika tanggal saat ini adalah tanggal 1
             $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+        } else {
+            if ($noUrutAkhir) {
+                $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            } else {
+                $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            }
         }
-
-
         $accounting = DB::select('SELECT * FROM accounting');
         $kasir = DB::select('SELECT * from kasir');
         $menyetujui = DB::select('SELECT * from menyetujui');
 
         $currency = DB::select('SELECT * FROM kurs');
-        $karyawan = DB::select('SELECT * FROM karyawan');
+        $karyawan = DB::select('SELECT * FROM karyawan ORDER BY nama ASC');
         $nominal_awal = DB::select('SELECT * FROM fee_timesheet');
         $nominal_project = DB::select('SELECT * FROM fee_project');
         $aliases = DB::select('SELECT * FROM client');
@@ -225,6 +226,8 @@ class ReimbursementController extends Controller
                 $rb_detail->nominal_awal = $request->nom_ts[$index];
                 $rb_detail->hari_awal = $request->hari_ts1[$index];
                 $rb_detail->hari = $request->hari_ts2[$index];
+                $nominal = ($rb_detail->nominal_awal / $rb_detail->hari_awal) * $rb_detail->hari;
+                $rb_detail->nominal = $nominal;
                 $rb_detail->fk_timesheet_project = $reimbursement->id;
                 $rb_detail->save();
             }
@@ -286,7 +289,9 @@ class ReimbursementController extends Controller
                 }
                 $results_TS[] = round($result); // Tambahkan hasil ke array
             }
-            $total_TS = array_sum($results_TS);
+            $total_TS = DB::table('admin_timesheet_project_detail')
+                ->where('fk_timesheet_project', $id)
+                ->sum('nominal');
             return view('halaman_admin.admin.reimbursement.view_reimbursement', [
                 'title' => $title,
                 'reimbursement' => $reimbursement,
@@ -357,21 +362,14 @@ class ReimbursementController extends Controller
             $title = 'Lihat Reimbursement';
             $rb_detail = DB::table('admin_rb_detail')->where('fk_rb', $id)->get();
             $nominal = DB::table('admin_rb_detail')->where('fk_rb', $id)->sum('nominal');
-            $dataKaryawan = DB::table('karyawan')->select('nama', 'bank', 'no_rekening', 'signature')->first();
-            $direksi = DB::table('menyetujui')
-                ->where('nama', 'Yacob')
-                ->pluck('signature')
-                ->first();
-            $dataUser = DB::table('users')->select('no_rekening', 'bank')->first();
+
 
             return view('halaman_admin.admin.reimbursement.lihat_reimbursement', [
                 'title' => $title,
                 'reimbursement' => $reimbursement,
                 'rb_detail' => $rb_detail,
                 'nominal' => $nominal,
-                'karyawan' => $dataKaryawan,
-                'direksi' => $direksi,
-                'user' => $dataUser
+
             ]);
         } elseif ($reimbursement->halaman == 'TS') {
             $title = 'Lihat Timesheet Support';
@@ -384,13 +382,15 @@ class ReimbursementController extends Controller
 
             foreach ($timesheet_project_detail as $item) {
                 if ($item->hari >= 19) {
-                    $result = 3000000;
+                    $result = $item->nominal_awal;
                 } else {
                     $result = ($item->nominal_awal / $item->hari_awal) * $item->hari;
                 }
                 $results_TS[] = round($result); // Tambahkan hasil ke array
             }
-            $total_TS = array_sum($results_TS);
+            $total_TS = DB::table('admin_timesheet_project_detail')
+                ->where('fk_timesheet_project', $id)
+                ->sum('nominal');
             return view('halaman_admin.admin.reimbursement.lihat_reimbursement', [
                 'title' => $title,
                 'reimbursement' => $reimbursement,
@@ -618,12 +618,20 @@ class ReimbursementController extends Controller
             }
         } elseif ($request->project === 'TS (Timesheet Support)') {
             foreach ($request->karyawan_ts as $index => $nama_karyawan) {
+                $nominal_awal = $request->nom_ts[$index];
+                $hari_awal = $request->hari_ts1[$index];
+                $hari = $request->hari_ts2[$index];
+
+                // Perhitungan pembagian
+                $nominal_per_hari = $nominal_awal / $hari_awal;
+                $nominal_per_hari_total = $nominal_per_hari * $hari;
                 $rb_detail = [
                     'nama_karyawan' => $nama_karyawan,
                     'curr' => $request->kurs_ts[$index],
                     'nominal_awal' => $request->nom_ts[$index],
                     'hari_awal' => $request->hari_ts1[$index],
                     'hari' => $request->hari_ts2[$index],
+                    'nominal' => $nominal_per_hari_total,
                     'fk_timesheet_project' => $id
                 ];
                 DB::table('admin_timesheet_project_detail')
@@ -664,5 +672,43 @@ class ReimbursementController extends Controller
     public function kirim_WA($id)
     {
         $reimbursement = DB::table('admin_reimbursement')->find($id);
+
+        $nomorTelepon = [
+            $reimbursement->no_telp_direksi,
+        ];
+
+        // Membangun pesan yang diinginkan
+        $pesan = "[Ini Adalah Pesan Otomatis]\nAda Permohonan RB No. " . $reimbursement->no_doku . " Dari " . $reimbursement->pemohon . " Menunggu Approval. \nKlik Disini untuk Melihat ";
+
+        $urlWhatsApp = 'https://api.whatsapp.com/send';
+
+        $berhasilDikirim = [];
+
+        foreach ($nomorTelepon as $nomor) {
+            try {
+                $url = $urlWhatsApp . '?phone=' . $nomor . '&text=' . urlencode($pesan);
+
+                // Lakukan pengiriman pesan dengan membuka URL menggunakan fungsi file_get_contents atau CURL
+                // Misalnya:
+                // $response = file_get_contents($url);
+
+                // Jika pengiriman pesan berhasil, tambahkan nomor ke dalam array berhasilDikirim
+                $berhasilDikirim[] = $nomor;
+            } catch (\Exception $e) {
+                // Tangani kesalahan yang terjadi
+                dd($e->getMessage());
+            }
+        }
+
+        // Lakukan penanganan sesuai kebutuhan dengan menggunakan array berhasilDikirim
+        if (!empty($berhasilDikirim)) {
+            // Redirect ke halaman WhatsApp
+            $redirectUrl = $urlWhatsApp . '?phone=' . implode(',', $berhasilDikirim) . '&text=' . urlencode($pesan);
+            header("Location: " . $redirectUrl);
+            exit();
+            // dd($redirectUrl);
+        } else {
+            return redirect()->back()->with('error', 'Gagal mengirim pesan WhatsApp.');
+        }
     }
 }

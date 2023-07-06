@@ -36,12 +36,16 @@ class CashAdvanceController extends Controller
         // dd($noUrutAkhir);
         $no_dokumen = null;
         $currentMonth = date('n');
-
-        if ($noUrutAkhir) {
-            $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
+        if (date('j') == 1) {
+            $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($no));
         } else {
-            $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($no + 1));
+            if ($noUrutAkhir) {
+                $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
+            } else {
+                $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($no));
+            }
         }
+
         $accounting = DB::select('SELECT * FROM accounting');
         $kasir = DB::select('SELECT * from kasir');
         $menyetujui = DB::select('SELECT * from menyetujui');

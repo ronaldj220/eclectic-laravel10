@@ -1,5 +1,6 @@
 @php
     date_default_timezone_set('Asia/Jakarta');
+    
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +13,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Eclectic (Admin) | {{ $title }}</title>
+    <title>Eclectic (Direksi) | {{ $title }}</title>
 
     <!-- Custom fonts for this template-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,12 +34,12 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient sidebar sidebar-dark accordion fixed-top" id="accordionSidebar"
+        <ul class="navbar-nav bg-gradient sidebar sidebar-dark accordion" id="accordionSidebar"
             style="background-color: #900C3F">
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
-                href="{{ route('admin.beranda') }}">
+                href="{{ route('direksi.beranda') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -50,90 +51,64 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="{{ route('admin.beranda') }}">
+                <a class="nav-link" href="{{ route('direksi.beranda') }}">
                     <i class="fa-solid fa-home fa-beat-fade"></i>
                     <span>Beranda</span></a>
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider">
+            <hr class="sidebar-divider my-0">
 
-            <!-- Heading -->
-            <div class="sidebar-heading text-center">
-                Halaman Master
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
+            <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog fa-beat-fade"></i>
-                    <span>Master</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{ route('admin.admin') }}"><i
-                                class="fa-solid fa-lock fa-beat"></i>&nbsp;Admin</a>
-                        <a class="collapse-item" href="{{ route('admin.karyawan') }}"><i
-                                class="fa-solid fa-user fa-beat"></i>&nbsp;Karyawan</a>
-                        <a class="collapse-item" href="{{ route('admin.currency') }}"><i
-                                class="fa-solid fa-money-check fa-beat"></i>&nbsp;Mata Uang</a>
-                        <a class="collapse-item" href="{{ route('admin.accounting') }}"><i
-                                class="fa-solid fa-calculator fa-beat"></i>&nbsp;Accounting</a>
-                        <a class="collapse-item" href="{{ route('admin.kasir') }}"><i
-                                class="fa-solid fa-cash-register fa-beat"></i>&nbsp;Kasir</a>
-                        <a class="collapse-item" href="{{ route('admin.menyetujui') }}"><i
-                                class="fa-solid fa-user fa-beat"></i>&nbsp;Menyetujui</a>
-                        <a class="collapse-item" href="{{ route('admin.master_timesheet') }}"><i
-                                class="fa-solid fa-coins fa-beat"></i>&nbsp;Rate Timesheet Project</a>
-                        <a class="collapse-item" href="{{ route('admin.master_fee_project') }}"><i
-                                class="fa-solid fa-coins fa-beat"></i>&nbsp;Rate Lembur & Ticket</a>
-                        <a class="collapse-item" href="{{ route('admin.supplier') }}">
-                            <i class="fa-solid fa-truck-field-un fa-beat"></i>&nbsp;Supplier</a>
-                        <a class="collapse-item" href="{{ route('admin.client') }}">
-                            <i class="fa-solid fa-user fa-beat"></i>&nbsp;Client</a>
-                        <a class="collapse-item" href="{{ route('admin.master_PO') }}">
-                            <i class="fa-solid fa-user fa-beat"></i>&nbsp;Master PO</a>
-                    </div>
-                </div>
+                <a class="nav-link" href="{{ route('direksi.reimbursement') }}">
+                    <i class="fa-solid fa-money-bill-transfer fa-beat-fade"></i>
+                    <span>Reimbursement</span></a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('direksi.cash_advance') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Cash Advance</span></a>
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider">
+            <hr class="sidebar-divider my-0">
 
-            <!-- Heading -->
-            <div class="sidebar-heading text-center">
-                Halaman Admin
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
+            <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder fa-beat-fade"></i>
-                    <span>Transaksi</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{ route('admin.reimbursement') }}">Reimbursement</a>
-                        <a class="collapse-item" href="{{ route('admin.cash_advance') }}">Cash Advance</a>
-                        <a class="collapse-item" href="{{ route('admin.cash_advance_report') }}">Cash Advance
-                            Report</a>
-                        <a class="collapse-item" href="{{ route('admin.purchase_request') }}">Purchase Request</a>
-                        <a class="collapse-item" href="{{ route('admin.purchase_order') }}">Purchase Order</a>
-                    </div>
-                </div>
+                <a class="nav-link" href="{{ route('direksi.cash_advance_report') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Cash Advance Report</span></a>
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('direksi.purchase_request') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Purchase Request</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('direksi.purchase_order') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Purchase Order</span></a>
+            </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
-
-
 
         </ul>
         <!-- End of Sidebar -->
@@ -184,13 +159,19 @@
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span
-                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->nama }}</span>
+                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::guard('direksi')->user()->nama }}
+                                    <br>
+                                    <small>{{ Auth::guard('direksi')->user()->jabatan }}</small></span>
                                 <img class="img-profile rounded-circle"
-                                    src="{{ asset('assets') }}/img/undraw_profile.svg">
+                                    src="{{ asset('assets') }}/img/undraw_profile_2.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="{{ route('direksi.beranda.profile') }}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal"
                                     data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -211,19 +192,19 @@
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary text-center">Edit Cash Advance
+                                    <h6 class="m-0 font-weight-bold text-primary text-center">Tambah Cash Advance
                                         Report
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <form action="{{ route('admin.cash_advance_report.edit_CAR', $CAR->id) }}"
+                                    <form action="{{ route('direksi.cash_advance_report.simpan_CAR') }}"
                                         method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">No Dokumen</label>
                                             <input type="text" class="form-control" id="exampleInputEmail1"
-                                                aria-describedby="emailHelp" name="no_doku"
-                                                value="{{ $CAR->no_doku }}">
+                                                aria-describedby="emailHelp" name="no_doku" readonly
+                                                value="{{ $no_dokumen }}">
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Tanggal Diajukan</label>
@@ -258,24 +239,19 @@
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Accounting</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="accounting" value="{{ $CAR->accounting }}" readonly>
+                                                name="accounting" value="{{ $accounting[0]->nama }}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Kasir</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="kasir" value="{{ $CAR->kasir }}" readonly>
+                                                name="kasir" value="{{ $kasir[0]->nama }}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Menyetujui</label>
                                             <input type="text" class="form-control" id="menyetujui"
                                                 name="nama_menyetujui" readonly>
                                         </div>
-                                        <div class="form-text text-muted"
-                                            style="font-size: 12px; font-family: Arial; color: red">
-                                            * Aris (Keperluan Direksi) <br>
-                                            * Sujiono (Keperluan Project) <br>
-                                            * Yacob (Keperluan Office)
-                                        </div>
+
                                         <div class="form-group mt-3">
                                             <div id="detail"></div>
                                         </div>
@@ -287,7 +263,7 @@
                                             <button type="submit" class="btn btn-primary"><i
                                                     class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Submit</button>
                                             &nbsp;&nbsp;
-                                            <a href="{{ route('admin.cash_advance_report') }}"
+                                            <a href="{{ route('direksi.cash_advance_report') }}"
                                                 class="btn btn-danger"><i
                                                     class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
                                         </div>
@@ -363,7 +339,7 @@
             <div class = 'col-md-12'>
               <div class="form-group">
                 <label for="exampleInputPassword1">Deskripsi</label>
-                <textarea class = 'form-control' name='deskripsi[]' rows=5></textarea>
+                <textarea class = 'form-control' name='deskripsi[]' rows=2></textarea>
               </div>
             </div>
             @error('email')
@@ -461,7 +437,7 @@
                 $("select").on("change", function() {
                     var tipe_ca_id = $(this).val();
                     $.ajax({
-                        url: "http://127.0.0.1:8000/admin/cash_advance_report/get-nominal",
+                        url: '{{ route('direksi.CAR.getNominal') }}',
                         type: "GET",
                         data: {
                             tipe_ca_id: tipe_ca_id
@@ -469,8 +445,8 @@
                         success: function(data) {
                             $("#nominal_ca").val(data.nominal_ca);
                             $("#pemohon").val(data.pemohon);
-                            $("#menyetujui").val(data.nama_menyetujui);
-                            // console.log(data);
+                            $("#menyetujui").val(data.menyetujui);
+                            console.log(data);
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
                             // Handle error

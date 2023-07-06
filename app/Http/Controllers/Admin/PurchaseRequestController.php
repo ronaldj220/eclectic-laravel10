@@ -123,5 +123,39 @@ class PurchaseRequestController extends Controller
     }
     public function edit_PR($id)
     {
+        $PR = DB::table('admin_purchase_request')->where('id', $id)->first();
+        $title = 'Edit Purchase Request';
+        $menyetujui = DB::select('SELECT * from menyetujui');
+
+        return view('halaman_admin.admin.purchase_request.edit_PR', [
+            'title' => $title,
+            'PR' => $PR,
+            'menyetujui' => $menyetujui
+        ]);
+    }
+    public function update_PR(Request $request, $id)
+    {
+        $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+        $tgl_diajukan = $tanggal->format('Y-m-d');
+        DB::table('admin_purchase_request')->where('id', $id)->update([
+            'no_doku' => $request->no_doku,
+            'tgl_diajukan' => $tgl_diajukan,
+            'pemohon' => $request->pemohon,
+            'menyetujui' => $request->nama_menyetujui
+        ]);
+
+        foreach ($request->ket as $keterangan => $value) {
+            DB::table('admin_purchase_request_detail')->where('fk_pr', $id)->update([
+                'judul' => $value,
+                'tgl_1' => isset($request->tgl_1[$keterangan]) ? $request->tgl_1[$keterangan] : null,
+                'tgl_2' => isset($request->tgl_2[$keterangan]) ? $request->tgl_2[$keterangan] : null,
+                'jumlah' => $request->jum[$keterangan],
+                'satuan' => $request->qty[$keterangan],
+                'tgl_pakai' => $request->tgl_pakai[$keterangan],
+                'project' =>  isset($request->project[$keterangan]) ? $request->project[$keterangan] : null,
+                'fk_pr' => $id
+            ]);
+        }
+        return redirect()->route('admin.purchase_request')->with('success', 'Data PR berhasil diperbarui.');
     }
 }

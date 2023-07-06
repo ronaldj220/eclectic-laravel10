@@ -189,6 +189,10 @@
                             <h6 class="m-0 font-weight-bold text-primary text-center">Lihat Purchase Order</h6>
                         </div>
                         <div class="card-body">
+                            <a href="{{ route('direksi.purchase_order.tambah_PO') }}" class="btn btn-success"
+                                style="margin-bottom: 20px">
+                                <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Ajukan PO
+                            </a>
                             @if (Session::has('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     {{ Session::get('success') }}
@@ -242,7 +246,7 @@
 
                                                     @if ($item->status_approved == 'rejected' && $item->status_paid == 'rejected')
                                                         <td style="text-align: center; color: #FF3131">
-                                                            <label style="font-weight: bold">Rejected</label>
+                                                            <label style="font-weight: bold">Submitted</label>
                                                         </td>
                                                         <td style="text-align: center;">
                                                             <div style="display: flex; justify-content: center;">
@@ -270,19 +274,13 @@
                                                         <td style="text-align: center;">
                                                             <div style="display: flex; justify-content: center;">
 
-                                                                <a href="{{ route('direksi.reimbursement.print_reimbursement', $item->id) }}"
+                                                                <a href="{{ route('direksi.purchase_order.print_PO', $item->id) }}"
                                                                     data-toggle="tooltip" data-placement="bottom"
                                                                     title="Print Dokumen">
                                                                     <i class="fa-solid fa-print"
                                                                         style="color: #900C3F"></i>
                                                                 </a>
-                                                                &nbsp; &nbsp; &nbsp;
-                                                                <a href="{{ route('direksi.reimbursement.print_bukti_reimbursement', $item->id) }}"
-                                                                    data-toggle="tooltip" data-placement="bottom"
-                                                                    title="Print Bukti">
-                                                                    <i class="fa-solid fa-image"
-                                                                        style="color: #900C3F"></i>
-                                                                </a>
+
 
                                                             </div>
                                                         </td>

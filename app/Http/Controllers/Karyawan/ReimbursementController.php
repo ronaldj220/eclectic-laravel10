@@ -88,14 +88,17 @@ class ReimbursementController extends Controller
         $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
         $noUrutAkhir = DB::table('admin_reimbursement')->whereMonth('tgl_diajukan', '=', date('m'))->count();
         $no = 1;
-        // dd($noUrutAkhir);
         $no_dokumen = null;
         $currentMonth = date('n');
 
-        if ($noUrutAkhir) {
-            $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
-        } else {
+        if (date('j') == 1) { // Cek jika tanggal saat ini adalah tanggal 1
             $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+        } else {
+            if ($noUrutAkhir) {
+                $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            } else {
+                $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            }
         }
         $accounting = DB::select('SELECT * FROM accounting');
         $kasir = DB::select('SELECT * from kasir');
@@ -222,6 +225,8 @@ class ReimbursementController extends Controller
                 $rb_detail->nominal_awal = $request->nom_ts[$index];
                 $rb_detail->hari_awal = $request->hari_ts1[$index];
                 $rb_detail->hari = $request->hari_ts2[$index];
+                $nominal = ($rb_detail->nominal_awal / $rb_detail->hari_awal) * $rb_detail->hari;
+                $rb_detail->nominal = $nominal;
                 $rb_detail->fk_timesheet_project = $reimbursement->id;
                 $rb_detail->save();
             }
@@ -274,10 +279,18 @@ class ReimbursementController extends Controller
             $results_TS = []; // Array untuk menyimpan hasil perhitungan masing-masing item
 
             foreach ($timesheet_project_detail as $item) {
-                $result = ($item->nominal_awal / $item->hari_awal) * $item->hari;
-                $results_TS[] = $result; // Tambahkan hasil ke array
+                if ($item->hari >= 19) {
+                    $result = $item->nominal_awal;
+                } else {
+                    $result = $item->nominal;
+                }
+                $results_TS[] = round($result); // Tambahkan hasil ke array
             }
-            $total_TS = array_sum($results_TS);
+
+            $total_TS = DB::table('admin_timesheet_project_detail')
+                ->where('fk_timesheet_project', $id)
+                ->sum('nominal');
+
             return view('halaman_karyawan.reimbursement.print_reimbursement', [
                 'title' => $title,
                 'reimbursement' => $reimbursement,
@@ -377,10 +390,17 @@ class ReimbursementController extends Controller
             $results_TS = []; // Array untuk menyimpan hasil perhitungan masing-masing item
 
             foreach ($timesheet_project_detail as $item) {
-                $result = ($item->nominal_awal / $item->hari_awal) * $item->hari;
-                $results_TS[] = $result; // Tambahkan hasil ke array
+                if ($item->hari >= 19) {
+                    $result = $item->nominal_awal;
+                } else {
+                    $result = ($item->nominal_awal / $item->hari_awal) * $item->hari;
+                }
+                $results_TS[] = round($result); // Tambahkan hasil ke array
             }
-            $total_TS = array_sum($results_TS);
+            $total_TS = DB::table('admin_timesheet_project_detail')
+                ->where('fk_timesheet_project', $id)
+                ->sum('nominal');
+
             return view('halaman_karyawan.reimbursement.view_reimbursement', [
                 'title' => $title,
                 'reimbursement' => $reimbursement,

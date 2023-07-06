@@ -235,55 +235,10 @@
     </div>
     <div class="d-flex justify-content-center" style="margin-top: 20px">
 
-        @if ($PO->status_approved == 'pending' && $PO->status_paid == 'pending')
-            @if ($PO->pemohon == Auth::guard('direksi')->user()->nama)
-                <a href="{{ route('direksi.purchase_order') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
-            @elseif ($PO->menyetujui == Auth::guard('direksi')->user()->nama)
-                <a href="{{ route('direksi.purchase_order.setujui_PO', $PO->id) }}" class="btn btn-primary"><i
-                        class="fa-solid fa-square-check fa-beat"></i>&nbsp;Setujui</a>
-                &nbsp; &nbsp;
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                    data-bs-target="#staticBackdrop"><i class="fa-solid fa-xmark fa-beat"></i>&nbsp;
-                    Tolak
-                </button>
-                &nbsp; &nbsp;
-                <a href="{{ route('direksi.purchase_order') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
-            @endif
-        @elseif ($PO->status_approved == 'approved' && $PO->status_paid == 'pending')
-            <a href="{{ route('direksi.purchase_order') }}" class="btn btn-danger"><i
-                    class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
-        @elseif ($PO->status_approved == 'rejected' && $PO->status_paid == 'rejected')
-            <a href="{{ route('direksi.purchase_order') }}" class="btn btn-danger"><i
-                    class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
-        @endif
+        <a href="{{ route('direksi.purchase_order') }}" class="btn btn-danger"><i
+                class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Alasan Penolakan</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('direksi.purchase_order.tolak_PO', $PO->id) }}" method="POST">
-                        @csrf
-                        <textarea name="alasan" class="form-control"></textarea>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-danger">Tolak</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kembali</button>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-        </div>
-    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
     </script>

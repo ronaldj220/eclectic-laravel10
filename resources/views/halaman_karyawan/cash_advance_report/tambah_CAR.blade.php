@@ -205,7 +205,7 @@
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">No Dokumen</label>
                                             <input type="text" class="form-control" id="exampleInputEmail1"
-                                                aria-describedby="emailHelp" name="no_doku"
+                                                aria-describedby="emailHelp" name="no_doku" readonly
                                                 value="{{ $no_dokumen }}">
                                         </div>
                                         <div class="form-group">
@@ -219,7 +219,7 @@
                                                 name="judul_doku">
                                         </div>
                                         <div class="form-group">
-                                            <label for="exampleInputPassword1">Tipe Cash Advance</label>
+                                            <label for="exampleInputPassword1">Nomor CA</label>
                                             <select class="form-control" name="tipe_ca_id" id="no_doku">
                                                 <option value=""> --- Pilih --- </option>
                                                 @foreach ($cash_advance as $item)
@@ -439,7 +439,7 @@
                 $("select").on("change", function() {
                     var tipe_ca_id = $(this).val();
                     $.ajax({
-                        url: "http://127.0.0.1:8000/karyawan/cash_advance_report/get-nominal",
+                        url: '{{ route('karyawan.CAR.get-nominal') }}',
                         type: "GET",
                         data: {
                             tipe_ca_id: tipe_ca_id

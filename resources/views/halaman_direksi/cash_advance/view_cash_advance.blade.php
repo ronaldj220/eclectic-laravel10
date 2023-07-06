@@ -115,7 +115,10 @@
                     &nbsp; &nbsp;
                     <a href="{{ route('direksi.cash_advance') }}" class="btn btn-danger"><i
                             class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
-                @elseif ($reimbursement->status_approved == 'approved')
+                @elseif ($cash_advance->status_approved == 'approved' && $cash_advance->status_paid == 'pending')
+                    <a href="{{ route('direksi.cash_advance') }}" class="btn btn-danger"><i
+                            class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
+                @elseif ($cash_advance->status_approved == 'rejected' && $cash_advance->status_paid == 'rejected')
                     <a href="{{ route('direksi.cash_advance') }}" class="btn btn-danger"><i
                             class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
                 @endif

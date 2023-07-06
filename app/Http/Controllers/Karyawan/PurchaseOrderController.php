@@ -68,10 +68,14 @@ class PurchaseOrderController extends Controller
         $no = 1;
         // dd($noUrutAkhir);
         $no_dokumen = null;
-        if ($noUrutAkhir) {
-            $no_dokumen = sprintf("%02s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . date('Y');
-        } else {
+        if (date('j') == 1) {
             $no_dokumen = sprintf("%02s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . date('Y');
+        } else {
+            if ($noUrutAkhir) {
+                $no_dokumen = sprintf("%02s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . date('Y');
+            } else {
+                $no_dokumen = sprintf("%02s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . date('Y');
+            }
         }
         $karyawan = Auth::guard('karyawan')->user()->nama;
         $tipe_pr = DB::select('SELECT * FROM admin_purchase_request WHERE pemohon = ?', [$karyawan]);

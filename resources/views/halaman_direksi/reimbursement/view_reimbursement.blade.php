@@ -21,7 +21,13 @@
             <br>
             <b><a style="text-transform: uppercase;">PT. Eclectic Consulting</a></b>
         </figure>
-        <br>
+        @if ($reimbursement->status_approved == 'rejected' && $reimbursement->status_paid == 'pending')
+            <thead>
+                <div class="alert alert-danger" role="alert" style="font-size: 12px">
+                    Alasan : {{ $reimbursement->alasan }}
+                </div>
+            </thead>
+        @endif
         <table class="table table-borderless table-sm"
             style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
             <tr>
@@ -30,6 +36,7 @@
                 </td>
             </tr>
         </table>
+
         @if ($reimbursement->halaman == 'RB')
             <table class="table is-striped table-bordered border-dark table-sm"
                 style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
@@ -143,22 +150,22 @@
                     <tr style="height:3cm;">
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Pemohon,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->pemohon }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Accounting,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->accounting }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Kasir,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->kasir }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Menyetujui,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->menyetujui }}</div>
                         </td>
                     </tr>
@@ -211,22 +218,22 @@
                     <tr style="height:3cm;">
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Pemohon,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->pemohon }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Accounting,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->accounting }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Kasir,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->kasir }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Menyetujui,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->menyetujui }}</div>
                         </td>
                     </tr>
@@ -278,22 +285,22 @@
                     <tr style="height:3cm;">
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Pemohon,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->pemohon }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Accounting,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->accounting }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Kasir,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->kasir }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Menyetujui,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 70px"></div>
                             <div class="center">{{ $reimbursement->menyetujui }}</div>
                         </td>
                     </tr>
@@ -304,19 +311,30 @@
         <br>
         <div class="d-flex justify-content-center" style="margin-top: 20px">
 
-            @if ($reimbursement->status_approved == 'pending')
-                <a href="{{ route('direksi.reimbursement.setujui_reimbursement', $reimbursement->id) }}"
-                    class="btn btn-primary"><i class="fa-solid fa-square-check fa-beat"></i>&nbsp;Setujui</a>
-                &nbsp; &nbsp;
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                    data-bs-target="#staticBackdrop"><i class="fa-solid fa-xmark fa-beat"></i>&nbsp;
-                    Tolak
-                </button>
-                &nbsp; &nbsp;
+            @if ($reimbursement->status_approved == 'pending' && $reimbursement->status_paid == 'pending')
+                @if ($reimbursement->pemohon == Auth::guard('direksi')->user()->nama)
+                    <a href="{{ route('direksi.reimbursement') }}" class="btn btn-danger"><i
+                            class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
+                @elseif ($reimbursement->menyetujui == Auth::guard('direksi')->user()->nama)
+                    <a href="{{ route('direksi.reimbursement.setujui_reimbursement', $reimbursement->id) }}"
+                        class="btn btn-primary"><i class="fa-solid fa-square-check fa-beat"></i>&nbsp;Setujui</a>
+                    &nbsp; &nbsp;
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#staticBackdrop"><i class="fa-solid fa-xmark fa-beat"></i>&nbsp;
+                        Tolak
+                    </button>
+                    &nbsp; &nbsp;
+                    <a href="{{ route('direksi.reimbursement') }}" class="btn btn-danger"><i
+                            class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
+                @endif
+            @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'pending')
                 <a href="{{ route('direksi.reimbursement') }}" class="btn btn-danger"><i
                         class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
-            @elseif ($reimbursement->status_approved == 'approved')
+            @elseif ($reimbursement->status_approved == 'rejected' && $reimbursement->status_paid == 'rejected')
+                <a href="{{ route('direksi.reimbursement') }}" class="btn btn-danger"><i
+                        class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
+            @elseif ($reimbursement->status_approved == 'rejected' && $reimbursement->status_paid == 'pending')
                 <a href="{{ route('direksi.reimbursement') }}" class="btn btn-danger"><i
                         class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
             @endif

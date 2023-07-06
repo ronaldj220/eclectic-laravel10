@@ -36,11 +36,16 @@ class PurchaseRequestController extends Controller
         $no = 1;
         // dd($noUrutAkhir);
         $no_dokumen = null;
-        if ($noUrutAkhir) {
-            $no_dokumen = date('y') . '/' . $bulanRomawi[date('n')] . '/' . $AWAL . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
-        } else {
+        if (date('j') == 1) {
             $no_dokumen = date('y') . '/' . $bulanRomawi[date('n')] . '/' . $AWAL . '/' . sprintf("%05s", abs($no));
+        } else {
+            if ($noUrutAkhir) {
+                $no_dokumen = date('y') . '/' . $bulanRomawi[date('n')] . '/' . $AWAL . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
+            } else {
+                $no_dokumen = date('y') . '/' . $bulanRomawi[date('n')] . '/' . $AWAL . '/' . sprintf("%05s", abs($no));
+            }
         }
+
 
         $menyetujui = DB::select('SELECT * FROM menyetujui');
 

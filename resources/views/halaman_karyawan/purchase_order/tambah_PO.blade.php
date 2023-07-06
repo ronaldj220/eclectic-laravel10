@@ -175,7 +175,7 @@
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">No Dokumen</label>
                                             <input type="text" class="form-control" id="exampleInputEmail1"
-                                                aria-describedby="emailHelp" name="no_doku"
+                                                aria-describedby="emailHelp" name="no_doku" readonly
                                                 value="{{ $no_dokumen }}">
                                         </div>
                                         <div class="form-group">
@@ -184,10 +184,10 @@
                                                 name="tgl_diajukan" value="{{ date('d/m/Y') }}">
                                         </div>
                                         <div class="form-group">
-                                            <label for="exampleInputPassword1">Tipe Purchase Request</label>
+                                            <label for="exampleInputPassword1">Nomor PR</label>
                                             <select class="form-control" name="tipe_pr" id="tipe_pr"
                                                 onchange="updateFields()"
-                                                data-url="{{ route('getDetailByTipePR') }}">
+                                                data-url="{{ route('karyawan.getDetailByTipePR') }}">
                                                 <option value=""> --- Pilih --- </option>
                                                 @foreach ($tipe_pr as $item)
                                                     <option value="{{ $item->no_doku }}">{{ $item->no_doku }}
@@ -199,7 +199,7 @@
                                             <label for="exampleInputPassword1">Supplier</label>
                                             <select class="form-control" name="supplier" id="supplier"
                                                 onchange="updateFields2()"
-                                                data-url="{{ route('getDataBySupplier') }}">
+                                                data-url="{{ route('karyawan.getDataBySupplier') }}">
                                                 <option value=""> --- Pilih --- </option>
                                                 @foreach ($supplier as $item)
                                                     <option value="{{ $item->nama_supplier }}">

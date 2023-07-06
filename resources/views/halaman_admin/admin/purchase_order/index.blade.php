@@ -294,6 +294,12 @@
                                                                 title="Setujui Dokumen">
                                                                 <i class="fa-solid fa-eye" style="color: #900C3F"></i>
                                                             </a>
+                                                            <a href="{{ route('admin.purchase_order.edit_PO', $item->id) }}"
+                                                                data-toggle="tooltip" data-placement="bottom"
+                                                                title="Edit PO">
+                                                                <i class="fa-solid fa-pen-to-square"
+                                                                    style="color: #900C3F"></i>
+                                                            </a>
                                                         </td>
                                                     @elseif ($item->status_approved == 'rejected' && $item->status_paid == 'pending')
                                                         <td style="text-align: center; color: #FF3131">

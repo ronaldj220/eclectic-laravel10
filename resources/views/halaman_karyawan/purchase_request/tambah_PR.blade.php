@@ -176,7 +176,7 @@
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">No Dokumen</label>
                                             <input type="text" class="form-control" id="exampleInputEmail1"
-                                                aria-describedby="emailHelp" name="no_doku"
+                                                aria-describedby="emailHelp" name="no_doku" readonly
                                                 value="{{ $no_dokumen }}">
                                         </div>
                                         <div class="form-group">

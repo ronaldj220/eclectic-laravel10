@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Eclectic (Karyawan) | {{ $title }}</title>
+    <title>Eclectic (Direksi) | {{ $title }}</title>
 
     <!-- Custom fonts for this template-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -35,7 +35,7 @@
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
-                href="{{ route('karyawan.beranda') }}">
+                href="{{ route('direksi.beranda') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -47,7 +47,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="{{ route('karyawan.beranda') }}">
+                <a class="nav-link" href="{{ route('direksi.beranda') }}">
                     <i class="fa-solid fa-home fa-beat-fade"></i>
                     <span>Beranda</span></a>
             </li>
@@ -57,7 +57,7 @@
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('karyawan.reimbursement') }}">
+                <a class="nav-link" href="{{ route('direksi.reimbursement') }}">
                     <i class="fa-solid fa-money-bill-transfer fa-beat-fade"></i>
                     <span>Reimbursement</span></a>
             </li>
@@ -67,7 +67,7 @@
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('karyawan.cash_advance') }}">
+                <a class="nav-link" href="{{ route('direksi.cash_advance') }}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Cash Advance</span></a>
             </li>
@@ -77,31 +77,29 @@
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('karyawan.cash_advance_report') }}">
+                <a class="nav-link" href="{{ route('direksi.cash_advance_report') }}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Cash Advance Report</span></a>
             </li>
 
-            @if (Auth::guard('karyawan')->user()->jabatan == 'Staff')
-                <!-- Divider -->
-                <hr class="sidebar-divider my-0">
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
 
-                <!-- Nav Item - Tables -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('karyawan.purchase_request') }}">
-                        <i class="fas fa-fw fa-table"></i>
-                        <span>Purchase Request</span></a>
-                </li>
-                <!-- Divider -->
-                <hr class="sidebar-divider my-0">
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('direksi.purchase_request') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Purchase Request</span></a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
 
-                <!-- Nav Item - Tables -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('karyawan.purchase_order') }}">
-                        <i class="fas fa-fw fa-table"></i>
-                        <span>Purchase Order</span></a>
-                </li>
-            @endif
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('direksi.purchase_order') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Purchase Order</span></a>
+            </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
@@ -157,17 +155,17 @@
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span
-                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::guard('karyawan')->user()->nama }}
+                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::guard('direksi')->user()->nama }}
                                     <br>
-                                    <small>{{ Auth::guard('karyawan')->user()->jabatan }}</small></span>
+                                    <small>{{ Auth::guard('direksi')->user()->jabatan }}</small></span>
                                 <img class="img-profile rounded-circle"
-                                    src="{{ asset('assets') }}/img/undraw_profile_3.svg">
+                                    src="{{ asset('assets') }}/img/undraw_profile_2.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
 
-                                <a class="dropdown-item" href="{{ route('karyawan.beranda.profile') }}">
+                                <a class="dropdown-item" href="{{ route('direksi.beranda.profile') }}">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
@@ -195,8 +193,8 @@
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <form action="{{ route('karyawan.reimbursement.simpan_reimbursement') }}"
-                                        method="POST" enctype="multipart/form-data">
+                                    <form action="{{ route('direksi.reimbursement.simpan_RB') }}" method="POST"
+                                        enctype="multipart/form-data">
                                         @csrf
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">No Dokumen</label>
@@ -221,7 +219,7 @@
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Pemohon</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="pemohon" value="{{ Auth::guard('karyawan')->user()->nama }}"
+                                                name="pemohon" value="{{ Auth::guard('direksi')->user()->nama }}"
                                                 readonly>
                                         </div>
                                         <div class="form-group">
@@ -250,95 +248,19 @@
                                             * Sujiono (Keperluan Project) <br>
                                             * Yacob (Keperluan Office)
                                         </div>
-                                        @if (Auth::guard('karyawan')->user()->jabatan == 'Project Manager')
-                                            <div class="form-group" style="margin-top: 10px">
-                                                <label for="exampleInputPassword1">File Bukti</label>
-                                                <input type="file"
-                                                    class="form-control-file @error('bukti') is-invalid @enderror"
-                                                    name='bukti' accept='.pdf, .zip, .rar'>
-                                                <br>
-                                                <small id="passwordHelpBlock" class="form-text text-muted"
-                                                    style="font-family: Arial, Helvetica, sans-serif; margin-top: -10px">
-                                                    Gunakan PDF atau ZIP atau RAR
-                                                </small>
-                                                @error('bukti')
-                                                    <div class="alert alert-danger alert-dismissible fade show"
-                                                        role="alert">
-                                                        {{ $message }}
-                                                        <button type="button" class="close" data-dismiss="alert"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                        @elseif (Auth::guard('karyawan')->user()->jabatan == 'Support Manager')
-                                            <div class="form-group" style="margin-top: 10px">
-                                                <label for="exampleInputPassword1">File Bukti</label>
-                                                <input type="file"
-                                                    class="form-control-file @error('bukti') is-invalid @enderror"
-                                                    name='bukti' accept='.pdf, .zip, .rar'>
-                                                <br>
-                                                <small id="passwordHelpBlock" class="form-text text-muted"
-                                                    style="font-family: Arial, Helvetica, sans-serif; margin-top: -10px;">
-                                                    Gunakan PDF atau ZIP atau RAR
-                                                </small>
-                                                @error('bukti')
-                                                    <div class="alert alert-danger alert-dismissible fade show"
-                                                        role="alert">
-                                                        {{ $message }}
-                                                        <button type="button" class="close" data-dismiss="alert"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                        @endif
+
                                         <div class="form-group" style="margin-top: 10px; margin-bottom: 2px">
                                             <label for="">Pilih</label>
                                         </div>
                                         <div class="form-group">
-                                            @if (Auth::guard('karyawan')->user()->jabatan == 'Konsultan')
+                                            @if (Auth::guard('direksi')->user()->jabatan == 'Direktur')
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="project"
                                                         id="inlineRadio1" value="RB (Reimbursement)">
                                                     <label class="form-check-label" for="inlineRadio1">RB
                                                         (Reimbursement)</label>
                                                 </div>
-                                            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Project Manager')
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="project"
-                                                        id="inlineRadio1" value="RB (Reimbursement)">
-                                                    <label class="form-check-label" for="inlineRadio1">RB
-                                                        (Reimbursement)</label>
-                                                </div>
-                                                <div class="form-check ">
-                                                    <input class="form-check-input" type="radio" name="project"
-                                                        id="inlineRadio2" value="TS (Timesheet Support)">
-                                                    <label class="form-check-label" for="inlineRadio2">TS (Timesheet
-                                                        Project)</label>
-                                                </div>
-                                            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Support Manager')
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="project"
-                                                        id="inlineRadio1" value="RB (Reimbursement)">
-                                                    <label class="form-check-label" for="inlineRadio1">RB
-                                                        (Reimbursement)</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="project"
-                                                        id="inlineRadio3" value="ST (Support Ticket)">
-                                                    <label class="form-check-label" for="inlineRadio3">ST (Support
-                                                        Ticket)</label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="project"
-                                                        id="inlineRadio4" value="SL (Support Lembur)">
-                                                    <label class="form-check-label" for="inlineRadio4">SL (Support
-                                                        Lembur)</label>
-                                                </div>
-                                            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Staff')
+                                            @elseif (Auth::guard('direksi')->user()->jabatan == 'Head of Business Development')
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="project"
                                                         id="inlineRadio1" value="RB (Reimbursement)">
@@ -360,7 +282,7 @@
                                             <button type="submit" class="btn btn-primary"><i
                                                     class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Submit</button>
                                             &nbsp;&nbsp;
-                                            <a href="{{ route('karyawan.reimbursement') }}" class="btn btn-danger"><i
+                                            <a href="{{ route('direksi.reimbursement') }}" class="btn btn-danger"><i
                                                     class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
                                         </div>
                                     </form>
@@ -544,181 +466,6 @@
                                     <div class = 'row'>
                                         <div class = 'col-md-12'>
                                             <div class="form-group" style = 'margin-top: 20px'>
-                                                <button name="delete${i}" id="delete${i}" onclick="deleteRow(this)" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </center>`;
-                    } else if (selectedValue === 'TS (Timesheet Support)') {
-                        template =
-                            `<center>
-                                <div class='container'>
-                                    <div class = 'row'>
-                                        <div class = 'col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Nama Karyawan</label>
-                                                <select class="form-control" id="exampleFormControlSelect1" name="karyawan_ts[]">
-                                                    <option value=""> --- Pilih --- </option>
-                                                    @foreach ($karyawan as $item)
-                                                        <option value="{{ $item->nama }}">{{ $item->nama }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-2'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Hari </label>
-                                                <input type="number" class="form-control" name='hari_ts2[]'>
-                                            </div>
-                                        </div>
-                                        <div class = 'col-md-6'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1" hidden>Mata Uang</label>
-                                                <select class="form-control" id="exampleFormControlSelect1" name="kurs_ts[]" hidden>
-                                                    <option value=""> --- Pilih --- </option>
-                                                    @foreach ($kurs as $item)
-                                                        <option value="{{ $item->mata_uang }}" {{ $item->mata_uang == 'IDR' ? 'selected' : '' }}>{{ $item->mata_uang }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1" hidden>Nominal</label>
-                                                <input type="text" class="form-control" name='nom_ts[]' value = {{ $nominal_awal[0]->nominal }} hidden>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1" hidden>Hari (Secara Default)</label>
-                                                <input type="text" class="form-control" name='hari_ts1[]' value = {{ $nominal_awal[0]->hari }} hidden>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class = 'row'>
-                                        <div class='col-md-2'>
-                                            <div class="form-group">
-                                                <button name="delete${i}" id="delete${i}" onclick="deleteRow(this)" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </center>`;
-                    } else if (selectedValue === 'ST (Support Ticket)') {
-                        template =
-                            `<center>
-                                <div class='container'>
-                                    <div class = 'row'>
-                                        <div class='col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Nama Karyawan</label>
-                                                <select class="form-control" id="exampleFormControlSelect1" name="karyawan_st[]">
-                                                    <option value=""> --- Pilih --- </option>
-                                                    @foreach ($karyawan as $item)
-                                                        <option value="{{ $item->nama }}">{{ $item->nama }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Nickname Project</label>
-                                                <select class="form-control" id="exampleFormControlSelect1" name="project_st[]">
-                                                    <option value=""> --- Pilih --- </option>
-                                                    @foreach ($aliases as $item)
-                                                        <option value="{{ $item->aliases }}">{{ $item->aliases }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Mata Uang</label>
-                                                <select class="form-control" id="exampleFormControlSelect1" name="kurs_st[]">
-                                                    <option value=""> --- Pilih --- </option>
-                                                    @foreach ($kurs as $item)
-                                                        <option value="{{ $item->mata_uang }}" {{ $item->mata_uang == 'IDR' ? 'selected' : '' }}>{{ $item->mata_uang }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Nominal</label>
-                                                <input type="text" class="form-control" name='nom_st[]' value = {{ $nominal_project[0]->nominal }} readonly>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Jam </label>
-                                                <input type="number" class="form-control" name='jam_st[]' >
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class = 'row'>
-                                        <div class='col-md-12'>
-                                            <div class="form-group">
-                                                <button name="delete${i}" id="delete${i}" onclick="deleteRow(this)" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </center>`;
-                    } else if (selectedValue === 'SL (Support Lembur)') {
-                        template =
-                            `<center>
-                                <div class='container'>
-                                    <div class = 'row'>
-                                        <div class='col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Nama Karyawan</label>
-                                                <select class="form-control" id="exampleFormControlSelect1" name="karyawan_st[]">
-                                                    <option value=""> --- Pilih --- </option>
-                                                    @foreach ($karyawan as $item)
-                                                        <option value="{{ $item->nama }}">{{ $item->nama }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Nickname Project</label>
-                                                <select class="form-control" id="exampleFormControlSelect1" name="project_st[]">
-                                                    <option value=""> --- Pilih --- </option>
-                                                    @foreach ($aliases as $item)
-                                                        <option value="{{ $item->aliases }}">{{ $item->aliases }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Mata Uang</label>
-                                                <select class="form-control" id="exampleFormControlSelect1" name="kurs_st[]">
-                                                    <option value=""> --- Pilih --- </option>
-                                                    @foreach ($kurs as $item)
-                                                        <option value="{{ $item->mata_uang }}" {{ $item->mata_uang == 'IDR' ? 'selected' : '' }}>{{ $item->mata_uang }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Nominal</label>
-                                                <input type="text" class="form-control" name='nom_st[]' value = {{ $nominal_project[0]->nominal }} readonly>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Jam </label>
-                                                <input type="number" class="form-control" name='jam_st[]' step="0.1">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class = 'row'>
-                                        <div class='col-md-12'>
-                                            <div class="form-group">
                                                 <button name="delete${i}" id="delete${i}" onclick="deleteRow(this)" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
                                             </div>
                                         </div>

@@ -209,9 +209,9 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                            @elseif (Session::has('danger'))
+                            @elseif (Session::has('error'))
                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {{ Session::get('danger') }}
+                                    {{ Session::get('error') }}
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -318,8 +318,9 @@
                                                                 <i class="fa-solid fa-pen-to-square"
                                                                     style="color: #900C3F"></i>
                                                             </a>
-                                                            <a href="#" data-toggle="tooltip"
-                                                                data-placement="bottom" title="Kirim WA">
+                                                            <a href="{{ route('admin.reimbursement.kirim_WA', $item->id) }}"
+                                                                data-toggle="tooltip" data-placement="bottom"
+                                                                title="Kirim WA">
                                                                 <i class="fa-brands fa-whatsapp"
                                                                     style="color: #900C3F"></i>
                                                             </a>

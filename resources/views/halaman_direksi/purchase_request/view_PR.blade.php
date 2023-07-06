@@ -93,18 +93,26 @@
     <div class="d-flex justify-content-center" style="margin-top: 20px">
 
         @if ($PR->status_approved == 'pending' && $PR->status_paid == 'pending')
-            <a href="{{ route('direksi.purchase_request.setujui_PR', $PR->id) }}" class="btn btn-primary"><i
-                    class="fa-solid fa-square-check fa-beat"></i>&nbsp;Setujui</a>
-            &nbsp; &nbsp;
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i
-                    class="fa-solid fa-xmark fa-beat"></i>&nbsp;
-                Tolak
-            </button>
-            &nbsp; &nbsp;
+            @if ($PR->pemohon == Auth::guard('direksi')->user()->nama)
+                <a href="{{ route('direksi.purchase_request') }}" class="btn btn-danger"><i
+                        class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
+            @elseif ($PR->menyetujui == Auth::guard('direksi')->user()->nama)
+                <a href="{{ route('direksi.purchase_request.setujui_PR', $PR->id) }}" class="btn btn-primary"><i
+                        class="fa-solid fa-square-check fa-beat"></i>&nbsp;Setujui</a>
+                &nbsp; &nbsp;
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><i
+                        class="fa-solid fa-xmark fa-beat"></i>&nbsp;
+                    Tolak
+                </button>
+                &nbsp; &nbsp;
+                <a href="{{ route('direksi.purchase_request') }}" class="btn btn-danger"><i
+                        class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
+            @endif
+        @elseif ($PR->status_approved == 'approved' && $PR->status_paid == 'pending')
             <a href="{{ route('direksi.purchase_request') }}" class="btn btn-danger"><i
                     class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
-        @elseif ($PO->status_approved == 'approved' && $PO->status_paid == 'pending')
+        @elseif ($PR->status_approved == 'rejected' && $PR->status_paid == 'rejected')
             <a href="{{ route('direksi.purchase_request') }}" class="btn btn-danger"><i
                     class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
         @endif
