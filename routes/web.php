@@ -147,6 +147,9 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function () {
     Route::get('/reimbursement/print_reimbursement/{id}', [ReimbursementController::class, 'print_reimbursement'])->name('admin.reimbursement.print_reimbursement');
     Route::get('/reimbursement/print_bukti_reimbursement/{id}', [ReimbursementController::class, 'print_bukti_reimbursement'])->name('admin.reimbursement.print_bukti_reimbursement');
 
+    // Route untuk mendapatkan Nomor Telepon Direksi
+    Route::get('/reimbursement/getNomor', [ReimbursementController::class, 'getNomor'])->name('admin.reimbursement.getNomor');
+
     Route::get('/reimbursement/bulan', [ReimbursementController::class, 'search_by_date'])->name('admin.reimbursement.bulan');
 
     // Route untuk Edit Reimbursement
@@ -340,6 +343,9 @@ Route::prefix('kasir')->middleware(['auth:kasir'])->group(function () {
     Route::get('/reimbursement/bayar_reimbursement/{id}', [KasirReimbursementController::class, 'bayar_reimbursement'])->name('kasir.reimbursement.bayar_reimbursement');
     Route::post('/reimbursement/paid_reimbursement/{id}', [KasirReimbursementController::class, 'paid_RB'])->name('kasir.reimbursement.paid_RB');
 
+    // Route untuk tambah RB bagian Finance
+    Route::get('/reimbursement/tambah_RB', [KasirReimbursementController::class, 'tambah_RB'])->name('kasir.reimbursement.tambah_RB');
+    Route::post('/reimbursement/simpan_RB', [KasirReimbursementController::class, 'simpan_RB'])->name('kasir.reimbursement.simpan_RB');
     // Route untuk CA 
     Route::get('/cash_advance', [KasirCashAdvanceController::class, 'index'])->name('kasir.cash_advance');
     Route::get('/cash_advance/view_cash_advance/{id}', [KasirCashAdvanceController::class, 'view_cash_advance'])->name('kasir.cash_advance.view_cash_advance');
@@ -349,6 +355,9 @@ Route::prefix('kasir')->middleware(['auth:kasir'])->group(function () {
     Route::get('/cash_advance/bayar_cash_advance/{id}', [KasirCashAdvanceController::class, 'bayar_cash_advance'])->name('kasir.cash_advance.bayar_cash_advance');
     Route::post('/cash_advance/paid_CA/{id}', [KasirCashAdvanceController::class, 'paid_CA'])->name('kasir.cash_advance.paid_CA');
 
+    // Route untuk tambah CA bagian Finance
+    Route::get('/cash_advance/tambah_CA', [KasirCashAdvanceController::class, 'tambah_CA'])->name('kasir.cash_advance.tambah_CA');
+    Route::post('/cash_advance/simpan_CA', [KasirCashAdvanceController::class, 'simpan_CA'])->name('kasir.cash_advance.simpan_CA');
     // Route untuk CAR
     Route::get('/cash_advance_report', [KasirCashAdvanceReportController::class, 'index'])->name('kasir.cash_advance_report');
     Route::get('/cash_advance_report/view_cash_advance_report/{id}', [KasirCashAdvanceReportController::class, 'view_cash_advance_report'])->name('kasir.cash_advance_report.view_cash_advance_report');
@@ -359,6 +368,13 @@ Route::prefix('kasir')->middleware(['auth:kasir'])->group(function () {
     Route::get('/cash_advance_report/bayar_cash_advance_report/{id}', [KasirCashAdvanceReportController::class, 'bayar_cash_advance_report'])->name('kasir.cash_advance_report.bayar_cash_advance_report');
     Route::post('/cash_advance_report/paid_CAR/{id}', [KasirCashAdvanceReportController::class, 'paid_CAR'])->name('kasir.cash_advance_report.paid_CAR');
 
+    // Route untuk tambah CAR bagian Finance
+    Route::get('/cash_advance_report/tambah_CAR', [KasirCashAdvanceReportController::class, 'tambah_CAR'])->name('kasir.cash_advance_report.tambah_CAR');
+    Route::post('/cash_advance_report/simpan_CAR', [KasirCashAdvanceReportController::class, 'simpan_CAR'])->name('kasir.cash_advance_report.simpan_CAR');
+
+    // Route untuk mendapatkan data dari CA
+    Route::get('cash_advance_report/get-nominal', [KasirCashAdvanceReportController::class, 'getNominal'])->name('kasir.CAR.getNominal');
+
     // Route untuk PR
     Route::get('/purchase_request', [KasirPurchaseRequestController::class, 'index'])->name('kasir.purchase_request');
     Route::get('/purchase_request/view_PR/{id}', [KasirPurchaseRequestController::class, 'view_PR'])->name('kasir.purchase_request.view_PR');
@@ -366,9 +382,19 @@ Route::prefix('kasir')->middleware(['auth:kasir'])->group(function () {
     Route::get('/purchase_request/bayar_PR/{id}', [KasirPurchaseRequestController::class, 'bayar_PR'])->name('kasir.purchase_request.bayar_PR');
     Route::post('/purchase_request/paid_PR/{id}', [KasirPurchaseRequestController::class, 'paid_PR'])->name('kasir.purchase_request.paid_PR');
 
+    // Route untuk tambah PR bagian Finance 
+    Route::get('/purchase_request/tambah_PR', [KasirPurchaseRequestController::class, 'tambah_PR'])->name('kasir.purchase_request.tambah_PR');
+
     // Route untuk PO
     Route::get('/purchase_order', [KasirPurchaseOrderController::class, 'index'])->name('kasir.purchase_order');
     Route::get('/purchase_order/view_PO/{id}', [KasirPurchaseOrderController::class, 'view_PO'])->name('kasir.purchase_order.view_PO');
     Route::get('/purchase_order/print_PO/{id}', [KasirPurchaseOrderController::class, 'print_PO'])->name('kasir.purchase_order.print_PO');
     Route::get('/purchase_order/bayar_PO/{id}', [KasirPurchaseOrderController::class, 'bayar_PO'])->name('kasir.purchase_order.bayar_PO');
+
+    // Route untuk tambah PO bagian Finance
+    Route::get('/purchase_order/tambah_PO', [KasirPurchaseOrderController::class, 'tambah_PO'])->name('kasir.purchase_order.tambah_PO');
+    Route::post('/purchase_order/simpan_PO', [KasirPurchaseOrderController::class, 'simpan_PO'])->name('kasir.purchase_order.simpan_PO');
+
+    Route::get('/get-data-by-supplier', [KasirPurchaseOrderController::class, 'getDataBySupplier'])->name('kasir.getDataBySupplier');
+    Route::get('/admin/getDetailByTipePR', [KasirPurchaseOrderController::class, 'getDataByPR'])->name('kasir.getDetailByTipePR');
 });

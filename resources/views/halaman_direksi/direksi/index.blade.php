@@ -224,17 +224,17 @@
                             </th>
                             <th>
                                 <!-- Nav Item - Tables -->
-                                <a href="#" data-toggle="tooltip" data-placement="bottom"
-                                    title="Buat Purchase Request"><img src="{{ asset('123.png') }}"
-                                        width="80"></a>
+                                <a href="{{ route('direksi.purchase_request.tambah_PR') }}" data-toggle="tooltip"
+                                    data-placement="bottom" title="Buat Purchase Request"><img
+                                        src="{{ asset('123.png') }}" width="80"></a>
                                 <br>
                                 <p style="text-align: center">PR</p>
                             </th>
                             <th>
                                 <!-- Nav Item - Tables -->
-                                <a href="#" data-toggle="tooltip" data-placement="bottom"
-                                    title="Buat Purchase Order"><img src="{{ asset('images.png') }}"
-                                        width="65"></a>
+                                <a href="{{ route('direksi.purchase_order.tambah_PO') }}" data-toggle="tooltip"
+                                    data-placement="bottom" title="Buat Purchase Order"><img
+                                        src="{{ asset('images.png') }}" width="65"></a>
                                 <br>
                                 <p style="text-align: center">PO</p>
                             </th>

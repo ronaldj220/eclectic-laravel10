@@ -63,27 +63,29 @@ class ReimbursementController extends Controller
             'reimbursement' => $dataReimbursement
         ]);
     }
-    // public function search(Request $request)
-    // {
-    //     $title = 'Reimbursement';
-    //     $query = DB::table('admin_reimbursement')
-    //         ->orderBy('no_doku', 'desc');
+    public function getNomor(Request $request)
+    {
+        $menyetujui = $request->input('menyetujui');
 
-    //     // Memeriksa apakah parameter bulan dikirimkan dalam request POST
-    //     if ($request->has('cari')) {
-    //         $cari = $request->cari;
-    //         $query->where('judul_doku', 'LIKE', '%' . $cari . '%');
-    //     } else {
-    //         $query->paginate(10);
-    //     }
+        $details = DB::table('menyetujui')->where('nama', $menyetujui)->get();
 
-    //     $dataReimbursement = $query->paginate(10);
+        if ($details->count() > 0) {
 
-    //     return view('halaman_admin.admin.reimbursement.index', [
-    //         'title' => $title,
-    //         'reimbursement' => $dataReimbursement
-    //     ]);
-    // }
+            foreach ($details as $detail) {
+                $no_telp[] = $detail->no_telp;
+            }
+
+            $data = [
+                'keterangan' => $no_telp,
+            ];
+
+            // Mengirim data ke tampilan sebagai respons JSON
+            return response()->json($data);
+        } else {
+            // Jika data tidak ditemukan, mengirim respons JSON dengan data kosong
+            return response()->json([]);
+        }
+    }
     public function tambah_reimbursement()
     {
         $title = 'Tambah Reimbursement';
@@ -142,6 +144,7 @@ class ReimbursementController extends Controller
         $reimbursement->accounting = $request->accounting;
         $reimbursement->kasir = $request->kasir;
         $reimbursement->menyetujui = $request->nama_menyetujui;
+        $reimbursement->no_telp_direksi = $request->no_telp;
 
         if ($request->project === 'RB (Reimbursement)') {
             $reimbursement->halaman = 'RB';
@@ -597,6 +600,7 @@ class ReimbursementController extends Controller
                     'nominal' => $request->nom_rb[$deskripsi],
                     'tanggal_1' => $request->tgl1[$deskripsi],
                     'tanggal_2' => isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null,
+                    'keperluan' => $request->keperluan[$deskripsi],
                     'fk_rb' => $id
                 ];
 

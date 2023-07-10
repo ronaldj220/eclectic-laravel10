@@ -527,7 +527,6 @@
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('assets') }}/js/sb-admin-2.min.js"></script>
     <script src="{{ asset('assets/js/tooltip.js') }}"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#bulan').change(function() {

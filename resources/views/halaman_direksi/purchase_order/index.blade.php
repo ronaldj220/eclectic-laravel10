@@ -186,7 +186,8 @@
                 <div class="container-fluid">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary text-center">Lihat Purchase Order</h6>
+                            <h6 class="m-0 font-weight-bold text-primary text-center">Daftar dan Lihat Purchase Order
+                            </h6>
                         </div>
                         <div class="card-body">
                             <a href="{{ route('direksi.purchase_order.tambah_PO') }}" class="btn btn-success"

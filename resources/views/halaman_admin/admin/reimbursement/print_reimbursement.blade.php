@@ -57,10 +57,10 @@
                                     $tanggal2 = \Carbon\Carbon::parse($item->tanggal_2);
                                     $selisihHari = $tanggal2->diffInDays($tanggal1);
                                 @endphp
-                                {{ date('d/m/Y', strtotime($item->tanggal_1)) }} -
-                                {{ date('d/m/Y', strtotime($item->tanggal_2)) }}
+                                {{ date('d/m/y', strtotime($item->tanggal_1)) }} -
+                                {{ date('d/m/y', strtotime($item->tanggal_2)) }}
                             @elseif ($item->tanggal_1)
-                                {{ date('d/m/Y', strtotime($item->tanggal_1)) }}
+                                {{ date('d/m/y', strtotime($item->tanggal_1)) }}
                             @endif
                             @if ($item->keperluan)
                                 ({{ $item->keperluan }})

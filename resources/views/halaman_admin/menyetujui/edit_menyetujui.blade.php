@@ -230,6 +230,11 @@
                                                 name="nama" value="{{ $menyetujui->nama }}">
                                         </div>
                                         <div class="form-group">
+                                            <label for="exampleInputPassword1">Nomor Telepon</label>
+                                            <input type="text" class="form-control" id="exampleInputPassword1"
+                                                name="no_telp" value="{{ $menyetujui->no_telp }}">
+                                        </div>
+                                        <div class="form-group">
                                             <label for="exampleFormControlSelect1">Jabatan</label>
                                             <select class="form-control" id="exampleFormControlSelect1"
                                                 name="jabatan">

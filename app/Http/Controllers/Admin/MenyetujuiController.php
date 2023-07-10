@@ -38,7 +38,8 @@ class MenyetujuiController extends Controller
             'email' => $request->email,
             'nama' => $request->nama,
             'password' => Hash::make($request->password),
-            'jabatan' => $request->jabatan
+            'jabatan' => $request->jabatan,
+            'no_telp' => $request->no_telp
         ]);
         return redirect()->route('admin.menyetujui')->with('success', 'Data Menyetujui Berhasil Ditambahkan!');
     }

@@ -212,7 +212,7 @@
                                     <thead class="text-center">
                                         <tr>
                                             <th style="width: 2%">No Dokumen</th>
-                                            <th style="width: 2%">Pemohon</th>
+                                            <th style="width: 2%">Supplier</th>
                                             @if ($PO && count($PO) > 0)
                                                 @php
                                                     $item = $PO[0];

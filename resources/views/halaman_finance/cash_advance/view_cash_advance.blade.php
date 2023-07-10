@@ -16,13 +16,13 @@
 <body>
     <!-- Begin Page Content -->
     <div class="container" style="margin-right: 60px; ">
-        <figure class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+        <figure class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
             <b><a style="text-transform: uppercase;">cash advance</a></b>
             <br>
             <a style="text-transform: capitalize;">PT. Eclectic Consulting</a>
         </figure>
         <table class="table table-borderless table-sm"
-            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 12px">
+            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
             <tr>
                 <td>No<br>Tanggal</td>
                 <td>: {{ $cash_advance->no_doku }}<br>: {{ date('d.m.Y', strtotime($cash_advance->tgl_diajukan)) }}
@@ -33,7 +33,7 @@
 
         </form>
         <table class="table is-striped table-bordered border-dark table-sm"
-            style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+            style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
             <thead>
                 <tr>
                     <th class="text-center" style="width: 3%">No.</th>
@@ -77,28 +77,27 @@
 
         <div>
             <table class="table is-striped table-bordered border-dark text-center"
-                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                 <tr style="height:3cm;">
                     <td style="width:25%">
                         <div class="center" style="font-weight: bold">Pemohon,</div>
-                        <div style="text-align: center;">
-                            <div style="margin-top: 40px"></div>
-                        </div>
+                        <div style="margin-top: 70px"></div>
+
                         <div class="center">{{ $cash_advance->pemohon }}</div>
                     </td>
                     <td style="width:25%">
                         <div class="center" style="font-weight: bold">Accounting,</div>
-                        <div style="margin-top: 40px"></div>
+                        <div style="margin-top: 70px"></div>
                         <div class="center">{{ $cash_advance->accounting }}</div>
                     </td>
                     <td style="width:25%">
                         <div class="center" style="font-weight: bold">Kasir,</div>
-                        <div style="margin-top: 40px"></div>
+                        <div style="margin-top: 70px"></div>
                         <div class="center">{{ $cash_advance->kasir }}</div>
                     </td>
                     <td style="width:25%">
                         <div class="center" style="font-weight: bold">Menyetujui,</div>
-                        <div style="margin-top: 40px"></div>
+                        <div style="margin-top: 70px"></div>
                         <div class="center">{{ $cash_advance->menyetujui }}</div>
                     </td>
                 </tr>
@@ -107,12 +106,20 @@
         <br>
         <div class="d-flex justify-content-center" style="margin-top: 20px">
 
-            @if ($cash_advance->status_approved == 'pending')
+            @if ($cash_advance->status_approved == 'rejected' && $cash_advance->status_paid == 'rejected')
+                @if ($cash_advance->pemohon == Auth::guard('kasir')->user()->nama)
+                    <a href="{{ route('kasir.cash_advance') }}" class="btn btn-danger"><i
+                            class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
+                @endif
+            @elseif ($cash_advance->status_approved == 'pending' && $cash_advance->status_paid == 'pending')
+                @if ($cash_advance->pemohon == Auth::guard('kasir')->user()->nama)
+                    <a href="{{ route('kasir.cash_advance') }}" class="btn btn-danger"><i
+                            class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
+                @endif
+            @elseif ($cash_advance->status_approved == 'approved' && $cash_advance->status_paid == 'pending')
                 <a href="{{ route('kasir.cash_advance') }}" class="btn btn-danger"><i
                         class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
-            @elseif ($cash_advance->status_approved == 'approved')
-                <a href="{{ route('kasir.cash_advance') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
+
             @endif
         </div>
 

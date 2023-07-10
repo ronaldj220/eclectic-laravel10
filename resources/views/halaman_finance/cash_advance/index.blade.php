@@ -182,9 +182,14 @@
                 <div class="container-fluid">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary text-center">Lihat CA</h6>
+                            <h6 class="m-0 font-weight-bold text-primary text-center">Daftar dan Lihat Cash Advance
+                            </h6>
                         </div>
                         <div class="card-body">
+                            <a href="{{ route('kasir.cash_advance.tambah_CA') }}" class="btn btn-success"
+                                style="margin-bottom: 20px">
+                                <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Ajukan CA
+                            </a>
                             @if (Session::has('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     {{ Session::get('success') }}
@@ -233,9 +238,76 @@
                                                     <td><a
                                                             href="{{ route('kasir.cash_advance.view_cash_advance', $item->id) }}">{{ $item->no_doku }}</a>
                                                     </td>
-                                                    @if ($item->status_approved == 'approved' && $item->status_paid == 'pending')
+                                                    @if ($item->status_approved == 'rejected' && $item->status_paid == 'rejected')
+                                                        <td style="text-align: center; color: #FF3131">
+                                                            <label style="font-weight: bold">Submitted</label>
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <div style="display: flex; justify-content: center;">
+                                                                <a href="{{ route('kasir.cash_advance.print_cash_advance', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Print Dokumen">
+                                                                    <i class="fa-solid fa-print"
+                                                                        style="color: #900C3F"></i>
+                                                                </a>
+                                                                &nbsp; &nbsp; &nbsp;
+                                                                <a href="{{ route('kasir.cash_advance.excel_cash_advance', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Download Excel">
+                                                                    <i class="fa-solid fa-file-excel"
+                                                                        style="color: #900C3F"></i>
+                                                                </a>
+
+                                                            </div>
+                                                        </td>
+                                                    @elseif ($item->status_approved == 'rejected' && $item->status_paid == 'pending')
+                                                        <td style="text-align: center; color: #FF3131">
+                                                            <label style="font-weight: bold">Rejected</label>
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <div style="display: flex; justify-content: center;">
+                                                                <a href="{{ route('kasir.cash_advance.print_cash_advance', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Print Dokumen">
+                                                                    <i class="fa-solid fa-print"
+                                                                        style="color: #900C3F"></i>
+                                                                </a>
+                                                                &nbsp; &nbsp; &nbsp;
+                                                                <a href="{{ route('kasir.cash_advance.excel_cash_advance', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Download Excel">
+                                                                    <i class="fa-solid fa-file-excel"
+                                                                        style="color: #900C3F"></i>
+                                                                </a>
+
+                                                            </div>
+                                                        </td>
+                                                    @elseif ($item->status_approved == 'pending' && $item->status_paid == 'pending')
+                                                        <td
+                                                            style="text-align: center; color: #6D6F28; text-transform: uppercase;">
+                                                            <b><label>Waiting for Approval</label></b>
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <div style="display: flex; justify-content: center;">
+                                                                <a href="{{ route('kasir.cash_advance.print_cash_advance', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Print Dokumen">
+                                                                    <i class="fa-solid fa-print"
+                                                                        style="color: #900C3F"></i>
+                                                                </a>
+                                                                &nbsp; &nbsp; &nbsp;
+                                                                <a href="{{ route('kasir.cash_advance.excel_cash_advance', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Download Excel">
+                                                                    <i class="fa-solid fa-file-excel"
+                                                                        style="color: #900C3F"></i>
+                                                                </a>
+
+                                                            </div>
+                                                        </td>
+                                                    @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')
                                                         <td style="text-align: center; color: #FF914D">
-                                                            <label style="font-weight: bold">Waiting For
+                                                            <label style="font-weight: bold;">Waiting For
                                                                 Payment</label>
                                                         </td>
                                                         <td style="text-align: center;">
@@ -259,6 +331,27 @@
                                                                     title="Bayar">
                                                                     <i class="fa fa-credit-card"
                                                                         style="color:#900C3F"></i>
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                    @elseif ($item->status_approved == 'approved' && $item->status_paid == 'paid')
+                                                        <td style="text-align: center; color: #0097B2">
+                                                            <label style="font-weight: bold">Paid</label>
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <div style="display: flex; justify-content: center;">
+                                                                <a href="{{ route('kasir.cash_advance.print_cash_advance', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Print Dokumen">
+                                                                    <i class="fa-solid fa-print"
+                                                                        style="color: #900C3F"></i>
+                                                                </a>
+                                                                &nbsp; &nbsp; &nbsp;
+                                                                <a href="{{ route('kasir.cash_advance.excel_cash_advance', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Download Excel">
+                                                                    <i class="fa-solid fa-file-excel"
+                                                                        style="color: #900C3F"></i>
                                                                 </a>
                                                             </div>
                                                         </td>

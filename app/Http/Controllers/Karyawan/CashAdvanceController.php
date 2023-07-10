@@ -79,7 +79,7 @@ class CashAdvanceController extends Controller
             'kasir' => $request->kasir,
             'menyetujui' => $request->nama_menyetujui
         ]);
-        return redirect()->route('admin.cash_advance')->with('success', 'Data Cash Advance Berhasil Diajukan!');
+        return redirect()->route('karyawan.cash_advance')->with('success', 'Data Cash Advance Berhasil Diajukan!');
     }
 
     public function view_cash_advance($id)

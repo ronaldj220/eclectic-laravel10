@@ -1,6 +1,3 @@
-@php
-    date_default_timezone_set('Asia/Jakarta');
-@endphp
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Eclectic (Admin) | {{ $title }}</title>
+    <title>Eclectic (Finance) | {{ $title }}</title>
 
     <!-- Custom fonts for this template-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -38,7 +35,7 @@
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
-                href="{{ route('admin.beranda') }}">
+                href="{{ route('kasir.beranda') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -50,90 +47,65 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="{{ route('admin.beranda') }}">
+                <a class="nav-link" href="{{ route('kasir.beranda') }}">
                     <i class="fa-solid fa-home fa-beat-fade"></i>
                     <span>Beranda</span></a>
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider">
+            <hr class="sidebar-divider my-0">
 
-            <!-- Heading -->
-            <div class="sidebar-heading text-center">
-                Halaman Master
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
+            <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog fa-beat-fade"></i>
-                    <span>Master</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{ route('admin.admin') }}"><i
-                                class="fa-solid fa-lock fa-beat"></i>&nbsp;Admin</a>
-                        <a class="collapse-item" href="{{ route('admin.karyawan') }}"><i
-                                class="fa-solid fa-user fa-beat"></i>&nbsp;Karyawan</a>
-                        <a class="collapse-item" href="{{ route('admin.currency') }}"><i
-                                class="fa-solid fa-money-check fa-beat"></i>&nbsp;Mata Uang</a>
-                        <a class="collapse-item" href="{{ route('admin.accounting') }}"><i
-                                class="fa-solid fa-calculator fa-beat"></i>&nbsp;Accounting</a>
-                        <a class="collapse-item" href="{{ route('admin.kasir') }}"><i
-                                class="fa-solid fa-cash-register fa-beat"></i>&nbsp;Kasir</a>
-                        <a class="collapse-item" href="{{ route('admin.menyetujui') }}"><i
-                                class="fa-solid fa-user fa-beat"></i>&nbsp;Menyetujui</a>
-                        <a class="collapse-item" href="{{ route('admin.master_timesheet') }}"><i
-                                class="fa-solid fa-coins fa-beat"></i>&nbsp;Rate Timesheet Project</a>
-                        <a class="collapse-item" href="{{ route('admin.master_fee_project') }}"><i
-                                class="fa-solid fa-coins fa-beat"></i>&nbsp;Rate Lembur & Ticket</a>
-                        <a class="collapse-item" href="{{ route('admin.supplier') }}">
-                            <i class="fa-solid fa-truck-field-un fa-beat"></i>&nbsp;Supplier</a>
-                        <a class="collapse-item" href="{{ route('admin.client') }}">
-                            <i class="fa-solid fa-user fa-beat"></i>&nbsp;Client</a>
-                        <a class="collapse-item" href="{{ route('admin.master_PO') }}">
-                            <i class="fa-solid fa-user fa-beat"></i>&nbsp;Master PO</a>
-                    </div>
-                </div>
+                <a class="nav-link" href="{{ route('kasir.reimbursement') }}">
+                    <i class="fa-solid fa-money-bill-transfer fa-beat-fade"></i>
+                    <span>Reimbursement</span></a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('kasir.cash_advance') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Cash Advance</span></a>
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider">
+            <hr class="sidebar-divider my-0">
 
-            <!-- Heading -->
-            <div class="sidebar-heading text-center">
-                Halaman Admin
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
+            <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder fa-beat-fade"></i>
-                    <span>Transaksi</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{ route('admin.reimbursement') }}">Reimbursement</a>
-                        <a class="collapse-item" href="{{ route('admin.cash_advance') }}">Cash Advance</a>
-                        <a class="collapse-item" href="{{ route('admin.cash_advance_report') }}">Cash Advance
-                            Report</a>
-                        <a class="collapse-item" href="{{ route('admin.purchase_request') }}">Purchase Request</a>
-                        <a class="collapse-item" href="{{ route('admin.purchase_order') }}">Purchase Order</a>
-                    </div>
-                </div>
+                <a class="nav-link" href="{{ route('kasir.cash_advance_report') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Cash Advance Report</span></a>
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('kasir.purchase_request') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Purchase Request</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('kasir.purchase_order') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Purchase Order</span></a>
+            </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
-
-
 
         </ul>
         <!-- End of Sidebar -->
@@ -155,14 +127,40 @@
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
+                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-search fa-fw"></i>
+                            </a>
+                            <!-- Dropdown - Messages -->
+                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                                aria-labelledby="searchDropdown">
+                                <form class="form-inline mr-auto w-100 navbar-search">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light border-0 small"
+                                            placeholder="Search for..." aria-label="Search"
+                                            aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button">
+                                                <i class="fas fa-search fa-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span
-                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->nama }}</span>
+                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::guard('kasir')->user()->nama }}
+                                    <br>
+                                    <small>Kasir</small></span>
                                 <img class="img-profile rounded-circle"
-                                    src="{{ asset('assets') }}/img/undraw_profile.svg">
+                                    src="{{ asset('assets') }}/img/undraw_profile_2.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -181,9 +179,9 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container">
+                <div class="container" style="margin-top: -10px; margin-right: -20px">
                     <div class="row">
-                        <div class="col-lg-10">
+                        <div class="col-lg-8">
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
@@ -191,36 +189,34 @@
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <form action="{{ route('admin.reimbursement.simpan_reimbursement') }}"
-                                        method="POST" enctype="multipart/form-data">
+                                    <form action="{{ route('direksi.reimbursement.simpan_RB') }}" method="POST"
+                                        enctype="multipart/form-data">
                                         @csrf
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">No Dokumen</label>
                                             <input type="text" class="form-control" id="exampleInputEmail1"
-                                                aria-describedby="emailHelp" name="no_doku"
+                                                aria-describedby="emailHelp" name="no_doku" readonly
                                                 value="{{ $no_dokumen }}">
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Tanggal</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="tgl_diajukan" value="{{ date('d/m/Y') }}">
+                                                name="tgl_diajukan" value="{{ date('d/m/Y') }}" required>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Keterangan</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="judul_doku">
+                                                name="judul_doku" autofocus @error('judul_doku') is-invalid @enderror
+                                                value="{{ old('judul_doku') }}">
+                                            @error('judul_doku')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Pemohon</label>
-                                            <select class="form-control" id="exampleFormControlSelect1"
-                                                name="pemohon">
-                                                <option value="Zhomi"> Zhomi </option>
-                                                @foreach ($karyawan as $item)
-                                                    <option value="{{ $item->nama }}"
-                                                        {{ $item->nama == '' ? 'selected' : '' }}>
-                                                        {{ $item->nama }}</option>
-                                                @endforeach
-                                            </select>
+                                            <input type="text" class="form-control" id="exampleInputPassword1"
+                                                name="pemohon" value="{{ Auth::guard('kasir')->user()->nama }}"
+                                                readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Accounting</label>
@@ -234,9 +230,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Menyetujui</label>
-                                            <select class="form-control" id="menyetujui" name="nama_menyetujui"
-                                                onchange="updateFields2()"
-                                                data-url="{{ route('admin.reimbursement.getNomor') }}">
+                                            <select class="form-control" id="exampleFormControlSelect1"
+                                                name="nama_menyetujui">
                                                 <option value=""> --- Pilih --- </option>
                                                 @foreach ($menyetujui as $item)
                                                     <option value="{{ $item->nama }}">{{ $item->nama }}</option>
@@ -248,11 +243,6 @@
                                             * Aris (Keperluan Direksi) <br>
                                             * Sujiono (Keperluan Project) <br>
                                             * Yacob (Keperluan Office)
-                                        </div>
-                                        <div class="form-group" hidden>
-                                            <label for="exampleInputPassword1">Nomor Telepon</label>
-                                            <input type="text" class="form-control" id="no_telp" name="no_telp"
-                                                readonly>
                                         </div>
                                         <div class="form-group" style="margin-top: 10px">
                                             <label for="exampleInputPassword1">File Bukti</label>
@@ -275,7 +265,6 @@
                                                 </div>
                                             @enderror
                                         </div>
-
                                         <div class="form-group" style="margin-top: 10px; margin-bottom: 2px">
                                             <label for="">Pilih</label>
                                         </div>
@@ -290,7 +279,7 @@
                                                 <input class="form-check-input" type="radio" name="project"
                                                     id="inlineRadio2" value="TS (Timesheet Support)">
                                                 <label class="form-check-label" for="inlineRadio2">TS (Timesheet
-                                                    Support)</label>
+                                                    Project)</label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input" type="radio" name="project"
@@ -304,6 +293,7 @@
                                                 <label class="form-check-label" for="inlineRadio4">SL (Support
                                                     Lembur)</label>
                                             </div>
+
                                         </div>
 
                                         <div class="form-group mt-3">
@@ -316,7 +306,7 @@
                                             <button type="submit" class="btn btn-primary"><i
                                                     class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Submit</button>
                                             &nbsp;&nbsp;
-                                            <a href="{{ route('admin.reimbursement') }}" class="btn btn-danger"><i
+                                            <a href="{{ route('kasir.reimbursement') }}" class="btn btn-danger"><i
                                                     class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
                                         </div>
                                     </form>
@@ -325,8 +315,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- /.container-fluid -->
 
             </div>
             <!-- End of Main Content -->
@@ -382,6 +370,8 @@
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('assets') }}/js/sb-admin-2.min.js"></script>
 
+    <script src="{{ asset('assets/js/tooltip.js') }}"></script>
+
     <script>
         function getRadioValue() {
             var radio = document.getElementsByName('project');
@@ -390,6 +380,9 @@
                 if (radio[i].checked) {
 
                     selectedValue = radio[i].value;
+
+                    // Validasi berdasarkan jabatan pengguna
+                    var userRole = {!! $userRoleJSON !!};
 
                     // Setelah validasi berhasil, atur template yang akan ditampilkan berdasarkan opsi yang dipilih
                     let template = '';
@@ -402,13 +395,13 @@
                                         <div class = 'col-md-6'>
                                             <div class="form-group">
                                                 <label for="exampleInputPassword1">Deskripsi</label>
-                                                <textarea class='form-control' name='deskripsi[]' rows='6'></textarea>
-                                            </div>
+                                                <textarea class="form-control" name="deskripsi[]" rows="6"></textarea>
+                                            </div>                                           
                                         </div>
                                         <div class='col-md-6'>
                                             <div class="form-group">
                                                 <label for="exampleInputPassword1">File Bukti</label>
-                                                <input type="file" class="form-control-file" name='foto[]' accept='.png, .jpg'>
+                                                <input type="file" class="form-control-file" name='foto[]' accept='.png, .jpg, .jpeg, .pdf'>
                                                 <br>
                                                 <div class="form-text text-muted"
                                                     style="font-size: 12px; font-family: Arial; margin-bottom: 20px">
@@ -419,12 +412,16 @@
                                                 <label for="exampleInputPassword1">No Bukti</label>
                                                 <input type="text" class="form-control" name='nobu[]'>
                                             </div>
+                                            <div class="form-text text-muted"
+                                                    style="font-size: 12px; font-family: Arial; margin-top: -15px;">
+                                                    Struk, Nota, Atau <i>Receipt</i>
+                                                </div>
                                         </div>
                                         <div class='col-md-6'>
                                             <div class="form-group">
                                                 <label for="exampleInputPassword1">Mata Uang</label>
                                                 <select class="form-control" id="exampleFormControlSelect1" name="kurs_rb[]">
-                                                    <option value="" > --- Pilih --- </option>
+                                                    <option value=""> --- Pilih --- </option>
                                                     @foreach ($kurs as $item)
                                                         <option value="{{ $item->mata_uang }}" {{ $item->mata_uang == 'IDR' ? 'selected' : '' }}>{{ $item->mata_uang }}</option>
                                                     @endforeach
@@ -458,7 +455,7 @@
                                         </div>
                                         <div class='col-md-5'>
                                             <div class="form-group">
-                                                <label for="keprluan">Project/Instansi/Perusahaan Tujuan</label>
+                                                <label for="keprluan">Project/Instansi/Perusahaan</label>
                                                 <input type="text" class="form-control @error('keperluan') is-invalid @enderror" name='keperluan[]' autofocus >
                                                 @error('keperluan')
                                                     <div class="alert alert-danger">{{ $message }}</div>
@@ -495,10 +492,16 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class='col-md-2'>
+                                            <div class="form-group">
+                                                <label for="exampleInputPassword1">Hari </label>
+                                                <input type="number" class="form-control" name='hari_ts2[]'>
+                                            </div>
+                                        </div>
                                         <div class = 'col-md-6'>
                                             <div class="form-group">
-                                                <label for="exampleInputPassword1">Mata Uang</label>
-                                                <select class="form-control" id="exampleFormControlSelect1" name="kurs_ts[]">
+                                                <label for="exampleInputPassword1" hidden>Mata Uang</label>
+                                                <select class="form-control" id="exampleFormControlSelect1" name="kurs_ts[]" hidden>
                                                     <option value=""> --- Pilih --- </option>
                                                     @foreach ($kurs as $item)
                                                         <option value="{{ $item->mata_uang }}" {{ $item->mata_uang == 'IDR' ? 'selected' : '' }}>{{ $item->mata_uang }}</option>
@@ -508,25 +511,19 @@
                                         </div>
                                         <div class='col-md-4'>
                                             <div class="form-group">
-                                                <label for="exampleInputPassword1">Nominal</label>
-                                                <input type="text" class="form-control" name='nom_ts[]' value = {{ $nominal_awal[0]->nominal }} readonly>
+                                                <label for="exampleInputPassword1" hidden>Nominal</label>
+                                                <input type="text" class="form-control" name='nom_ts[]' value = {{ $nominal_awal[0]->nominal }} hidden>
                                             </div>
                                         </div>
                                         <div class='col-md-4'>
                                             <div class="form-group">
-                                                <label for="exampleInputPassword1">Hari (Secara Default)</label>
-                                                <input type="text" class="form-control" name='hari_ts1[]' value = {{ $nominal_awal[0]->hari }} readonly>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-4'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Hari </label>
-                                                <input type="number" class="form-control" name='hari_ts2[]'>
+                                                <label for="exampleInputPassword1" hidden>Hari (Secara Default)</label>
+                                                <input type="text" class="form-control" name='hari_ts1[]' value = {{ $nominal_awal[0]->hari }} hidden>
                                             </div>
                                         </div>
                                     </div>
                                     <div class = 'row'>
-                                        <div class='col-md-12'>
+                                        <div class='col-md-2'>
                                             <div class="form-group">
                                                 <button name="delete${i}" id="delete${i}" onclick="deleteRow(this)" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
                                             </div>
@@ -581,7 +578,7 @@
                                         <div class='col-md-4'>
                                             <div class="form-group">
                                                 <label for="exampleInputPassword1">Jam </label>
-                                                <input type="number" class="form-control" name='jam_st[]'>
+                                                <input type="number" class="form-control" name='jam_st[]' >
                                             </div>
                                         </div>
                                     </div>
@@ -641,7 +638,7 @@
                                         <div class='col-md-4'>
                                             <div class="form-group">
                                                 <label for="exampleInputPassword1">Jam </label>
-                                                <input type="number" class="form-control" name='jam_st[]'>
+                                                <input type="number" class="form-control" name='jam_st[]' step="0.1">
                                             </div>
                                         </div>
                                     </div>
@@ -676,30 +673,9 @@
             var id = $('#id' + row).val();
             $('#delete' + row).closest('center').remove();
         }
-
-        function updateFields2() {
-            var selectedSupplier = document.getElementById("menyetujui").value;
-            var url = document.getElementById("menyetujui").getAttribute("data-url");
-
-            // Lakukan permintaan AJAX ke endpoint getDataBySupplier
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        var response = JSON.parse(xhr.responseText);
-                        document.getElementById("no_telp").value = response.keterangan;
-                    } else {
-                        document.getElementById("pemohon").value = "";
-                        document.getElementById("menyetujui").value = "";
-                    }
-                }
-            };
-            xhr.open("GET", url + "?menyetujui=" + selectedSupplier);
-            xhr.send();
-        }
     </script>
 </body>
-@include('sweetalert::alert')
 
+@include('sweetalert::alert')
 
 </html>

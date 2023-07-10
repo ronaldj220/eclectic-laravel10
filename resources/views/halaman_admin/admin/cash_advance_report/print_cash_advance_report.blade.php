@@ -58,13 +58,13 @@
                                 $tanggal2 = \Carbon\Carbon::parse($item->tanggal_2);
                                 $selisihHari = $tanggal2->diffInDays($tanggal1);
                             @endphp
-                            {{ date('d/m/Y', strtotime($item->tanggal_1)) }} -
-                            {{ date('d/m/Y', strtotime($item->tanggal_2)) }}
+                            {{ date('d/m/y', strtotime($item->tanggal_1)) }} -
+                            {{ date('d/m/y', strtotime($item->tanggal_2)) }}
                             @if ($item->keperluan)
                                 ({{ $item->keperluan }})
                             @endif
                         @elseif ($item->tanggal_1)
-                            {{ date('d/m/Y', strtotime($item->tanggal_1)) }}
+                            {{ date('d/m/y', strtotime($item->tanggal_1)) }}
                             @if ($item->keperluan)
                                 ({{ $item->keperluan }})
                             @endif
@@ -86,7 +86,7 @@
             <tr style="font-weight: bold">
                 <td colspan="3" class="text-end">Cash Advance {{ $cash_advance_report->tipe_ca }}</td>
                 <td class="text-center">{{ $item->curr }}</td>
-                <td class="text-end">{{ number_format($cash_advance_report->nominal_ca, 0, ',', '.') }}</td>
+                <td class="text-end">{{ number_format($cash_advance_report->nominal_ca, 2, ',', '.') }}</td>
             </tr>
             @if ($nominal < $cash_advance_report->nominal_ca)
                 <tr style="font-weight: bold">
@@ -100,7 +100,7 @@
                     <td colspan="3" class="text-end" style="color: red">Kurang</td>
                     <td class="text-center" style="color: red">{{ $item->curr }}</td>
                     <td class="text-end" style="color: red">
-                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 0, ',', '.') }}</td>
+                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 2, ',', '.') }}</td>
                 </tr>
             @elseif ($nominal = $cash_advance_report->nominal_ca)
                 <tr style="font-weight: bold">

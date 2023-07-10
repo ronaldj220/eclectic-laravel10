@@ -125,7 +125,7 @@ class CashAdvanceReportController extends Controller
             $CA_detail->fk_ca = $cashAdvance->id;
             $CA_detail->save();
         }
-        return redirect()->route('admin.cash_advance_report')->with('success', 'Data Cash Advance Report Berhasil Diajukan!');
+        return redirect()->route('karyawan.cash_advance_report')->with('success', 'Data Cash Advance Report Berhasil Diajukan!');
     }
 
     public function view_CAR($id)

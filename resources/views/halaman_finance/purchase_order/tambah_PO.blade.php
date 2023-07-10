@@ -1,6 +1,3 @@
-@php
-    date_default_timezone_set('Asia/Jakarta');
-@endphp
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Eclectic (Admin) | {{ $title }}</title>
+    <title>Eclectic (Direksi) | {{ $title }}</title>
 
     <!-- Custom fonts for this template-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -38,7 +35,7 @@
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
-                href="{{ route('admin.beranda') }}">
+                href="{{ route('kasir.beranda') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -50,90 +47,65 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="{{ route('admin.beranda') }}">
+                <a class="nav-link" href="{{ route('kasir.beranda') }}">
                     <i class="fa-solid fa-home fa-beat-fade"></i>
                     <span>Beranda</span></a>
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider">
+            <hr class="sidebar-divider my-0">
 
-            <!-- Heading -->
-            <div class="sidebar-heading text-center">
-                Halaman Master
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
+            <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog fa-beat-fade"></i>
-                    <span>Master</span>
-                </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{ route('admin.admin') }}"><i
-                                class="fa-solid fa-lock fa-beat"></i>&nbsp;Admin</a>
-                        <a class="collapse-item" href="{{ route('admin.karyawan') }}"><i
-                                class="fa-solid fa-user fa-beat"></i>&nbsp;Karyawan</a>
-                        <a class="collapse-item" href="{{ route('admin.currency') }}"><i
-                                class="fa-solid fa-money-check fa-beat"></i>&nbsp;Mata Uang</a>
-                        <a class="collapse-item" href="{{ route('admin.accounting') }}"><i
-                                class="fa-solid fa-calculator fa-beat"></i>&nbsp;Accounting</a>
-                        <a class="collapse-item" href="{{ route('admin.kasir') }}"><i
-                                class="fa-solid fa-cash-register fa-beat"></i>&nbsp;Kasir</a>
-                        <a class="collapse-item" href="{{ route('admin.menyetujui') }}"><i
-                                class="fa-solid fa-user fa-beat"></i>&nbsp;Menyetujui</a>
-                        <a class="collapse-item" href="{{ route('admin.master_timesheet') }}"><i
-                                class="fa-solid fa-coins fa-beat"></i>&nbsp;Rate Timesheet Project</a>
-                        <a class="collapse-item" href="{{ route('admin.master_fee_project') }}"><i
-                                class="fa-solid fa-coins fa-beat"></i>&nbsp;Rate Lembur & Ticket</a>
-                        <a class="collapse-item" href="{{ route('admin.supplier') }}">
-                            <i class="fa-solid fa-truck-field-un fa-beat"></i>&nbsp;Supplier</a>
-                        <a class="collapse-item" href="{{ route('admin.client') }}">
-                            <i class="fa-solid fa-user fa-beat"></i>&nbsp;Client</a>
-                        <a class="collapse-item" href="{{ route('admin.master_PO') }}">
-                            <i class="fa-solid fa-user fa-beat"></i>&nbsp;Master PO</a>
-                    </div>
-                </div>
+                <a class="nav-link" href="{{ route('kasir.reimbursement') }}">
+                    <i class="fa-solid fa-money-bill-transfer fa-beat-fade"></i>
+                    <span>Reimbursement</span></a>
             </li>
             <!-- Divider -->
-            <hr class="sidebar-divider">
+            <hr class="sidebar-divider my-0">
 
-            <!-- Heading -->
-            <div class="sidebar-heading text-center">
-                Halaman Admin
-            </div>
 
-            <!-- Nav Item - Pages Collapse Menu -->
+            <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder fa-beat-fade"></i>
-                    <span>Transaksi</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{ route('admin.reimbursement') }}">Reimbursement</a>
-                        <a class="collapse-item" href="{{ route('admin.cash_advance') }}">Cash Advance</a>
-                        <a class="collapse-item" href="{{ route('admin.cash_advance_report') }}">Cash Advance
-                            Report</a>
-                        <a class="collapse-item" href="{{ route('admin.purchase_request') }}">Purchase Request</a>
-                        <a class="collapse-item" href="{{ route('admin.purchase_order') }}">Purchase Order</a>
-                    </div>
-                </div>
+                <a class="nav-link" href="{{ route('kasir.cash_advance') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Cash Advance</span></a>
             </li>
 
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('kasir.cash_advance_report') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Cash Advance Report</span></a>
+            </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('kasir.purchase_request') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Purchase Request</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('kasir.purchase_order') }}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Purchase Order</span></a>
+            </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
-
-
 
         </ul>
         <!-- End of Sidebar -->
@@ -160,16 +132,16 @@
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span
-                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->nama }}</span>
+                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::guard('kasir')->user()->nama }}
+                                    <br>
+                                    <small>Kasir</small></span>
                                 <img class="img-profile rounded-circle"
-                                    src="{{ asset('assets') }}/img/undraw_profile.svg">
+                                    src="{{ asset('assets') }}/img/undraw_profile_3.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-
-                                <a class="dropdown-item" href="#" data-toggle="modal"
-                                    data-target="#logoutModal">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -188,18 +160,17 @@
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary text-center">Tambah Purchase Order
+                                    <h6 class="m-0 font-weight-bold text-primary text-center">Tambah Purchase Request
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <form action="{{ route('admin.purchase_order.update_PO', $PO->id) }}"
-                                        method="POST">
+                                    <form action="{{ route('direksi.purchase_order.simpan_PO') }}" method="POST">
                                         @csrf
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">No Dokumen</label>
                                             <input type="text" class="form-control" id="exampleInputEmail1"
-                                                aria-describedby="emailHelp" name="no_doku"
-                                                value="{{ $PO->no_doku }}">
+                                                aria-describedby="emailHelp" name="no_doku" readonly
+                                                value="{{ $no_dokumen }}">
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Tanggal Purchasing</label>
@@ -210,7 +181,7 @@
                                             <label for="exampleInputPassword1">Nomor PR</label>
                                             <select class="form-control" name="tipe_pr" id="tipe_pr"
                                                 onchange="updateFields()"
-                                                data-url="{{ route('admin.getDetailByTipePR') }}">
+                                                data-url="{{ route('kasir.getDetailByTipePR') }}">
                                                 <option value=""> --- Pilih --- </option>
                                                 @foreach ($tipe_pr as $item)
                                                     <option value="{{ $item->no_doku }}">{{ $item->no_doku }}
@@ -222,7 +193,7 @@
                                             <label for="exampleInputPassword1">Supplier</label>
                                             <select class="form-control" name="supplier" id="supplier"
                                                 onchange="updateFields2()"
-                                                data-url="{{ route('admin.getDataBySupplier') }}">
+                                                data-url="{{ route('kasir.getDataBySupplier') }}">
                                                 <option value=""> --- Pilih --- </option>
                                                 @foreach ($supplier as $item)
                                                     <option value="{{ $item->nama_supplier }}">
@@ -240,12 +211,12 @@
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Accounting</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="accounting" value="{{ $PO->accounting }}" readonly>
+                                                name="accounting" value="{{ $accounting[0]->nama }}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Kasir</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="kasir" value="{{ $PO->kasir }}" readonly>
+                                                name="kasir" value="{{ $kasir[0]->nama }}" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Menyetujui</label>
@@ -268,7 +239,7 @@
                                             <button type="submit" class="btn btn-primary"><i
                                                     class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Submit</button>
                                             &nbsp;&nbsp;
-                                            <a href="{{ route('admin.purchase_order') }}" class="btn btn-danger"><i
+                                            <a href="{{ route('kasir.purchase_order') }}" class="btn btn-danger"><i
                                                     class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
                                         </div>
                                     </form>
@@ -339,118 +310,118 @@
         document.getElementById('add_pr').onclick = function() {
             let template =
                 `<center>
-                    <div class = 'container'>
-                        <div class = 'row'>
-                            <div class="col-md-12">
-                              <div class="form-group">
-                                  <label for="ket">Keterangan</label>
-                                  <input type="text" class="form-control" name="ket[]" id="ket${i}" >
-                              </div>
+                  <div class = 'container'>
+                      <div class = 'row'>
+                          <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="ket">Keterangan</label>
+                                <input type="text" class="form-control" name="ket[]" id="ket${i}" >
                             </div>
-                            <div class="col-md-12">
+                          </div>
+                          <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-row">
+                                    <div class="col">
+                                        <input type="number" class="form-control" placeholder="Jumlah" name="jum[]" id="jum${i}" >
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" class="form-control" placeholder="Qty" name="qty[]" id="qty${i}" >
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                          <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="form-row">
+                                    <div class="col">
+                                      <select class="form-control" id="exampleFormControlSelect1" name="kurs[]">
+                                          <option value=""> --- Pilih --- </option>
+                                          @foreach ($kurs as $item)
+                                              <option value="{{ $item->mata_uang }}" {{ $item->mata_uang == 'IDR' ? 'selected' : '' }}>{{ $item->mata_uang }}</option>
+                                          @endforeach
+                                      </select>
+                                    </div>
+                                    <div class="col">
+                                      <input type="number" class="form-control" placeholder="Nominal" name="nom[]" step="0.001">
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                          <div class="col-md-12">
                               <div class="form-group">
-                                  <div class="form-row">
+                                  <div class="form-check form-check-inline">
+                                      <input class="form-check-input" type="checkbox" id="VAT" value="VAT" onchange="toggleTextbox('VATTextbox')">
+                                      <label class="form-check-label" for="VAT">PPN</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                      <input class="form-check-input" type="checkbox" id="PPh" value="PPh" onchange="toggleTextbox('PPhTextbox')">
+                                      <label class="form-check-label" for="PPh">PPh</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                      <input class="form-check-input" type="checkbox" id="PPh4" value="PPh_4" onchange="toggleTextbox('PPh4Textbox')">
+                                      <label class="form-check-label" for="PPh_4">PPh 4 Ayat 21</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                      <input class="form-check-input" type="checkbox" id="PPh21" value="PPh21" onchange="toggleTextbox('PPh21Textbox')">
+                                      <label class="form-check-label" for="PPh_4">PPh 21</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                      <input class="form-check-input" type="checkbox" id="Diskon" value="Diskon" onchange="toggleTextbox('DiskonTextbox')">
+                                      <label class="form-check-label" for="PPh_4">Diskon</label>
+                                  </div>
+                                  <div class="form-check form-check-inline">
+                                      <input class="form-check-input" type="checkbox" id="Ctm" value="Ctm" onchange="toggleTextbox('CtmTextbox')">
+                                      <label class="form-check-label" for="PPh_4">Lain-lain</label>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="col-md-12">
+                              <div class="form-group">
+                                  <div class="row">
                                       <div class="col">
-                                          <input type="number" class="form-control" placeholder="Jumlah" name="jum[]" id="jum${i}" >
+                                          <div id="VATTextbox" style="display: none;">
+                                              <input type="text" id="VATInput" name="vat[]" class="form-control" placeholder="Enter PPN value">
+                                          </div>
                                       </div>
                                       <div class="col">
-                                          <input type="text" class="form-control" placeholder="Qty" name="qty[]" id="qty${i}" >
+                                          <div id="PPhTextbox" style="display: none;">
+                                              <input type="text" id="PPhInput" name="pph[]" class="form-control" placeholder="Enter PPh value">
+                                          </div>
+                                      </div>
+                                      <div class="col">
+                                          <div id="PPh4Textbox" style="display: none;">
+                                              <input type="text" id="PPh4Input" name="pph_4[]" class="form-control" placeholder="Enter PPh 4 Ayat 2 value">
+                                          </div>
+                                      </div>
+                                      <div class="col">
+                                          <div id="PPh21Textbox" style="display: none;">
+                                              <input type="text" id="PPh21Input" name="pph_21[]" class="form-control" placeholder="Enter PPh 21 value">
+                                          </div>
+                                      </div>
+                                      <div class="col">
+                                          <div id="DiskonTextbox" style="display: none;">
+                                              <input type="text" id="PPh4Input" name="diskon[]" class="form-control" placeholder="Enter diskon value">
+                                          </div>
+                                      </div>
+                                      <div class="col">
+                                          <div id="CtmTextbox" style="display: none;">
+                                              <input type="text" id="CtmInput" name="lain-lain[]" class="form-control" placeholder="Lain-lain"> &nbsp;
+                                              <input type="number" id="CtmInput" name="lain-lain_nom[]" class="form-control" placeholder="Enter Other Values">
+                                          </div>
                                       </div>
                                   </div>
                               </div>
-                            </div>
-                            <div class="col-md-12">
+                          </div>
+                      </div>
+                      <div class = 'row'>
+                          <div class='col-md-12'>
                               <div class="form-group">
-                                  <div class="form-row">
-                                      <div class="col">
-                                        <select class="form-control" id="exampleFormControlSelect1" name="kurs[]">
-                                            <option value=""> --- Pilih --- </option>
-                                            @foreach ($kurs as $item)
-                                                <option value="{{ $item->mata_uang }}" {{ $item->mata_uang == 'IDR' ? 'selected' : '' }}>{{ $item->mata_uang }}</option>
-                                            @endforeach
-                                        </select>
-                                      </div>
-                                      <div class="col">
-                                        <input type="number" class="form-control" placeholder="Nominal" name="nom[]" step="0.001">
-                                      </div>
-                                  </div>
+                                  <button name="delete${i}" id="delete${i}" onclick="deleteRow(this)" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
                               </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="VAT" value="VAT" onchange="toggleTextbox('VATTextbox')">
-                                        <label class="form-check-label" for="VAT">PPN</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="PPh" value="PPh" onchange="toggleTextbox('PPhTextbox')">
-                                        <label class="form-check-label" for="PPh">PPh</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="PPh4" value="PPh_4" onchange="toggleTextbox('PPh4Textbox')">
-                                        <label class="form-check-label" for="PPh_4">PPh 4 Ayat 21</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="PPh21" value="PPh21" onchange="toggleTextbox('PPh21Textbox')">
-                                        <label class="form-check-label" for="PPh_4">PPh 21</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="Diskon" value="Diskon" onchange="toggleTextbox('DiskonTextbox')">
-                                        <label class="form-check-label" for="PPh_4">Diskon</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="Ctm" value="Ctm" onchange="toggleTextbox('CtmTextbox')">
-                                        <label class="form-check-label" for="PPh_4">Lain-lain</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col">
-                                            <div id="VATTextbox" style="display: none;">
-                                                <input type="text" id="VATInput" name="vat[]" class="form-control" placeholder="Enter PPN value">
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div id="PPhTextbox" style="display: none;">
-                                                <input type="text" id="PPhInput" name="pph[]" class="form-control" placeholder="Enter PPh value">
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div id="PPh4Textbox" style="display: none;">
-                                                <input type="text" id="PPh4Input" name="pph_4[]" class="form-control" placeholder="Enter PPh 4 Ayat 2 value">
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div id="PPh21Textbox" style="display: none;">
-                                                <input type="text" id="PPh21Input" name="pph_21[]" class="form-control" placeholder="Enter PPh 21 value">
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div id="DiskonTextbox" style="display: none;">
-                                                <input type="text" id="PPh4Input" name="diskon[]" class="form-control" placeholder="Enter diskon value">
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div id="CtmTextbox" style="display: none;">
-                                                <input type="text" id="CtmInput" name="lain-lain[]" class="form-control" placeholder="Lain-lain"> &nbsp;
-                                                <input type="number" id="CtmInput" name="lain-lain_nom[]" class="form-control" placeholder="Enter Other Values">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class = 'row'>
-                            <div class='col-md-12'>
-                                <div class="form-group">
-                                    <button name="delete${i}" id="delete${i}" onclick="deleteRow(this)" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </center>`;
+                          </div>
+                      </div>
+                  </div>
+              </center>`;
             // Kode lanjutan untuk opsi yang valid dipilih
             let container = document.getElementById('detail');
             let div = document.createElement('div');
@@ -530,7 +501,6 @@
             }
         }
     </script>
-
 </body>
 @include('sweetalert::alert')
 
