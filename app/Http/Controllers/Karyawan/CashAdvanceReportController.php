@@ -14,14 +14,23 @@ use Intervention\Image\ImageManagerStatic as Image;
 
 class CashAdvanceReportController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Cash Advance Report';
         $karyawan = Auth::guard('karyawan')->user()->nama;
+        if ($request->has('search')) {
+            $dataCashAdvanceReport = DB::table('admin_cash_advance_report')
+                ->where('pemohon', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('judul_doku', 'LIKE', '%' . $request->search . '%')
+                ->orderBy('no_doku', 'desc')
+                ->orderBy('tgl_diajukan', 'desc')
+                ->paginate(20);
+        }
         $dataCashAdvanceReport = DB::table('admin_cash_advance_report')
             ->orderBy('no_doku', 'desc')
             ->where('pemohon', $karyawan)
             ->paginate(10);
+
         return view('halaman_karyawan.cash_advance_report.index', [
             'title' => $title,
             'CAR' => $dataCashAdvanceReport

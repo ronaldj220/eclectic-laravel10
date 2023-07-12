@@ -189,7 +189,7 @@
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <form action="{{ route('direksi.reimbursement.simpan_RB') }}" method="POST"
+                                    <form action="{{ route('kasir.reimbursement.simpan_RB') }}" method="POST"
                                         enctype="multipart/form-data">
                                         @csrf
                                         <div class="form-group">
@@ -242,7 +242,8 @@
                                             style="font-size: 16px; font-family: Arial; color: red">
                                             * Aris (Keperluan Direksi) <br>
                                             * Sujiono (Keperluan Project) <br>
-                                            * Yacob (Keperluan Office)
+                                            * Yacob (Keperluan Office) <br>
+                                            * Richard (Keperluan Marketing)
                                         </div>
                                         <div class="form-group" style="margin-top: 10px">
                                             <label for="exampleInputPassword1">File Bukti</label>

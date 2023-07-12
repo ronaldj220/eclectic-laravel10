@@ -15,12 +15,49 @@ use PhpOffice\PhpSpreadsheet\Chart\Title;
 
 class PurchaseRequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Purchase Request';
-        $data_PR = DB::table('admin_purchase_request')
+        if ($request->has('search')) {
+            $data_PR = DB::table('admin_purchase_request')
+                ->where('pemohon', 'LIKE', '%' . $request->search . '%')
+                ->orderBy('no_doku', 'desc')
+                ->orderBy('tgl_diajukan', 'desc')
+                ->paginate(20);
+        } else {
+            $data_PR = DB::table('admin_purchase_request')
+                ->orderBy('no_doku', 'desc')
+                ->paginate(20);
+        }
+
+        return view('halaman_admin.admin.purchase_request.index', [
+            'title' => $title,
+            'purchase_request' => $data_PR
+        ]);
+    }
+    public function search_by_date(Request $request)
+    {
+        $title = 'Purchase Request';
+        $query = DB::table('admin_purchase_request')
             ->orderBy('no_doku', 'desc')
-            ->paginate(10);
+            ->orderByRaw("
+            CASE
+                WHEN status_approved = 'approved' THEN 1
+                WHEN status_approved = 'pending' THEN 2
+                WHEN status_approved = 'rejected' THEN 3
+                ELSE 4
+            END
+        ");
+
+        // Memeriksa apakah parameter bulan dikirimkan dalam request POST
+        if ($request->has('bulan')) {
+            $bulan = $request->bulan;
+            $query->whereMonth('tgl_diajukan', date('m', strtotime($bulan)))
+                ->whereYear('tgl_diajukan', date('Y', strtotime($bulan)));
+        }
+
+        $data_PR = $query->paginate(20);
+
         return view('halaman_admin.admin.purchase_request.index', [
             'title' => $title,
             'purchase_request' => $data_PR

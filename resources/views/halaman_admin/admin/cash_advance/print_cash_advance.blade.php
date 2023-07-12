@@ -45,16 +45,18 @@
             <?php $no = 1; ?>
             <tr>
                 <td class="text-center">{{ $no++ . '.' }}</td>
-                <td>{{ $cash_advance->judul_doku }}</td>
+                <td>
+                    {{ $cash_advance->judul_doku }}
+                </td>
                 <td></td>
                 <td class="text-center">{{ $cash_advance->curr }}</td>
-                <td class="text-end">{{ number_format($nominal, 2, ',', '.') }}</td>
+                <td class="text-end">{{ number_format($nominal, 0, ',', '.') }}</td>
             </tr>
             <!-- Total Price -->
             <tr style="font-weight: bold">
                 <td colspan="3" class="text-end">Jumlah</td>
                 <td class="text-center">{{ $cash_advance->curr }}</td>
-                <td class="text-end">{{ number_format($nominal, 2, ',', '.') }}</td>
+                <td class="text-end">{{ number_format($nominal, 0, ',', '.') }}</td>
             </tr>
         </table>
 
@@ -90,15 +92,42 @@
                 <div class="row">
                     <div class="col">
                     </div>
+                    @if ($cash_advance->menyetujui == 'Aris')
+                        <div class="col">
+                        </div>
+                    @else
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                <tr class="text-center">
+                                    <td>Approved on {{ date('d/m/Y', strtotime($cash_advance->tgl_approval)) }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+        @elseif ($cash_advance->status_approved == 'approved' && $cash_advance->status_paid == 'paid')
+            <div class="container" style="margin-top: -20px">
+                <div class="row">
                     <div class="col">
-                        <table class="table table-borderless table-sm"
-                            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
-                            <tr class="text-center">
-                                <td>Approved on {{ date('d/m/Y', strtotime($cash_advance->tgl_approval)) }}
-                                </td>
-                            </tr>
-                        </table>
                     </div>
+                    @if ($cash_advance->menyetujui == 'Aris')
+                        <div class="col">
+                        </div>
+                    @else
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                <tr class="text-center">
+                                    <td>Approved on {{ date('d/m/Y', strtotime($cash_advance->tgl_approval)) }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    @endif
                 </div>
             </div>
         @endif

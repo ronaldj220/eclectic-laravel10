@@ -86,7 +86,7 @@
             <tr style="font-weight: bold">
                 <td colspan="3" class="text-end">Cash Advance {{ $cash_advance_report->tipe_ca }}</td>
                 <td class="text-center">{{ $item->curr }}</td>
-                <td class="text-end">{{ number_format($cash_advance_report->nominal_ca, 2, ',', '.') }}</td>
+                <td class="text-end">{{ number_format($cash_advance_report->nominal_ca, 0, ',', '.') }}</td>
             </tr>
             @if ($nominal < $cash_advance_report->nominal_ca)
                 <tr style="font-weight: bold">
@@ -100,7 +100,7 @@
                     <td colspan="3" class="text-end" style="color: red">Kurang</td>
                     <td class="text-center" style="color: red">{{ $item->curr }}</td>
                     <td class="text-end" style="color: red">
-                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 2, ',', '.') }}</td>
+                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 0, ',', '.') }}</td>
                 </tr>
             @elseif ($nominal = $cash_advance_report->nominal_ca)
                 <tr style="font-weight: bold">
@@ -147,15 +147,43 @@
                 <div class="row">
                     <div class="col">
                     </div>
+                    @if ($cash_advance_report->menyetujui == 'Aris')
+                        <div class="col">
+                        </div>
+                    @else
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 220px; margin-right: -10px;">
+                                <tr class="text-center">
+                                    <td>Approved on
+                                        {{ date('d/m/Y', strtotime($cash_advance_report->tgl_persetujuan)) }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @elseif ($cash_advance_report->status_approved == 'approved' && $cash_advance_report->status_paid == 'paid')
+            <div class="container" style="margin-top: -30px">
+                <div class="row">
                     <div class="col">
-                        <table class="table table-borderless table-sm"
-                            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 220px; margin-right: -10px;">
-                            <tr class="text-center">
-                                <td>Approved on {{ date('d/m/Y', strtotime($cash_advance_report->tgl_persetujuan)) }}
-                                </td>
-                            </tr>
-                        </table>
                     </div>
+                    @if ($cash_advance_report->menyetujui == 'Aris')
+                        <div class="col">
+                        </div>
+                    @else
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 220px; margin-right: -10px;">
+                                <tr class="text-center">
+                                    <td>Approved on
+                                        {{ date('d/m/Y', strtotime($cash_advance_report->tgl_persetujuan)) }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    @endif
                 </div>
             </div>
         @endif

@@ -183,7 +183,7 @@
                                             <label for="exampleInputPassword1">Tanggal</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
                                                 name="tgl_diajukan" value="{{ Date::now()->format('d/m/Y') }}"
-                                                required>
+                                                required readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Tanggal</label>
@@ -246,7 +246,8 @@
                                             style="font-size: 16px; font-family: Arial; color: red">
                                             * Aris (Keperluan Direksi) <br>
                                             * Sujiono (Keperluan Project) <br>
-                                            * Yacob (Keperluan Office)
+                                            * Yacob (Keperluan Office) <br>
+                                            * Richard (Keperluan Marketing)
                                         </div>
                                         <div class="d-flex justify-content-center" style="margin-top: 20px">
                                             <button type="submit" class="btn btn-primary"><i

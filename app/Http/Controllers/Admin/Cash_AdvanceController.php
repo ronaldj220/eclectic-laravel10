@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\Admin\CashAdvanceExport;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Cash_Advance;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,18 +14,52 @@ use Maatwebsite\Excel\Facades\Excel as FacadesExcel;
 
 class Cash_AdvanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Cash Advance';
-        $dataCashAdvance = DB::table('admin_cash_advance')
-            ->orderBy('no_doku', 'desc')
-            ->paginate(10);
-        $dataRBMenyetujui = DB::table('admin_cash_advance')->first();
-
+        if ($request->has('search')) {
+            $dataCashAdvance = DB::table('admin_cash_advance')
+                ->where('pemohon', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('judul_doku', 'LIKE', '%' . $request->search . '%')
+                ->orderBy('no_doku', 'desc')
+                ->orderBy('tgl_diajukan', 'desc')
+                ->paginate(20);
+        } else {
+            $dataCashAdvance = DB::table('admin_cash_advance')
+                ->orderBy('no_doku', 'desc')
+                ->paginate(20);
+        }
         return view('halaman_admin.admin.cash_advance.index', [
             'title' => $title,
             'CashAdvance' => $dataCashAdvance,
-            'menyetujui' => $dataRBMenyetujui
+        ]);
+    }
+    public function search_by_date(Request $request)
+    {
+        $title = 'Cash Advance';
+        $query = DB::table('admin_cash_advance')
+            ->orderBy('no_doku', 'desc')
+            ->orderByRaw("
+            CASE
+                WHEN status_approved = 'approved' THEN 1
+                WHEN status_approved = 'pending' THEN 2
+                WHEN status_approved = 'rejected' THEN 3
+                ELSE 4
+            END
+        ");
+
+        // Memeriksa apakah parameter bulan dikirimkan dalam request POST
+        if ($request->has('bulan')) {
+            $bulan = $request->bulan;
+            $query->whereMonth('tgl_diajukan', date('m', strtotime($bulan)))
+                ->whereYear('tgl_diajukan', date('Y', strtotime($bulan)));
+        }
+
+        $dataCashAdvance = $query->paginate(20);
+
+        return view('halaman_admin.admin.cash_advance.index', [
+            'title' => $title,
+            'CashAdvance' => $dataCashAdvance
         ]);
     }
     public function tambah_CA()
@@ -158,5 +193,34 @@ class Cash_AdvanceController extends Controller
                 'menyetujui' => $request->nama_menyetujui
             ]);
         return redirect()->route('admin.cash_advance')->with('success', 'Data Cash Advance Berhasil Diperbarui!');
+    }
+    public function approved_CA($id)
+    {
+        try {
+            $data = DB::table('admin_cash_advance')->where('id', $id)->first();
+            DB::table('admin_cash_advance')->where('id', $id)->update([
+                'status_approved' => 'approved',
+                'status_paid' => 'pending',
+            ]);
+            $no_doku = $data->no_doku;
+            return redirect()->route('admin.cash_advance')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil disetujui. Tunggu Pembayaran ya!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.cash_advance')->with('gagal', $e->getMessage());
+        }
+    }
+    public function rejected_CA($id, Request $request)
+    {
+        try {
+            $data = DB::table('admin_cash_advance')->where('id', $id)->first();
+            DB::table('admin_cash_advance')->where('id', $id)->update([
+                'status_approved' => 'rejected',
+                'alasan' => $request->alasan
+            ]);
+            $no_doku = $data->no_doku;
+            $alasan = $request->alasan;
+            return redirect()->route('admin.cash_advance')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan CA yang baru!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.cash_advance')->with('gagal', $e->getMessage());
+        }
     }
 }

@@ -227,7 +227,8 @@
                                             style="font-size: 16px; font-family: Arial; color: red">
                                             * Aris (Keperluan Direksi) <br>
                                             * Sujiono (Keperluan Project) <br>
-                                            * Yacob (Keperluan Office)
+                                            * Yacob (Keperluan Office) <br>
+                                            * Richard (Keperluan Marketing)
                                         </div>
                                         <div class="form-group mt-3">
                                             <div id="detail"></div>

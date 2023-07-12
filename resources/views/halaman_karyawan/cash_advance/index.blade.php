@@ -198,23 +198,11 @@
                                     <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Ajukan CA
                                 </a>
 
-                                <form id="formBulan" action="{{ route('karyawan.reimbursement.bulan') }}"
-                                    method="POST" class="ml-auto">
-                                    {{ csrf_field() }}
-                                    <div class="form-group">
-                                        <label for="bulan">Bulan</label>
-                                        <input type="month" class="form-control" id="bulan" name="bulan"
-                                            value="{{ request('bulan') }}">
-                                    </div>
-                                </form>
-
-
-                                &nbsp; &nbsp; &nbsp;
-                                <form action="{{ route('karyawan.reimbursement') }}" method="POST" id="formCari">
+                                <form action="{{ route('karyawan.cash_advance') }}" method="GET" id="formCari">
                                     @csrf
                                     <div class="form-group">
-                                        <label for="cari">Cari</label>
-                                        <input type="search" class="form-control" name="cari" id="cari">
+                                        <input type="search" class="form-control" name="search" id="cari"
+                                            placeholder="Search...">
                                     </div>
                                 </form>
                             </div>
@@ -271,20 +259,14 @@
                                                             <label style="font-weight: bold">Submitted</label>
                                                         </td>
                                                         <td style="text-align: center">
-                                                            <a href="{{ route('karyawan.reimbursement.print_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('karyawan.cash_advance.view_cash_advance', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Print Dokumen">
                                                                 <i class="fa-solid fa-print"
                                                                     style="color: #900C3F"></i>
                                                             </a>
                                                             &nbsp;
-                                                            <a href="{{ route('karyawan.reimbursement.lihat_bukti_reimbursement', $item->id) }}"
-                                                                data-toggle="tooltip" data-placement="bottom"
-                                                                title="Print Bukti">
-                                                                <i class="fa-solid fa-image"
-                                                                    style="color: #900C3F"></i>
-                                                            </a>
-                                                            &nbsp;
+
 
                                                         </td>
                                                     @elseif ($item->status_approved == 'rejected' && $item->status_paid == 'pending')
@@ -292,19 +274,13 @@
                                                             <label style="font-weight: bold">Rejected</label>
                                                         </td>
                                                         <td style="text-align: center;">
-                                                            <a href="{{ route('karyawan.reimbursement.print_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('karyawan.cash_advance.view_cash_advance', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Print Dokumen">
                                                                 <i class="fa-solid fa-print"
                                                                     style="color: #900C3F"></i>
                                                             </a>
                                                             &nbsp;
-                                                            <a href="{{ route('karyawan.reimbursement.lihat_bukti_reimbursement', $item->id) }}"
-                                                                data-toggle="tooltip" data-placement="bottom"
-                                                                title="Print Bukti">
-                                                                <i class="fa-solid fa-image"
-                                                                    style="color: #900C3F"></i>
-                                                            </a>
 
                                                         </td>
                                                     @elseif ($item->status_approved == 'pending' && $item->status_paid == 'pending')
@@ -313,18 +289,13 @@
                                                                 Approval</label>
                                                         </td>
                                                         <td style="text-align: center;">
-                                                            <a href="{{ route('admin.reimbursement.print_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('karyawan.cash_advance.view_cash_advance', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Print Dokumen">
                                                                 <i class="fa-solid fa-print"
                                                                     style="color: #900C3F"></i>
                                                             </a>
                                                             &nbsp;
-                                                            <a href="{{ route('admin.reimbursement.lihat_reimbursement', $item->id) }}"
-                                                                data-toggle="tooltip" data-placement="bottom"
-                                                                title="View ">
-                                                                <i class="fa-solid fa-eye" style="color: #900C3F"></i>
-                                                            </a>
                                                         </td>
                                                     @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')
                                                         <td style="text-align: center;color: #00BF63;">
@@ -332,17 +303,24 @@
                                                                 style="font-weight: bold; text-transform: uppercase">Approved</label>
                                                         </td>
                                                         <td style="text-align: center;">
-                                                            <a href="{{ route('admin.reimbursement.print_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('karyawan.cash_advance.view_cash_advance', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Print Dokumen">
                                                                 <i class="fa-solid fa-print"
                                                                     style="color: #900C3F"></i>
                                                             </a>
                                                             &nbsp;
-                                                            <a href="{{ route('admin.reimbursement.print_bukti_reimbursement', $item->id) }}"
+                                                        </td>
+                                                    @elseif ($item->status_approved == 'approved' && $item->status_paid == 'paid')
+                                                        <td style="text-align: center;color: #00BF63;">
+                                                            <label
+                                                                style="font-weight: bold; text-transform: uppercase">paid</label>
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <a href="{{ route('karyawan.cash_advance.view_cash_advance', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
-                                                                title="Print Bukti">
-                                                                <i class="fa-solid fa-image"
+                                                                title="Print Dokumen">
+                                                                <i class="fa-solid fa-print"
                                                                     style="color: #900C3F"></i>
                                                             </a>
                                                             &nbsp;
@@ -421,9 +399,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#bulan').change(function() {
-                $('#formBulan').submit(); // Mengirimkan form saat bulan berubah
-            });
             $('#cari').change(function() {
                 $('#formCari').submit(); // Mengirimkan form saat bulan berubah
             });

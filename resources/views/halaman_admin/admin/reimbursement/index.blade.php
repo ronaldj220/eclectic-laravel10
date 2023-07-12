@@ -190,6 +190,7 @@
                                     <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Ajukan RB
                                 </a>
 
+
                                 <form id="formBulan" action="{{ route('admin.reimbursement.bulan') }}"
                                     method="GET" class="ml-auto">
                                     {{ csrf_field() }}
@@ -197,6 +198,15 @@
                                         <label for="bulan">Bulan</label>
                                         <input type="month" class="form-control" id="bulan" name="bulan"
                                             value="{{ request('bulan') }}">
+                                    </div>
+                                </form>
+                                &nbsp;
+                                <form action="{{ route('admin.reimbursement') }}" style="margin-top: 30px"
+                                    method="GET">
+                                    {{ csrf_field() }}
+                                    <div class="form-group">
+                                        <input type="search" class="form-control" id="exampleFormControlInput1"
+                                            name="search" placeholder="Search...">
                                     </div>
                                 </form>
 
@@ -318,12 +328,7 @@
                                                                 <i class="fa-solid fa-pen-to-square"
                                                                     style="color: #900C3F"></i>
                                                             </a>
-                                                            <a href="{{ route('admin.reimbursement.kirim_WA', $item->id) }}"
-                                                                data-toggle="tooltip" data-placement="bottom"
-                                                                title="Kirim WA">
-                                                                <i class="fa-brands fa-whatsapp"
-                                                                    style="color: #900C3F"></i>
-                                                            </a>
+
                                                         </td>
                                                     @elseif ($item->status_approved == 'rejected' && $item->status_paid == 'pending')
                                                         <td style="text-align: center; color: #FF3131">
@@ -390,6 +395,13 @@
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="View ">
                                                                 <i class="fa-solid fa-eye" style="color: #900C3F"></i>
+                                                            </a>
+                                                            &nbsp;
+                                                            <a href="{{ route('admin.reimbursement.kirim_WA', $item->id) }}"
+                                                                data-toggle="tooltip" data-placement="bottom"
+                                                                title="Kirim WA">
+                                                                <i class="fa-brands fa-whatsapp"
+                                                                    style="color: #900C3F"></i>
                                                             </a>
                                                         </td>
                                                     @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')

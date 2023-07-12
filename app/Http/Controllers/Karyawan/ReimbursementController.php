@@ -19,65 +19,29 @@ use Intervention\Image\ImageManagerStatic as Image;
 
 class ReimbursementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Reimbursement';
         $authId = Auth::guard('karyawan')->user()->nama;
+        if ($request->has('search')) {
+            $dataReimbursement = DB::table('admin_reimbursement')
+                ->where('pemohon', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('judul_doku', 'LIKE', '%' . $request->search . '%')
+                ->whereIn('status_approved', ['rejected', 'pending', 'approved'])
+                ->whereIn('status_paid', ['rejected', 'pending'])
+                ->orderBy('no_doku', 'desc')
+                ->paginate(20);
+        }
         $dataReimbursement = DB::table('admin_reimbursement')
             ->where('pemohon', $authId)
-            ->where('status_approved', 'rejected')
-            ->where('status_paid', 'rejected')
-            ->paginate(10);
+            ->orderBy('no_doku', 'desc')
+            ->whereIn('status_approved', ['rejected', 'pending', 'approved'])
+            ->whereIn('status_paid', ['rejected', 'pending'])
+            ->paginate(20);
 
         return view('halaman_karyawan.reimbursement.index', [
             'title' => $title,
             'reimbursement' => $dataReimbursement,
-        ]);
-    }
-    public function search_by_date(Request $request)
-    {
-        $title = 'Reimbursement';
-        $authId = Auth::guard('karyawan')->user()->nama;
-        $query = DB::table('admin_reimbursement')
-            ->where('pemohon', $authId)
-            ->where('status_approved', 'rejected')
-            ->where('status_paid', 'rejected');
-
-        // Memeriksa apakah parameter bulan dikirimkan dalam request POST
-        if ($request->has('bulan')) {
-            $bulan = $request->bulan;
-            $query->whereMonth('tgl_diajukan', date('m', strtotime($bulan)))
-                ->whereYear('tgl_diajukan', date('Y', strtotime($bulan)));
-        }
-        $dataReimbursement = $query->paginate(10);
-
-        return view('halaman_karyawan.reimbursement.index', [
-            'title' => $title,
-            'reimbursement' => $dataReimbursement
-        ]);
-    }
-    public function search(Request $request)
-    {
-        $title = 'Reimbursement';
-        $authId = Auth::guard('karyawan')->user()->nama;
-        $query = DB::table('admin_reimbursement')
-            ->where('pemohon', $authId)
-            ->where('status_approved', 'rejected')
-            ->where('status_paid', 'rejected');
-
-        // Memeriksa apakah parameter bulan dikirimkan dalam request POST
-        if ($request->has('cari')) {
-            $cari = $request->cari;
-            $query->where('judul_doku', 'LIKE', '%' . $cari . '%');
-        } else {
-            $query->paginate(10);
-        }
-
-        $dataReimbursement = $query->paginate(10);
-
-        return view('halaman_karyawan.reimbursement.index', [
-            'title' => $title,
-            'reimbursement' => $dataReimbursement
         ]);
     }
     public function tambah_reimbursement()

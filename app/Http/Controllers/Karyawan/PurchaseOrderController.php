@@ -13,10 +13,17 @@ use Illuminate\Support\Facades\DB;
 
 class PurchaseOrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Purchase Order';
         $karyawan = Auth::guard('karyawan')->user()->nama;
+        if ($request->has('search')) {
+            $data_PO = DB::table('admin_purchase_order')
+                ->where('supplier', 'LIKE', '%' . $request->search . '%')
+                ->orderBy('tgl_purchasing', 'desc')
+                ->orderBy('no_doku', 'desc')
+                ->paginate(20);
+        }
         $data_PO = DB::table('admin_purchase_order')
             ->where('pemohon', $karyawan)
             ->orderBy('no_doku', 'asc')

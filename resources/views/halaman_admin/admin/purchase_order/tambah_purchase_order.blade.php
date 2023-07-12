@@ -255,7 +255,8 @@
                                             style="font-size: 16px; font-family: Arial; color: red">
                                             * Aris (Keperluan Direksi) <br>
                                             * Sujiono (Keperluan Project) <br>
-                                            * Yacob (Keperluan Office)
+                                            * Yacob (Keperluan Office) <br>
+                                            * Richard (Keperluan Marketing)
                                         </div>
                                         <div class="form-group mt-3">
                                             <div id="detail"></div>
@@ -354,6 +355,18 @@
                                       </div>
                                       <div class="col">
                                           <input type="text" class="form-control" placeholder="Qty" name="qty[]" id="qty${i}" >
+                                      </div>
+                                  </div>
+                              </div>
+                            </div>
+                            <div class="col-md-12">
+                              <div class="form-group">
+                                  <div class="form-row">
+                                      <div class="col">
+                                          <input type="date" class="form-control" name="tgl_1[]">
+                                      </div>
+                                      <div class="col">
+                                          <input type="date" class="form-control" name="tgl_2[]">
                                       </div>
                                   </div>
                               </div>

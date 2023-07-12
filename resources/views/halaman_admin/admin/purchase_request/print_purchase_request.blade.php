@@ -96,15 +96,41 @@
                 <div class="row">
                     <div class="col">
                     </div>
+                    @if ($PR->menyetujui == 'Aris')
+                        <div class="col">
+                        </div>
+                    @else
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 225px; margin-right: -10px;">
+                                <tr class="text-center">
+                                    <td>Approved on {{ date('d/m/Y', strtotime($PR->tgl_approval)) }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @elseif ($PR->status_approved == 'approved' && $PR->status_paid == 'paid')
+            <div class="container" style="margin-top: -30px">
+                <div class="row">
                     <div class="col">
-                        <table class="table table-borderless table-sm"
-                            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 225px; margin-right: -10px;">
-                            <tr class="text-center">
-                                <td>Approved on {{ date('d/m/Y', strtotime($PR->tgl_approval)) }}
-                                </td>
-                            </tr>
-                        </table>
                     </div>
+                    @if ($PR->menyetujui == 'Aris')
+                        <div class="col">
+                        </div>
+                    @else
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 225px; margin-right: -10px;">
+                                <tr class="text-center">
+                                    <td>Approved on {{ date('d/m/Y', strtotime($PR->tgl_approval)) }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    @endif
                 </div>
             </div>
         @endif

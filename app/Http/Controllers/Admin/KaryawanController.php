@@ -10,10 +10,17 @@ use Illuminate\Support\Facades\Hash;
 
 class KaryawanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Karyawan';
-        $dataKaryawan = DB::table('karyawan')->paginate(10);
+        if ($request->has('search')) {
+            $dataKaryawan = DB::table('karyawan')
+                ->where('nama', 'LIKE', '%' . $request->search . '%')
+                ->orderBy('nama', 'asc')
+                ->paginate(20);
+        } else {
+            $dataKaryawan = DB::table('karyawan')->orderBy('nama', 'asc')->paginate(10);
+        }
         return view('halaman_admin.karyawan.index', [
             'title' => $title,
             'dataKaryawan' => $dataKaryawan

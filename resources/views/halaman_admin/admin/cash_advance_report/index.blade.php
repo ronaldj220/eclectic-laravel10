@@ -211,10 +211,32 @@
                             <h6 class="m-0 font-weight-bold text-primary text-center">Daftar Cash Advance Report</h6>
                         </div>
                         <div class="card-body">
-                            <a href="{{ route('admin.cash_advance_report.tambah_cash_advance_report') }}"
-                                class="btn btn-success" style="margin-bottom: 10px"><i
-                                    class="fa-solid fa-plus fa-flip"></i>&nbsp;Ajukan
-                                CAR</a>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{{ route('admin.cash_advance_report.tambah_cash_advance_report') }}"
+                                    class="btn btn-success">
+                                    <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Ajukan CAR
+                                </a>
+
+
+                                <form id="formBulan" action="{{ route('admin.CAR.bulan') }}" method="GET"
+                                    class="ml-auto">
+                                    {{ csrf_field() }}
+                                    <div class="form-group">
+                                        <label for="bulan">Bulan</label>
+                                        <input type="month" class="form-control" id="bulan" name="bulan"
+                                            value="{{ request('bulan') }}">
+                                    </div>
+                                </form>
+                                &nbsp;
+                                <form action="" style="margin-top: 30px">
+                                    {{ csrf_field() }}
+                                    <div class="form-group">
+                                        <input type="search" class="form-control" id="exampleFormControlInput1"
+                                            name="search" placeholder="Search...">
+                                    </div>
+                                </form>
+
+                            </div>
                             @if (Session::has('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     {{ Session::get('success') }}
@@ -499,6 +521,17 @@
     <script src="{{ asset('assets') }}/js/sb-admin-2.min.js"></script>
     <script src="{{ asset('assets/js/tooltip.js') }}"></script>
     @include('sweetalert::alert')
+
+    <script>
+        $(document).ready(function() {
+            $('#bulan').change(function() {
+                $('#formBulan').submit(); // Mengirimkan form saat bulan berubah
+            });
+            $('#cari').change(function() {
+                $('#formCari').submit(); // Mengirimkan form saat bulan berubah
+            });
+        });
+    </script>
 
 
 </body>

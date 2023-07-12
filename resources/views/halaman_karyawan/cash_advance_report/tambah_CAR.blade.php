@@ -211,7 +211,7 @@
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Tanggal Diajukan</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="tgl_diajukan" value="{{ date('d/m/Y') }}" required>
+                                                name="tgl_diajukan" value="{{ date('d/m/Y') }}" required readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Judul Dokumen</label>

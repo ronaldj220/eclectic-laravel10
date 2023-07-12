@@ -12,13 +12,23 @@ use Illuminate\Support\Facades\DB;
 
 class PurchaseRequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Purchase Request';
         $karyawan = Auth::guard('karyawan')->user()->nama;
+        if ($request->has('search')) {
+            $data_PR = DB::table('admin_purchase_request')
+                ->where('pemohon', 'LIKE', '%' . $request->search . '%')
+                ->orderBy('no_doku', 'asc')
+                ->whereIn('status_approved', ['rejected', 'pending', 'approved'])
+                ->whereIn('status_paid', ['pending', 'rejected', 'paid'])
+                ->paginate(20);
+        }
         $data_PR = DB::table('admin_purchase_request')
             ->where('pemohon', $karyawan)
             ->orderBy('no_doku', 'asc')
+            ->whereIn('status_approved', ['rejected', 'pending', 'approved'])
+            ->whereIn('status_paid', ['pending', 'rejected', 'paid'])
             ->paginate(10);
         return view('halaman_karyawan.purchase_request.index', [
             'title' => $title,

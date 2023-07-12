@@ -260,24 +260,24 @@
                                                 <td style="width:25%">
                                                     <div class="center" style="font-weight: bold">Pemohon,</div>
 
-                                                    <div style="margin-top: 40px"></div>
+                                                    <div style="margin-top: 100px"></div>
                                                     <div class="center">{{ $reimbursement->pemohon }}</div>
                                                 </td>
                                                 <td style="width:25%">
                                                     <div class="center" style="font-weight: bold">Accounting,</div>
-                                                    <div style="margin-top: 40px"></div>
+                                                    <div style="margin-top: 100px"></div>
                                                     <div class="center">{{ $reimbursement->accounting }}</div>
                                                 </td>
                                                 <td style="width:25%">
                                                     <div class="center" style="font-weight: bold">Kasir,</div>
-                                                    <div style="margin-top: 40px"></div>
+                                                    <div style="margin-top: 100px"></div>
 
                                                     <div class="center">{{ $reimbursement->kasir }}</div>
                                                 </td>
                                                 <td style="width:25%">
                                                     <div class="center" style="font-weight: bold">Menyetujui,</div>
 
-                                                    <div style="margin-top: 40px"></div>
+                                                    <div style="margin-top: 100px"></div>
 
                                                     <div class="center">{{ $reimbursement->menyetujui }}</div>
                                                 </td>
@@ -320,7 +320,8 @@
                                             <tr>
                                                 <td class="text-center" style="max-width: 5%;">{{ $no++ . '.' }}
                                                 </td>
-                                                <td style="text-transform:capitalize;">{{ $item->nama_karyawan }}</td>
+                                                <td style="text-transform:capitalize;">{{ $item->nama_karyawan }}
+                                                    {{ $item->hari }} hari</td>
                                                 <td></td>
                                                 <td class="text-center">{{ $item->curr }}</td>
                                                 <td class="text-right">
@@ -341,7 +342,7 @@
                                             <tr style="height:3cm;">
                                                 <td style="width:25%">
                                                     <div class="center" style="font-weight: bold">Pemohon,</div>
-                                                    <br><br><br><br>
+                                                    <div style="margin-top: 100px"></div>
                                                     <div class="center">{{ $reimbursement->pemohon }}</div>
                                                 </td>
                                                 <td style="width:25%">
@@ -388,6 +389,7 @@
                                                 </td>
                                                 <td style="text-transform:capitalize;">{{ $item->nama_karyawan }}
                                                     ({{ $item->aliases }})
+                                                    {{ $item->jam }} jam
                                                 </td>
                                                 <td></td>
                                                 <td class="text-center">{{ $item->curr }}</td>
@@ -410,22 +412,22 @@
                                             <tr style="height:3cm;">
                                                 <td style="width:25%">
                                                     <div class="center" style="font-weight: bold">Pemohon,</div>
-                                                    <br><br><br><br>
+                                                    <div style="margin-top: 100px"></div>
                                                     <div class="center">{{ $reimbursement->pemohon }}</div>
                                                 </td>
                                                 <td style="width:25%">
                                                     <div class="center" style="font-weight: bold">Accounting,</div>
-                                                    <br><br><br><br>
+                                                    <div style="margin-top: 100px"></div>
                                                     <div class="center">{{ $reimbursement->accounting }}</div>
                                                 </td>
                                                 <td style="width:25%">
                                                     <div class="center" style="font-weight: bold">Kasir,</div>
-                                                    <br><br><br><br>
+                                                    <div style="margin-top: 100px"></div>
                                                     <div class="center">{{ $reimbursement->kasir }}</div>
                                                 </td>
                                                 <td style="width:25%">
                                                     <div class="center" style="font-weight: bold">Menyetujui,</div>
-                                                    <br><br><br><br>
+                                                    <div style="margin-top: 100px"></div>
                                                     <div class="center">{{ $reimbursement->menyetujui }}</div>
                                                 </td>
                                             </tr>
@@ -457,6 +459,7 @@
                                                 </td>
                                                 <td style="text-transform:capitalize;">{{ $item->nama_karyawan }}
                                                     ({{ $item->aliases }})
+                                                    {{ $item->jam }} jam
                                                 </td>
                                                 <td></td>
                                                 <td class="text-center">{{ $item->curr }}</td>
@@ -478,22 +481,22 @@
                                             <tr style="height:3cm;">
                                                 <td style="width:25%">
                                                     <div class="center" style="font-weight: bold">Pemohon,</div>
-                                                    <br><br><br><br>
+                                                    <div style="margin-top: 100px"></div>
                                                     <div class="center">{{ $reimbursement->pemohon }}</div>
                                                 </td>
                                                 <td style="width:25%">
                                                     <div class="center" style="font-weight: bold">Accounting,</div>
-                                                    <br><br><br><br>
+                                                    <div style="margin-top: 100px"></div>
                                                     <div class="center">{{ $reimbursement->accounting }}</div>
                                                 </td>
                                                 <td style="width:25%">
                                                     <div class="center" style="font-weight: bold">Kasir,</div>
-                                                    <br><br><br><br>
+                                                    <div style="margin-top: 100px"></div>
                                                     <div class="center">{{ $reimbursement->kasir }}</div>
                                                 </td>
                                                 <td style="width:25%">
                                                     <div class="center" style="font-weight: bold">Menyetujui,</div>
-                                                    <br><br><br><br>
+                                                    <div style="margin-top: 100px"></div>
                                                     <div class="center">{{ $reimbursement->menyetujui }}</div>
                                                 </td>
                                             </tr>
@@ -506,17 +509,56 @@
                                         <button class="btn btn-primary"><i
                                                 class="fa-solid fa-square-check fa-beat"></i>&nbsp;Verify</button>
                                         &nbsp; &nbsp;
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-danger" data-toggle="modal"
+                                            data-target="#staticBackdrop"> <i
+                                                class="fa-solid fa-xmark fa-beat"></i>&nbsp;
+                                            Tolak
+                                        </button>
 
-                                        <a href="{{ route('admin.reimbursement') }}" class="btn btn-danger"><i
+                                        &nbsp; &nbsp;
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="staticBackdrop" data-backdrop="static"
+                                            data-keyboard="false" tabindex="-1"
+                                            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="staticBackdropLabel">Alasan
+                                                            Penolakan
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="">
+                                                            <textarea name="alasan" class="form-control"></textarea>
+                                                        </form>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Tutup</button>
+                                                            <button type="button"
+                                                                class="btn btn-danger">Tolak</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('admin.reimbursement') }}" class="btn btn-warning"><i
                                                 class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
                                     @elseif ($reimbursement->status_approved == 'rejected' && $reimbursement->status_paid == 'pending')
-                                        <a href="{{ route('admin.reimbursement') }}" class="btn btn-danger"><i
+                                        <a href="{{ route('admin.reimbursement') }}" class="btn btn-warning"><i
                                                 class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
                                     @elseif ($reimbursement->status_approved == 'pending' && $reimbursement->status_paid == 'pending')
-                                        <a href="{{ route('admin.reimbursement') }}" class="btn btn-danger"><i
+                                        <a href="{{ route('admin.reimbursement') }}" class="btn btn-warning"><i
                                                 class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
                                     @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'pending')
-                                        <a href="{{ route('admin.reimbursement') }}" class="btn btn-danger"><i
+                                        <a href="{{ route('admin.reimbursement') }}" class="btn btn-warning"><i
+                                                class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
+                                    @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'paid')
+                                        <a href="{{ route('admin.reimbursement') }}" class="btn btn-warning"><i
                                                 class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
                                     @endif
 
@@ -526,7 +568,6 @@
                     </div>
                 </div>
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
 

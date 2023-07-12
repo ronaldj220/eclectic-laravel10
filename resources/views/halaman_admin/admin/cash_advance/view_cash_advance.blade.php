@@ -272,12 +272,48 @@
                                 </div>
                                 <div class="container d-flex justify-content-center">
                                     @if ($cash_advance->status_approved == 'rejected' && $cash_advance->status_paid == 'rejected')
-                                        <button class="btn btn-primary"><i
-                                                class="fa-solid fa-square-check fa-beat"></i>&nbsp;Verify</button>
-                                        &nbsp; &nbsp;
+                                        @if ($cash_advance->menyetujui == 'Aris')
+                                            <a href="{{ route('admin.cash_advance.setujui_CA', $cash_advance->id) }}"
+                                                class="btn btn-primary"><i
+                                                    class="fa-solid fa-square-check fa-beat"></i>&nbsp;Setujui</a>
+                                            &nbsp; &nbsp;
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-danger" data-toggle="modal"
+                                                data-target="#staticBackdrop"> <i
+                                                    class="fa-solid fa-xmark fa-beat"></i>&nbsp;
+                                                Tolak
+                                            </button>
+                                            &nbsp; &nbsp;
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="staticBackdrop" data-backdrop="static"
+                                                data-keyboard="false" tabindex="-1"
+                                                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="staticBackdropLabel">Alasan
+                                                                Penolakan</h5>
+                                                            <button type="button" class="close"
+                                                                data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            ...
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Close</button>
+                                                            <button type="button"
+                                                                class="btn btn-primary">Understood</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     @endif
 
-                                    <a href="{{ route('admin.cash_advance') }}" class="btn btn-danger"><i
+                                    <a href="{{ route('admin.cash_advance') }}" class="btn btn-warning"><i
                                             class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
                                 </div>
                             </form>

@@ -211,11 +211,29 @@
                             <h6 class="m-0 font-weight-bold text-primary text-center">Daftar Purchase Order</h6>
                         </div>
                         <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center"
-                                style="margin-bottom: 10px">
+                            <div class="d-flex justify-content-between align-items-center">
                                 <a href="{{ route('admin.purchase_order.tambah_PO') }}" class="btn btn-success">
                                     <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Ajukan PO
                                 </a>
+
+
+                                <form id="formBulan" action="{{ route('admin.purchase_order.bulan') }}"
+                                    method="GET" class="ml-auto">
+                                    {{ csrf_field() }}
+                                    <div class="form-group">
+                                        <label for="bulan">Bulan</label>
+                                        <input type="month" class="form-control" id="bulan" name="bulan"
+                                            value="{{ request('bulan') }}">
+                                    </div>
+                                </form>
+                                &nbsp;
+                                <form action="" style="margin-top: 30px">
+                                    {{ csrf_field() }}
+                                    <div class="form-group">
+                                        <input type="search" class="form-control" id="exampleFormControlInput1"
+                                            name="search" placeholder="Search...">
+                                    </div>
+                                </form>
                             </div>
                             @if (Session::has('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -467,8 +485,16 @@
     <script src="{{ asset('assets/js/tooltip.js') }}"></script>
     @include('sweetalert::alert', ['cdn' => 'https://cdn.jsdelivr.net/npm/sweetalert2@9'])
 
-
-
+    <script>
+        $(document).ready(function() {
+            $('#bulan').change(function() {
+                $('#formBulan').submit(); // Mengirimkan form saat bulan berubah
+            });
+            $('#cari').change(function() {
+                $('#formCari').submit(); // Mengirimkan form saat bulan berubah
+            });
+        });
+    </script>
 
 </body>
 

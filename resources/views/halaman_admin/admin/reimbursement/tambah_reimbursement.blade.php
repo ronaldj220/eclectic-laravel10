@@ -247,13 +247,15 @@
                                             style="font-size: 16px; font-family: Arial; color: red">
                                             * Aris (Keperluan Direksi) <br>
                                             * Sujiono (Keperluan Project) <br>
-                                            * Yacob (Keperluan Office)
+                                            * Yacob (Keperluan Office) <br>
+                                            * Richard (Keperluan Marketing)
                                         </div>
                                         <div class="form-group" hidden>
                                             <label for="exampleInputPassword1">Nomor Telepon</label>
                                             <input type="text" class="form-control" id="no_telp" name="no_telp"
                                                 readonly>
                                         </div>
+
                                         <div class="form-group" style="margin-top: 10px">
                                             <label for="exampleInputPassword1">File Bukti</label>
                                             <input type="file"

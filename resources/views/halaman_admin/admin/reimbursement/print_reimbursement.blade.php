@@ -118,15 +118,41 @@
                     <div class="row">
                         <div class="col">
                         </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'paid')
+                <div class="container" style="margin-top: -20px">
+                    <div class="row">
                         <div class="col">
-                            <table class="table table-borderless table-sm"
-                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
-                                <tr class="text-center">
-                                    <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
-                                    </td>
-                                </tr>
-                            </table>
                         </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif
@@ -200,21 +226,47 @@
                     <div class="row">
                         <div class="col">
                         </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'paid')
+                <div class="container" style="margin-top: -20px">
+                    <div class="row">
                         <div class="col">
-                            <table class="table table-borderless table-sm"
-                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
-                                <tr class="text-center">
-                                    <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
-                                    </td>
-                                </tr>
-                            </table>
                         </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif
         @elseif ($reimbursement->halaman == 'ST')
             <table class="table is-striped table-bordered border-dark table-sm"
-                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
+                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
                 <thead>
                     <tr>
                         <th class="text-center" style="width: 3%">No.</th>
@@ -285,15 +337,41 @@
                     <div class="row">
                         <div class="col">
                         </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'paid')
+                <div class="container" style="margin-top: -20px">
+                    <div class="row">
                         <div class="col">
-                            <table class="table table-borderless table-sm"
-                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
-                                <tr class="text-center">
-                                    <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
-                                    </td>
-                                </tr>
-                            </table>
                         </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif
@@ -369,15 +447,41 @@
                     <div class="row">
                         <div class="col">
                         </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'paid')
+                <div class="container" style="margin-top: -20px">
+                    <div class="row">
                         <div class="col">
-                            <table class="table table-borderless table-sm"
-                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
-                                <tr class="text-center">
-                                    <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
-                                    </td>
-                                </tr>
-                            </table>
                         </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif

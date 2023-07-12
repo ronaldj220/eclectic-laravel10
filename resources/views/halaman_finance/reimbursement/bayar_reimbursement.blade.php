@@ -472,16 +472,17 @@
                                 @endif
                                 <div class="container d-flex justify-content-center">
                                     @if ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'pending')
-                                        <!-- Button trigger modal -->
-                                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                                            data-target="#staticBackdrop"><i
-                                                class="fa-solid fa-cash-register fa-beat"></i>
-                                            Bayar
-                                        </button>
-                                        &nbsp; &nbsp;
-
-                                        <a href="{{ route('kasir.reimbursement') }}" class="btn btn-danger"><i
-                                                class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
+                                        @if ($reimbursement->halaman == 'RB')
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                data-target="#staticBackdrop"><i
+                                                    class="fa-solid fa-cash-register fa-beat"></i>
+                                                Bayar
+                                            </button>
+                                            &nbsp; &nbsp;
+                                            <a href="{{ route('kasir.reimbursement') }}" class="btn btn-danger"><i
+                                                    class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
+                                        @endif
                                     @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'paid')
                                         <a href="{{ route('kasir.reimbursement') }}" class="btn btn-danger"><i
                                                 class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>

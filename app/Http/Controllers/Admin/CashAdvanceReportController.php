@@ -16,12 +16,50 @@ use Intervention\Image\ImageManagerStatic as Image;
 
 class CashAdvanceReportController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Cash Advance Report';
-        $dataCashAdvanceReport = DB::table('admin_cash_advance_report')
+        if ($request->has('search')) {
+            $dataCashAdvanceReport = DB::table('admin_cash_advance_report')
+                ->where('pemohon', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('judul_doku', 'LIKE', '%' . $request->search . '%')
+                ->orderBy('tgl_diajukan', 'desc')
+                ->orderBy('no_doku', 'desc')
+                ->paginate(20);
+        } else {
+            $dataCashAdvanceReport = DB::table('admin_cash_advance_report')
+                ->orderBy('no_doku', 'desc')
+                ->paginate(10);
+        }
+
+        return view('halaman_admin.admin.cash_advance_report.index', [
+            'title' => $title,
+            'cashAdvance' => $dataCashAdvanceReport
+        ]);
+    }
+    public function search_by_date(Request $request)
+    {
+        $title = 'Cash Advance Report';
+        $query = DB::table('admin_cash_advance_report')
             ->orderBy('no_doku', 'desc')
-            ->paginate(10);
+            ->orderByRaw("
+            CASE
+                WHEN status_approved = 'approved' THEN 1
+                WHEN status_approved = 'pending' THEN 2
+                WHEN status_approved = 'rejected' THEN 3
+                ELSE 4
+            END
+        ");
+
+        // Memeriksa apakah parameter bulan dikirimkan dalam request POST
+        if ($request->has('bulan')) {
+            $bulan = $request->bulan;
+            $query->whereMonth('tgl_diajukan', date('m', strtotime($bulan)))
+                ->whereYear('tgl_diajukan', date('Y', strtotime($bulan)));
+        }
+
+        $dataCashAdvanceReport = $query->paginate(20);
+
         return view('halaman_admin.admin.cash_advance_report.index', [
             'title' => $title,
             'cashAdvance' => $dataCashAdvanceReport
@@ -71,10 +109,11 @@ class CashAdvanceReportController extends Controller
         $tipe_ca_id = $request->input('tipe_ca_id');
 
         $result = DB::select('SELECT * FROM admin_cash_advance WHERE no_doku = ?', [$tipe_ca_id]);
+        $nominal = number_format($result[0]->nominal, 2, '.', '');
 
         return response()->json(
             [
-                'nominal_ca' => $result[0]->nominal,
+                'nominal_ca' => $nominal,
                 'pemohon' => $result[0]->pemohon,
                 'nama_menyetujui' => $result[0]->menyetujui,
             ]
@@ -89,7 +128,9 @@ class CashAdvanceReportController extends Controller
         $cashAdvance->no_doku = $request->no_doku;
         $cashAdvance->tgl_diajukan = $tgl_diajukan;
         $cashAdvance->tipe_ca = $request->tipe_ca_id;
-        $cashAdvance->nominal_ca = $request->nominal_ca;
+        // Hapus tanda koma (',') dari nominal_ca sebelum menyimpannya
+        $nominalCa = str_replace(',', '', $request->nominal_ca);
+        $cashAdvance->nominal_ca = $nominalCa;
         $cashAdvance->judul_doku = $request->judul_doku;
         $cashAdvance->pemohon = $request->pemohon;
         $cashAdvance->accounting = $request->accounting;
@@ -248,5 +289,16 @@ class CashAdvanceReportController extends Controller
                 ->where('fk_ca', $id)
                 ->update($CAR_detail);
         }
+    }
+    public function paid_CAR($id, Request $request)
+    {
+        $data = DB::table('admin_cash_advance')->find($id);
+        DB::table('admin_cash_advance')->where('id', $id)->update([
+            'status_approved' => 'approved',
+            'status_paid' => 'paid',
+            'no_referensi' => $request->no_ref
+        ]);
+        $no_doku = $data->no_doku;
+        return redirect()->route('admin.cash_advance_report')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dibayar!');
     }
 }

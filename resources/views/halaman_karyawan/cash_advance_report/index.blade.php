@@ -197,6 +197,15 @@
                                     class="btn btn-success" style="margin-bottom: 20px">
                                     <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Ajukan CAR
                                 </a>
+
+                                <form action="{{ route('karyawan.cash_advance_report') }}" method="GET"
+                                    id="formCari">
+                                    @csrf
+                                    <div class="form-group">
+                                        <input type="search" class="form-control" name="search" id="cari"
+                                            placeholder="Search...">
+                                    </div>
+                                </form>
                             </div>
                             @if (Session::has('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -220,10 +229,16 @@
                                                 @if ($item->status_approved == 'rejected' && $item->status_paid == 'rejected')
                                                     <th style="width: 3%">Status</th>
                                                     <th style="width: 3%">Aksi</th>
+                                                @elseif ($item->status_approved == 'rejected' && $item->status_paid == 'pending')
+                                                    <th style="width: 3%">Status</th>
+                                                    <th style="width: 3%">Aksi</th>
                                                 @elseif ($item->status_approved == 'pending' && $item->status_paid == 'pending')
                                                     <th style="width: 3%">Status</th>
                                                     <th style="width: 3%">Aksi</th>
                                                 @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')
+                                                    <th style="width: 3%">Status</th>
+                                                    <th style="width: 3%">Aksi</th>
+                                                @elseif ($item->status_approved == 'approved' && $item->status_paid == 'paid')
                                                     <th style="width: 3%">Status</th>
                                                     <th style="width: 3%">Aksi</th>
                                                 @endif
@@ -245,17 +260,10 @@
                                                             <label style="font-weight: bold">Submitted</label>
                                                         </td>
                                                         <td style="text-align: center">
-                                                            <a href="{{ route('karyawan.reimbursement.print_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('karyawan.cash_advance_report.view_CAR', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Print Dokumen">
                                                                 <i class="fa-solid fa-print"
-                                                                    style="color: #900C3F"></i>
-                                                            </a>
-                                                            &nbsp;
-                                                            <a href="{{ route('karyawan.reimbursement.lihat_bukti_reimbursement', $item->id) }}"
-                                                                data-toggle="tooltip" data-placement="bottom"
-                                                                title="Print Bukti">
-                                                                <i class="fa-solid fa-image"
                                                                     style="color: #900C3F"></i>
                                                             </a>
                                                             &nbsp;
@@ -266,45 +274,25 @@
                                                             <label style="font-weight: bold">Rejected</label>
                                                         </td>
                                                         <td style="text-align: center;">
-                                                            <a href="{{ route('karyawan.reimbursement.print_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('karyawan.cash_advance_report.view_CAR', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Print Dokumen">
                                                                 <i class="fa-solid fa-print"
                                                                     style="color: #900C3F"></i>
                                                             </a>
-                                                            &nbsp;
-                                                            <a href="{{ route('karyawan.reimbursement.lihat_bukti_reimbursement', $item->id) }}"
-                                                                data-toggle="tooltip" data-placement="bottom"
-                                                                title="Print Bukti">
-                                                                <i class="fa-solid fa-image"
-                                                                    style="color: #900C3F"></i>
-                                                            </a>
 
                                                         </td>
-                                                    @elseif ($item->status_approved == 'pending')
+                                                    @elseif ($item->status_approved == 'pending' && $item->status_paid == 'pending')
                                                         <td style="text-align: center; color: #FF914D">
                                                             <label style="font-weight: bold">Waiting For
                                                                 Approval</label>
                                                         </td>
                                                         <td style="text-align: center;">
-                                                            <a href="{{ route('admin.reimbursement.print_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('karyawan.cash_advance_report.view_CAR', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Print Dokumen">
                                                                 <i class="fa-solid fa-print"
                                                                     style="color: #900C3F"></i>
-                                                            </a>
-                                                            &nbsp;
-                                                            <a href="{{ route('admin.reimbursement.print_bukti_reimbursement', $item->id) }}"
-                                                                data-toggle="tooltip" data-placement="bottom"
-                                                                title="Print Bukti">
-                                                                <i class="fa-solid fa-image"
-                                                                    style="color: #900C3F"></i>
-                                                            </a>
-                                                            &nbsp;
-                                                            <a href="{{ route('admin.reimbursement.lihat_reimbursement', $item->id) }}"
-                                                                data-toggle="tooltip" data-placement="bottom"
-                                                                title="View ">
-                                                                <i class="fa-solid fa-eye" style="color: #900C3F"></i>
                                                             </a>
                                                         </td>
                                                     @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')
@@ -313,20 +301,25 @@
                                                                 style="font-weight: bold; text-transform: uppercase">Approved</label>
                                                         </td>
                                                         <td style="text-align: center;">
-                                                            <a href="{{ route('admin.reimbursement.print_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('karyawan.cash_advance_report.view_CAR', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Print Dokumen">
                                                                 <i class="fa-solid fa-print"
                                                                     style="color: #900C3F"></i>
                                                             </a>
-                                                            &nbsp;
-                                                            <a href="{{ route('admin.reimbursement.print_bukti_reimbursement', $item->id) }}"
+                                                        </td>
+                                                    @elseif ($item->status_approved == 'approved' && $item->status_paid == 'paid')
+                                                        <td style="text-align: center;color: #00BF63;">
+                                                            <label
+                                                                style="font-weight: bold; text-transform: uppercase">paid</label>
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <a href="{{ route('karyawan.cash_advance_report.view_CAR', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
-                                                                title="Print Bukti">
-                                                                <i class="fa-solid fa-image"
+                                                                title="Print Dokumen">
+                                                                <i class="fa-solid fa-print"
                                                                     style="color: #900C3F"></i>
                                                             </a>
-                                                            &nbsp;
                                                         </td>
                                                     @endif
 

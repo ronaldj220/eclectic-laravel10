@@ -14,13 +14,49 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class PurchaseOrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Purchase Order';
-        $dataPO = DB::table('admin_purchase_order')
-            ->orderBy('tgl_purchasing', 'desc')
+        if ($request->has('search')) {
+            $dataPO = DB::table('admin_purchase_order')
+                ->where('supplier', 'LIKE', '%' . $request->search . '%')
+                ->orderBy('tgl_purchasing', 'desc')
+                ->orderBy('no_doku', 'desc')
+                ->paginate(20);
+        } else {
+            $dataPO = DB::table('admin_purchase_order')
+                ->orderBy('tgl_purchasing', 'desc')
+                ->orderBy('no_doku', 'desc')
+                ->paginate(10);
+        }
+        return view('halaman_admin.admin.purchase_order.index', [
+            'title' => $title,
+            'PO' => $dataPO
+        ]);
+    }
+    public function search_by_date(Request $request)
+    {
+        $title = 'Purchase Order';
+        $query = DB::table('admin_purchase_order')
             ->orderBy('no_doku', 'desc')
-            ->paginate(10);
+            ->orderByRaw("
+            CASE
+                WHEN status_approved = 'approved' THEN 1
+                WHEN status_approved = 'pending' THEN 2
+                WHEN status_approved = 'rejected' THEN 3
+                ELSE 4
+            END
+        ");
+
+        // Memeriksa apakah parameter bulan dikirimkan dalam request POST
+        if ($request->has('bulan')) {
+            $bulan = $request->bulan;
+            $query->whereMonth('tgl_purchasing', date('m', strtotime($bulan)))
+                ->whereYear('tgl_purchasing', date('Y', strtotime($bulan)));
+        }
+
+        $dataPO = $query->paginate(20);
+
         return view('halaman_admin.admin.purchase_order.index', [
             'title' => $title,
             'PO' => $dataPO
@@ -139,6 +175,8 @@ class PurchaseOrderController extends Controller
             $PO_detail->satuan = $request->qty[$keterangan];
             $PO_detail->curr = $request->kurs[$keterangan];
             $PO_detail->nominal = $request->nom[$keterangan];
+            $PO_detail->tgl_1 = $request->tgl_1[$keterangan];
+            $PO_detail->tgl_2 = $request->tgl_2[$keterangan];
             $PO_detail->PPN = isset($request->vat[$keterangan]) ? ($request->vat[$keterangan]) : null;
             $PO_detail->PPH = isset($request->pph[$keterangan]) ? ($request->pph[$keterangan]) : null;
             $PO_detail->PPH_4 = isset($request->pph_4[$keterangan]) ? ($request->pph_4[$keterangan]) : null;
@@ -170,7 +208,7 @@ class PurchaseOrderController extends Controller
             $PPH_4 = ($item->PPH_4 / 100) * $item->nominal;
             $results[] = $result; // Tambahkan hasil ke array
         }
-        $grand_total = $nominal_PO + $result - $PPH;
+        $grand_total = $nominal_PO + $result - $PPH - $PPH_4;
 
 
         $carbonDate = Carbon::createFromFormat('Y-m-d', $PO->tgl_purchasing)->locale('id');

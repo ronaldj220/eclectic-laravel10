@@ -355,6 +355,7 @@
                                             </td>
                                             <td style="text-transform:capitalize;">{{ $item->nama_karyawan }}
                                                 ({{ $item->aliases }})
+                                                {{ $item->jam }} jam
                                             </td>
                                             <td></td>
                                             <td class="text-center">{{ $item->curr }}</td>
@@ -424,6 +425,7 @@
                                             </td>
                                             <td style="text-transform:capitalize;">{{ $item->nama_karyawan }}
                                                 ({{ $item->aliases }})
+                                                {{ $item->jam }} jam
                                             </td>
                                             <td></td>
                                             <td class="text-center">{{ $item->curr }}</td>

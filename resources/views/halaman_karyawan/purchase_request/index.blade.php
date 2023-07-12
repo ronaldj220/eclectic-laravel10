@@ -198,6 +198,14 @@
                                     style="margin-bottom: 10px">
                                     <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Ajukan PR
                                 </a>
+                                <form action="{{ route('karyawan.purchase_request') }}" method="GET"
+                                    id="formCari">
+                                    @csrf
+                                    <div class="form-group">
+                                        <input type="search" class="form-control" name="search" id="cari"
+                                            placeholder="Search...">
+                                    </div>
+                                </form>
                             </div>
                             @if (Session::has('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">

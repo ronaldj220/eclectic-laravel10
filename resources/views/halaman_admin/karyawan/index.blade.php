@@ -212,9 +212,25 @@
                             <h6 class="m-0 font-weight-bold text-primary text-center">Daftar Karyawan</h6>
                         </div>
                         <div class="card-body">
-                            <a href="{{ route('admin.karyawan.tambah_karyawan') }}" class="btn btn-success"
-                                style="margin-bottom: 10px"><i class="fa-solid fa-plus fa-flip"></i>&nbsp;Tambah
-                                Karyawan</a>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{{ route('admin.karyawan.tambah_karyawan') }}" class="btn btn-success">
+                                    <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Tambah Karyawan
+                                </a>
+
+
+
+                                &nbsp;
+                                <form action="{{ route('admin.karyawan') }}" style="margin-top: 30px"
+                                    method="GET">
+                                    {{ csrf_field() }}
+                                    <div class="form-group">
+                                        <input type="search" class="form-control" id="exampleFormControlInput1"
+                                            name="search" placeholder="Search...">
+                                    </div>
+                                </form>
+
+                            </div>
+
                             @if (Session::has('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     {{ Session::get('success') }}

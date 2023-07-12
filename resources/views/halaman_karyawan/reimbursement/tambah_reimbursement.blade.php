@@ -207,7 +207,7 @@
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Tanggal</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="tgl_diajukan" value="{{ date('d/m/Y') }}" required>
+                                                name="tgl_diajukan" value="{{ date('d/m/Y') }}" required readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Keterangan</label>
@@ -248,7 +248,8 @@
                                             style="font-size: 16px; font-family: Arial; color: red">
                                             * Aris (Keperluan Direksi) <br>
                                             * Sujiono (Keperluan Project) <br>
-                                            * Yacob (Keperluan Office)
+                                            * Yacob (Keperluan Office) <br>
+                                            * Richard (Keperluan Marketing)
                                         </div>
                                         @if (Auth::guard('karyawan')->user()->jabatan == 'Project Manager')
                                             <div class="form-group" style="margin-top: 10px">

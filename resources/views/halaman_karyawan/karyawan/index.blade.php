@@ -276,6 +276,34 @@
                                                         <th style="width: 3%">Status</th>
                                                     @endif
                                                 @endif
+                                                @if ($CA && count($CA) > 0)
+                                                    @php
+                                                        $item = $CA[0];
+                                                    @endphp
+                                                    @if ($item->status_approved == 'rejected' && $item->status_paid == 'rejected')
+                                                        <th style="width: 3%">Status</th>
+                                                    @elseif ($item->status_approved == 'rejected' && $item->status_paid == 'pending')
+                                                        <th style="width: 3%">Status</th>
+                                                    @elseif ($item->status_approved == 'pending' && $item->status_paid == 'pending')
+                                                        <th style="width: 3%">Status</th>
+                                                    @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')
+                                                        <th style="width: 3%">Status</th>
+                                                    @endif
+                                                @endif
+                                                @if ($CAR && count($CAR) > 0)
+                                                    @php
+                                                        $item = $CAR[0];
+                                                    @endphp
+                                                    @if ($item->status_approved == 'rejected' && $item->status_paid == 'rejected')
+                                                        <th style="width: 3%">Status</th>
+                                                    @elseif ($item->status_approved == 'rejected' && $item->status_paid == 'pending')
+                                                        <th style="width: 3%">Status</th>
+                                                    @elseif ($item->status_approved == 'pending' && $item->status_paid == 'pending')
+                                                        <th style="width: 3%">Status</th>
+                                                    @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')
+                                                        <th style="width: 3%">Status</th>
+                                                    @endif
+                                                @endif
                                             </tr>
 
                                         </thead>

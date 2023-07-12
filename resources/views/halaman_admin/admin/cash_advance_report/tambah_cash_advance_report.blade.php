@@ -274,7 +274,8 @@
                                             style="font-size: 12px; font-family: Arial; color: red">
                                             * Aris (Keperluan Direksi) <br>
                                             * Sujiono (Keperluan Project) <br>
-                                            * Yacob (Keperluan Office)
+                                            * Yacob (Keperluan Office) <br>
+                                            * Richard (Keperluan Marketing)
                                         </div>
                                         <div class="form-group mt-3">
                                             <div id="detail"></div>
@@ -400,7 +401,7 @@
             <div class = 'col-md-6'>
               <div class="form-group">
                 <label for="exampleInputPassword1">Nominal</label>
-                <input type="number" class="form-control" name='nom[]'>
+                <input type="number" class="form-control" name='nom[]' step='0.001'>
               </div>
             </div>
             <div class = 'col-md-6'>

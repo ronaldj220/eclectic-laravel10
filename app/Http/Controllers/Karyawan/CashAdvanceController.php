@@ -10,20 +10,28 @@ use Illuminate\Support\Facades\DB;
 
 class CashAdvanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Cash Advance';
         $authId = Auth::guard('karyawan')->user()->nama;
+        if ($request->has('search')) {
+            $dataCashAdvance = DB::table('admin_cash_advance')
+                ->where('pemohon', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('judul_doku', 'LIKE', '%' . $request->search . '%')
+                ->orderBy('no_doku', 'desc')
+                ->orderBy('tgl_diajukan', 'desc')
+                ->paginate(20);
+        }
         $dataCashAdvance = DB::table('admin_cash_advance')
             ->where('pemohon', $authId)
-            ->where('status_approved', 'rejected')
-            ->where('status_paid', 'rejected')
+            ->orderBy('no_doku', 'asc')
+            ->whereIn('status_approved', ['rejected', 'pending', 'approved'])
+            ->whereIn('status_paid', ['pending', 'rejected', 'paid'])
             ->paginate(10);
-        $dataRBMenyetujui = DB::table('admin_cash_advance')->first();
+
         return view('halaman_karyawan.cash_advance.index', [
             'title' => $title,
             'CashAdvance' => $dataCashAdvance,
-            'menyetujui' => $dataRBMenyetujui
         ]);
     }
     public function tambah_cash_advance()
