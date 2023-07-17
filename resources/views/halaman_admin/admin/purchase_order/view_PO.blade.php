@@ -256,7 +256,10 @@
             <a href="{{ route('admin.purchase_order.setujui_PO', $PO->id) }}" class="btn btn-primary"><i
                     class="fa-solid fa-square-check fa-beat"></i>&nbsp;Verify</a>
             &nbsp; &nbsp;
-            <a href="{{ route('admin.purchase_order') }}" class="btn btn-danger"><i
+            <a href="{{ route('admin.purchase_order.tolak_PO', $PO->id) }}" class="btn btn-danger"><i
+                    class="fa-solid fa-xmark fa-beat"></i>&nbsp;Tolak</a>
+            &nbsp; &nbsp;
+            <a href="{{ route('admin.purchase_order') }}" class="btn btn-warning"><i
                     class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
         @elseif ($PO->status_approved == 'approved')
             <a href="{{ route('admin.purchase_order') }}" class="btn btn-danger"><i

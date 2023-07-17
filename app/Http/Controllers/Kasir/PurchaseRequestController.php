@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Kasir;
 
+use App\Exports\Kasir\PurchaseRequestExports;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Purchase_Request;
 use App\Models\Admin\Purchase_Request_Detail;
@@ -9,6 +10,7 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PurchaseRequestController extends Controller
 {
@@ -162,5 +164,9 @@ class PurchaseRequestController extends Controller
             $PR_detail->save();
         }
         return redirect()->route('kasir.purchase_request')->with('success', 'Data PR berhasil disimpan.');
+    }
+    public function excel_PR($id)
+    {
+        return Excel::download(new PurchaseRequestExports($id), 'PR_kasir' . $id . '.xlsx');
     }
 }

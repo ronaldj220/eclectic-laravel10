@@ -74,40 +74,40 @@
                     <td class="text-center" style="max-width: 5%;">{{ $item->curr }}
                     </td>
                     <td class="text-end">
-                        {{ number_format($item->nominal, 0, ',', '.') }}
+                        {{ number_format($item->nominal, 2, ',', '.') }}
                     </td>
                 </tr>
             @endforeach
             <tr style="font-weight: bold">
                 <td colspan="3" class="text-end">Jumlah</td>
                 <td class="text-center">{{ $item->curr }}</td>
-                <td class="text-end">{{ number_format($nominal, 0, ',', '.') }}</td>
+                <td class="text-end">{{ number_format($nominal, 2, ',', '.') }}</td>
             </tr>
             <tr style="font-weight: bold">
                 <td colspan="3" class="text-end">Cash Advance {{ $cash_advance_report->tipe_ca }}</td>
                 <td class="text-center">{{ $item->curr }}</td>
-                <td class="text-end">{{ number_format($cash_advance_report->nominal_ca, 0, ',', '.') }}</td>
+                <td class="text-end">{{ number_format($cash_advance_report->nominal_ca, 2, ',', '.') }}</td>
             </tr>
             @if ($nominal < $cash_advance_report->nominal_ca)
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Lebih</td>
                     <td class="text-center">{{ $item->curr }}</td>
                     <td class="text-end">
-                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 0, ',', '.') }}</td>
+                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 2, ',', '.') }}</td>
                 </tr>
             @elseif ($nominal > $cash_advance_report->nominal_ca)
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end" style="color: red">Kurang</td>
                     <td class="text-center" style="color: red">{{ $item->curr }}</td>
                     <td class="text-end" style="color: red">
-                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 0, ',', '.') }}</td>
+                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 2, ',', '.') }}</td>
                 </tr>
             @elseif ($nominal = $cash_advance_report->nominal_ca)
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Kurang</td>
                     <td class="text-center">{{ $item->curr }}</td>
                     <td class="text-end">
-                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 0, ',', '.') }}</td>
+                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 2, ',', '.') }}</td>
                 </tr>
             @endif
         </table>
@@ -125,16 +125,14 @@
                             <tr>
 
                                 <td style="width: 50%; text-align: center; ">
-                                    <div style="font-weight: bold;">Pembuat,</div>
-                                    <br><br><br><br>
-                                    <div style="text-align: center; margin-top: -3px;">
-                                        {{ $cash_advance_report->pemohon }}</div>
+                                    <div class="center" style="font-weight: bold">Pemohon,</div>
+                                    <div style="margin-top: 40px"></div>
+                                    <div class="center">{{ $cash_advance_report->pemohon }}</div>
                                 </td>
                                 <td style="width: 50%; text-align: center;">
-                                    <div style="font-weight: bold;">Menyetujui,</div>
-                                    <br><br><br><br>
-                                    <div style="text-align: center; margin-top: -3px;">
-                                        {{ $cash_advance_report->menyetujui }}</div>
+                                    <div class="center" style="font-weight: bold">Menyetujui,</div>
+                                    <div style="margin-top: 40px"></div>
+                                    <div class="center">{{ $cash_advance_report->menyetujui }}</div>
                                 </td>
                             </tr>
                         </table>

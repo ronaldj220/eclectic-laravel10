@@ -270,6 +270,11 @@
                                             <input type="text" class="form-control" id="menyetujui"
                                                 name="nama_menyetujui" readonly>
                                         </div>
+                                        <div class="form-group" hidden>
+                                            <label for="exampleInputPassword1">Nomor Telepon</label>
+                                            <input type="text" class="form-control" id="no_telp" name="no_telp"
+                                                readonly>
+                                        </div>
                                         <div class="form-text text-muted"
                                             style="font-size: 12px; font-family: Arial; color: red">
                                             * Aris (Keperluan Direksi) <br>
@@ -471,6 +476,7 @@
                             $("#nominal_ca").val(data.nominal_ca);
                             $("#pemohon").val(data.pemohon);
                             $("#menyetujui").val(data.nama_menyetujui);
+                            $("#no_telp").val(data.no_telp);
                             // console.log(data);
                         },
                         error: function(jqXHR, textStatus, errorThrown) {

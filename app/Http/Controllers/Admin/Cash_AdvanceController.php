@@ -113,7 +113,8 @@ class Cash_AdvanceController extends Controller
             'pemohon' => $request->pemohon,
             'accounting' => $request->accounting,
             'kasir' => $request->kasir,
-            'menyetujui' => $request->nama_menyetujui
+            'menyetujui' => $request->nama_menyetujui,
+            'no_telp' => $request->no_telp
         ]);
         return redirect()->route('admin.cash_advance')->with('success', 'Data Cash Advance Berhasil Diajukan!');
     }
@@ -138,6 +139,24 @@ class Cash_AdvanceController extends Controller
             ]);
             $no_doku = $data->no_doku;
             return redirect()->route('admin.cash_advance')->with('success', 'Data dengan no dokumen' . $no_doku . ' Berhasil Diajukan! Mohon Menunggu Kepastian ya... Semoga diterima!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.cash_advance')->with('gagal', $e->getMessage());
+        }
+    }
+    public function reject_CA($id)
+    {
+        try {
+            $data = DB::table('admin_cash_advance')->where('id', $id)->first();
+            try {
+                DB::table('admin_cash_advance')->where('id', $id)->update([
+                    'status_approved' => 'rejected',
+                    'status_paid' => 'pending'
+                ]);
+                $no_doku = $data->no_doku;
+                return redirect()->route('admin.cash_advance')->with('error', 'Data dengan no dokumen' . $no_doku . ' tidak disetujui! Mohon Ajukan CA yang berbeda!');
+            } catch (\Exception $e) {
+                return redirect()->route('admin.cash_advance')->with('gagal', $e->getMessage());
+            }
         } catch (\Exception $e) {
             return redirect()->route('admin.cash_advance')->with('gagal', $e->getMessage());
         }
@@ -208,7 +227,7 @@ class Cash_AdvanceController extends Controller
             return redirect()->route('admin.cash_advance')->with('gagal', $e->getMessage());
         }
     }
-    public function rejected_CA($id, Request $request)
+    public function tolak_CA($id, Request $request)
     {
         try {
             $data = DB::table('admin_cash_advance')->where('id', $id)->first();
@@ -221,6 +240,65 @@ class Cash_AdvanceController extends Controller
             return redirect()->route('admin.cash_advance')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan CA yang baru!');
         } catch (\Exception $e) {
             return redirect()->route('admin.cash_advance')->with('gagal', $e->getMessage());
+        }
+    }
+    public function getNomor(Request $request)
+    {
+        $menyetujui = $request->input('menyetujui');
+
+        $details = DB::table('menyetujui')->where('nama', $menyetujui)->get();
+
+        if ($details->count() > 0) {
+
+            foreach ($details as $detail) {
+                $no_telp[] = $detail->no_telp;
+            }
+
+            $data = [
+                'keterangan' => $no_telp,
+            ];
+
+            // Mengirim data ke tampilan sebagai respons JSON
+            return response()->json($data);
+        } else {
+            // Jika data tidak ditemukan, mengirim respons JSON dengan data kosong
+            return response()->json([]);
+        }
+    }
+    public function kirim_WA($id)
+    {
+        $cash_advance = DB::table('admin_cash_advance')->find($id);
+
+        $nomorTelepon = [
+            $cash_advance->no_telp,
+        ];
+
+        // Membangun pesan yang diinginkan
+        $pesan = "[Ini Adalah Pesan Dari Sistem]\nAda Permohonan CA No. " . $cash_advance->no_doku . " Dari " . $cash_advance->pemohon . " Menunggu Approval. \nKlik Disini untuk Melihat ";
+
+        $urlWhatsApp = 'https://api.whatsapp.com/send';
+
+        $berhasilDikirim = [];
+
+        foreach ($nomorTelepon as $nomor) {
+            try {
+                $url = $urlWhatsApp . '?phone=' . $nomor . '&text=' . urlencode($pesan);
+                $berhasilDikirim[] = $nomor;
+            } catch (\Exception $e) {
+                // Tangani kesalahan yang terjadi
+                dd($e->getMessage());
+            }
+        }
+
+        // Lakukan penanganan sesuai kebutuhan dengan menggunakan array berhasilDikirim
+        if (!empty($berhasilDikirim)) {
+            // Redirect ke halaman WhatsApp
+            $redirectUrl = $urlWhatsApp . '?phone=' . implode(',', $berhasilDikirim) . '&text=' . urlencode($pesan);
+            header("Location: " . $redirectUrl);
+            exit();
+            // dd($redirectUrl);
+        } else {
+            return redirect()->back()->with('error', 'Gagal mengirim pesan WhatsApp.');
         }
     }
 }

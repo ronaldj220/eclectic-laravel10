@@ -55,7 +55,6 @@
                                 @php
                                     $tanggal1 = \Carbon\Carbon::parse($item->tanggal_1);
                                     $tanggal2 = \Carbon\Carbon::parse($item->tanggal_2);
-                                    $selisihHari = $tanggal2->diffInDays($tanggal1);
                                 @endphp
                                 {{ date('d/m/y', strtotime($item->tanggal_1)) }} -
                                 {{ date('d/m/y', strtotime($item->tanggal_2)) }}

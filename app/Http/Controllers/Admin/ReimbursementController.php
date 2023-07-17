@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\Admin\ReimbursementExport;
 use App\Http\Controllers\Controller;
+use App\Imports\ReimbursementImports;
 use App\Models\Admin\Rb_Detail;
 use App\Models\Admin\Reimbursement;
 use App\Models\Admin\Support_Lembur_Detail;
@@ -14,8 +15,7 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
-
+use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManagerStatic as Image;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -242,6 +242,7 @@ class ReimbursementController extends Controller
                 $rb_detail->hari = $request->hari_ts2[$index];
                 $nominal = ($rb_detail->nominal_awal / $rb_detail->hari_awal) * $rb_detail->hari;
                 $rb_detail->nominal = $nominal;
+                $rb_detail->project = $request->project_ts[$index];
                 $rb_detail->fk_timesheet_project = $reimbursement->id;
                 $rb_detail->save();
             }
@@ -371,34 +372,33 @@ class ReimbursementController extends Controller
             return redirect()->route('admin.reimbursement')->with('gagal', $e->getMessage());
         }
     }
-    public function tolak_reimbursement($id, Request $request)
+    public function tolak_reimbursement($id)
     {
         try {
             $data = DB::table('admin_reimbursement')->where('id', $id)->first();
             if ($data->halaman == 'RB') {
                 DB::table('admin_reimbursement')->where('id', $id)->update([
                     'status_approved' => 'rejected',
-                    'alasan' => $request->alasan
+                    'status_paid' => 'pending'
                 ]);
             } elseif ($data->halaman == 'TS') {
                 DB::table('admin_reimbursement')->where('id', $id)->update([
                     'status_approved' => 'rejected',
-                    'alasan' => $request->alasan
+                    'status_paid' => 'pending'
                 ]);
             } elseif ($data->halaman == 'ST') {
                 DB::table('admin_reimbursement')->where('id', $id)->update([
                     'status_approved' => 'rejected',
-                    'alasan' => $request->alasan
+                    'status_paid' => 'pending'
                 ]);
             } elseif ($data->halaman == 'SL') {
                 DB::table('admin_reimbursement')->where('id', $id)->update([
                     'status_approved' => 'rejected',
-                    'alasan' => $request->alasan
+                    'status_paid' => 'pending'
                 ]);
             }
             $no_doku = $data->no_doku;
-            $alasan = $request->alasan;
-            return redirect()->route('admin.reimbursement')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan Reimbursement yang berbeda!');
+            return redirect()->route('admin.reimbursement')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui! Mohon Ajukan Reimbursement yang berbeda!');
         } catch (\Exception $e) {
             return redirect()->route('admin.reimbursement')->with('gagal', $e->getMessage());
         }
@@ -786,18 +786,36 @@ class ReimbursementController extends Controller
             return redirect()->route('admin.reimbursement')->with('gagal', $e->getMessage());
         }
     }
-    public function import_detail_excel(Request $request)
+    public function tolak_RB($id, Request $request)
     {
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            if (!$file->isEmpty()) {
-                // File diunggah dan tidak kosong
-                // Lakukan tindakan yang diperlukan di sini
-                return "File diunggah dan berisi data";
+        try {
+            $data = DB::table('admin_reimbursement')->where('id', $id)->first();
+            if ($data->halaman == 'RB') {
+                DB::table('admin_reimbursement')->where('id', $id)->update([
+                    'status_approved' => 'rejected',
+                    'alasan' => $request->alasan
+                ]);
+            } elseif ($data->halaman == 'TS') {
+                DB::table('admin_reimbursement')->where('id', $id)->update([
+                    'status_approved' => 'rejected',
+                    'alasan' => $request->alasan
+                ]);
+            } elseif ($data->halaman == 'ST') {
+                DB::table('admin_reimbursement')->where('id', $id)->update([
+                    'status_approved' => 'rejected',
+                    'alasan' => $request->alasan
+                ]);
+            } elseif ($data->halaman == 'SL') {
+                DB::table('admin_reimbursement')->where('id', $id)->update([
+                    'status_approved' => 'rejected',
+                    'alasan' => $request->alasan
+                ]);
             }
+            $no_doku = $data->no_doku;
+            $alasan = $request->alasan;
+            return redirect()->route('admin.reimbursement')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan Reimbursement yang berbeda!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.reimbursement')->with('gagal', $e->getMessage());
         }
-
-        // File tidak diunggah atau kosong
-        return "File tidak diunggah atau kosong";
     }
 }

@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('karyawan', function (Blueprint $table) {
-            $table->string('bukti_bank')->nullable()->after('signature');
+        Schema::table('admin_cash_advance', function (Blueprint $table) {
+            $table->string('no_telp')->nullable()->after('menyetujui');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('karyawan', function (Blueprint $table) {
-            $table->dropColumn('bukti_bank');
+        Schema::table('admin_cash_advance', function (Blueprint $table) {
+            $table->dropColumn('no_telp');
         });
     }
 };

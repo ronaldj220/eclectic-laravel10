@@ -91,6 +91,29 @@ class ReimbursementController extends Controller
             'userRoleJSON' => $userRoleJSON
         ]);
     }
+    public function getNomor(Request $request)
+    {
+        $menyetujui = $request->input('menyetujui');
+
+        $details = DB::table('menyetujui')->where('nama', $menyetujui)->get();
+
+        if ($details->count() > 0) {
+
+            foreach ($details as $detail) {
+                $no_telp[] = $detail->no_telp;
+            }
+
+            $data = [
+                'keterangan' => $no_telp,
+            ];
+
+            // Mengirim data ke tampilan sebagai respons JSON
+            return response()->json($data);
+        } else {
+            // Jika data tidak ditemukan, mengirim respons JSON dengan data kosong
+            return response()->json([]);
+        }
+    }
     public function simpan_reimbursement(Request $request)
     {
         $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
@@ -191,6 +214,7 @@ class ReimbursementController extends Controller
                 $rb_detail->hari = $request->hari_ts2[$index];
                 $nominal = ($rb_detail->nominal_awal / $rb_detail->hari_awal) * $rb_detail->hari;
                 $rb_detail->nominal = $nominal;
+                $rb_detail->project = $request->project_ts[$index];
                 $rb_detail->fk_timesheet_project = $reimbursement->id;
                 $rb_detail->save();
             }

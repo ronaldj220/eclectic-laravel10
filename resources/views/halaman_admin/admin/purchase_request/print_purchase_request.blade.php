@@ -42,9 +42,9 @@
                     <td style="text-transform: capitalize">
                         {{ $item->judul }}
                         @if ($item->tgl_1 && $item->tgl_2)
-                            {{ date('d/m/Y', strtotime($item->tgl_1)) }} - {{ date('d/m/Y', strtotime($item->tgl_2)) }}
+                            {{ date('d/m/y', strtotime($item->tgl_1)) }} - {{ date('d/m/y', strtotime($item->tgl_2)) }}
                         @elseif ($item->tgl_1)
-                            {{ date('d/m/Y', strtotime($item->tgl_1)) }}
+                            {{ date('d/m/y', strtotime($item->tgl_1)) }}
                         @endif
                     </td>
                     <td class="text-center" style="max-width: 12%; word-break: break-all;">

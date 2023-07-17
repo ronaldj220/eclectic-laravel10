@@ -158,6 +158,20 @@ class PurchaseRequestController extends Controller
             return redirect()->route('admin.purchase_request')->with('gagal', $e->getMessage());
         }
     }
+    public function tolak_PR($id)
+    {
+        try {
+            DB::table('admin_purchase_request')->where('id', $id)->update([
+                'status_approved' => 'rejected',
+                'status_paid' => 'pending'
+            ]);
+            $data = DB::table('admin_purchase_request')->where('id', $id)->first();
+            $no_doku = $data->no_doku;
+            return redirect()->route('admin.purchase_request')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui! Mohon Ajukan Dokumen yang Berbeda!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.purchase_request')->with('gagal', $e->getMessage());
+        }
+    }
     public function edit_PR($id)
     {
         $PR = DB::table('admin_purchase_request')->where('id', $id)->first();

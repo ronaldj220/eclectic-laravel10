@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Exports\Admin;
+namespace App\Exports\Kasir;
 
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromView;
-
 
 class PurchaseOrderExports implements FromView
 {

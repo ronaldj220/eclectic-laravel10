@@ -323,7 +323,7 @@
                                                         <td class="text-center">
                                                             <a href="{{ route('admin.cash_advance.view_cash_advance', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
-                                                                title="Setujui Dokumen">
+                                                                title="Lihat Dokumen">
                                                                 <i class="fa-solid fa-eye" style="color: #900C3F"></i>
                                                             </a>
                                                             <a href="{{ route('admin.cash_advance.print_cash_advance', $item->id) }}"
@@ -336,6 +336,12 @@
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Download Excel">
                                                                 <i class="fa-solid fa-file-excel"
+                                                                    style="color: #900C3F"></i>
+                                                            </a>
+                                                            <a href="{{ route('admin.cash_advance.kirim_WA', $item->id) }}"
+                                                                data-toggle="tooltip" data-placement="bottom"
+                                                                title="Kirim WA">
+                                                                <i class="fa-brands fa-whatsapp"
                                                                     style="color: #900C3F"></i>
                                                             </a>
                                                         </td>
@@ -360,7 +366,7 @@
                                                             </a>
                                                             <a href="{{ route('admin.cash_advance.view_cash_advance', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
-                                                                title="Lihat">
+                                                                title="Lihat Dokumen">
                                                                 <i class="fa-solid fa-eye" style="color: #900C3F"></i>
                                                             </a>
                                                         </td>

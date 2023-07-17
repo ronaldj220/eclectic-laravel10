@@ -164,7 +164,7 @@
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <form action="{{ route('direksi.purchase_order.simpan_PO') }}" method="POST">
+                                    <form action="{{ route('kasir.purchase_order.simpan_PO') }}" method="POST">
                                         @csrf
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">No Dokumen</label>

@@ -15,26 +15,26 @@
         <tr></tr>
         <tr></tr>
         <tr>
-            <th
-                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black">
+            <th style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black; display: flex; align-items: center;"
+                rowspan="2">
                 No</th>
             <th colspan="6"
-                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;text-align: center; font-weight: bold; border: 10px solid black">
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black">
                 Keterangan</th>
-            <th style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black"
-                colspan="2">No
-                Bukti</th>
-            <th style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black"
-                colspan="2">
+            <th style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black; width: 200%"
+                rowspan="2">
+                No Bukti</th>
+            <th style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black; width: 75%"
+                rowspan="2">
                 Curr</th>
-            <th style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black"
-                colspan="2">
+            <th style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black; width: 200%"
+                rowspan="2">
                 Nominal</th>
         </tr>
         <tr>
-            <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black"
-                colspan="13">
-                {{ $cash_advance_report->judul_doku }}</td>
+            <th colspan="6"
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black">
+                {{ $cash_advance_report->judul_doku }}</th>
         </tr>
     </thead>
     <tbody>
@@ -51,78 +51,83 @@
                         @php
                             $tanggal1 = \Carbon\Carbon::parse($item->tanggal_1);
                             $tanggal2 = \Carbon\Carbon::parse($item->tanggal_2);
-                            $selisihHari = $tanggal2->diffInDays($tanggal1);
                         @endphp
-                        {{ date('d/m/Y', strtotime($item->tanggal_1)) }} -
-                        {{ date('d/m/Y', strtotime($item->tanggal_2)) }}
-                        ({{ $selisihHari }} hari)
+                        {{ date('d/m/y', strtotime($item->tanggal_1)) }} -
+                        {{ date('d/m/y', strtotime($item->tanggal_2)) }}
+                        @if ($item->keperluan)
+                            ({{ $item->keperluan }})
+                        @endif
                     @elseif ($item->tanggal_1)
-                        {{ date('d/m/Y', strtotime($item->tanggal_1)) }}
+                        {{ date('d/m/y', strtotime($item->tanggal_1)) }}
+
+                        @if ($item->keperluan)
+                            ({{ $item->keperluan }})
+                        @endif
                     @endif
                 </td>
-                <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black"
-                    colspan="2">
+                <td
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black">
                     {{ $item->no_bukti }}</td>
-                <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black; width: 20%"
-                    colspan="2">
+                <td
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black; ">
                     {{ $item->curr }}</td>
-                <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black; width: 20%"
-                    colspan="2">
+                <td
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black; ">
                     {{ $item->nominal }}</td>
             </tr>
         @endforeach
         <tr>
             <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; font-weight: bold; border: 10px solid black"
-                colspan="9">
+                colspan="8">
                 Jumlah</td>
-            <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black; width: 20%"
-                colspan="2">
+            <td
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black; ">
                 {{ $item->curr }}</td>
-            <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black; width: 20%"
-                colspan="2">
+            <td
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black; ">
                 {{ $nominal }}</td>
         </tr>
         <tr>
             <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; font-weight: bold; border: 10px solid black"
-                colspan="9">
+                colspan="8">
                 Cash Advance {{ $cash_advance_report->tipe_ca }}</td>
-            <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black; width: 20%"
-                colspan="2">
+            <td
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black; ">
                 {{ $item->curr }}</td>
-            <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black; width: 20%"
-                colspan="2">
+            <td
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black; ">
                 {{ $cash_advance_report->nominal_ca }}</td>
         </tr>
         <tr>
             @if ($nominal < $cash_advance_report->nominal_ca)
                 <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; font-weight: bold; border: 10px solid black; color: black"
-                    colspan="9">
+                    colspan="8">
                     Lebih</td>
-                <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black; width: 20%"
-                    colspan="2">
+                <td
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black;">
                     {{ $item->curr }}</td>
-                <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black; width: 20%; color: black"
-                    colspan="2">
+                <td
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black;; color: black">
                     {{ abs($cash_advance_report->nominal_ca - $nominal) }}</td>
             @elseif ($nominal > $cash_advance_report->nominal_ca)
                 <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; font-weight: bold; border: 10px solid black; color: red"
-                    colspan="9">
+                    colspan="8">
                     Kurang</td>
-                <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black; width: 20%"
-                    colspan="2">
+                <td
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black;">
                     {{ $item->curr }}</td>
-                <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black; width: 20%; color: red"
-                    colspan="2">
+                <td
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black;; color: red">
                     {{ abs($cash_advance_report->nominal_ca - $nominal) }}</td>
             @elseif ($nominal == $cash_advance_report->nominal_ca)
                 <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; font-weight: bold; border: 10px solid black"
-                    colspan="9">
+                    colspan="8">
                     Kurang</td>
-                <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black; width: 20%"
-                    colspan="2">
+                <td
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black;">
                     {{ $item->curr }}</td>
-                <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black; width: 20%"
-                    colspan="2">
+                <td
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black;">
                     {{ abs($cash_advance_report->nominal_ca - $nominal) }}</td>
             @endif
         </tr>
@@ -135,14 +140,12 @@
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
             <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black"
-                colspan="3">
+                colspan="2">
                 Pembuat, </td>
             <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black"
-                colspan="3">
+                colspan="2">
                 Menyetujui, </td>
-        </tr>
         <tr>
             <td></td>
             <td></td>
@@ -150,9 +153,8 @@
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
-            <td colspan="3" rowspan="3" style="border: 10px solid black"></td>
-            <td colspan="3" rowspan="3" style="border: 10px solid black"></td>
+            <td colspan="2" rowspan="3" style="border: 10px solid black"></td>
+            <td colspan="2" rowspan="3" style="border: 10px solid black"></td>
         </tr>
         <tr></tr>
         <tr></tr>
@@ -163,11 +165,11 @@
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
             <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black"
-                colspan="3">{{ $cash_advance_report->pemohon }}</td>
+                colspan="2">{{ $cash_advance_report->pemohon }}</td>
             <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black"
-                colspan="3">{{ $cash_advance_report->menyetujui }}</td>
+                colspan="2">{{ $cash_advance_report->menyetujui }}</td>
         </tr>
     </tbody>
+
 </table>

@@ -20,15 +20,15 @@ class PurchaseOrderController extends Controller
         if ($request->has('search')) {
             $dataPO = DB::table('admin_purchase_order')
                 ->where('supplier', 'LIKE', '%' . $request->search . '%')
-                ->orderBy('tgl_purchasing', 'desc')
                 ->orderBy('no_doku', 'desc')
+                ->orderBy('tgl_purchasing', 'desc')
                 ->paginate(20);
-        } else {
-            $dataPO = DB::table('admin_purchase_order')
-                ->orderBy('tgl_purchasing', 'desc')
-                ->orderBy('no_doku', 'desc')
-                ->paginate(10);
         }
+
+        $dataPO = DB::table('admin_purchase_order')
+            ->orderBy('tgl_purchasing', 'desc')
+            ->orderBy('no_doku', 'desc')
+            ->paginate(20);
         return view('halaman_admin.admin.purchase_order.index', [
             'title' => $title,
             'PO' => $dataPO
@@ -266,6 +266,20 @@ class PurchaseOrderController extends Controller
             $data = DB::table('admin_purchase_order')->where('id', $id)->first();
             $no_doku = $data->no_doku;
             return redirect()->route('admin.purchase_order')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil diajukan! Mohon Menunggu Persetujuan dari Direktur!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.purchase_order')->with('gagal', $e->getMessage());
+        }
+    }
+    public function tolak_PO($id)
+    {
+        try {
+            DB::table('admin_purchase_order')->where('id', $id)->update([
+                'status_approved' => 'rejected',
+                'status_paid' => 'pending'
+            ]);
+            $data = DB::table('admin_purchase_order')->where('id', $id)->first();
+            $no_doku = $data->no_doku;
+            return redirect()->route('admin.purchase_order')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui! Mohon Ajukan Dokumen yang Berbeda!');
         } catch (\Exception $e) {
             return redirect()->route('admin.purchase_order')->with('gagal', $e->getMessage());
         }

@@ -506,46 +506,26 @@
                                 @endif
                                 <div class="container d-flex justify-content-center">
                                     @if ($reimbursement->status_approved == 'rejected' && $reimbursement->status_paid == 'rejected')
-                                        <button class="btn btn-primary"><i
-                                                class="fa-solid fa-square-check fa-beat"></i>&nbsp;Verify</button>
-                                        &nbsp; &nbsp;
-                                        <!-- Button trigger modal -->
-                                        <button type="button" class="btn btn-danger" data-toggle="modal"
-                                            data-target="#staticBackdrop"> <i
-                                                class="fa-solid fa-xmark fa-beat"></i>&nbsp;
-                                            Tolak
-                                        </button>
 
-                                        &nbsp; &nbsp;
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="staticBackdrop" data-backdrop="static"
-                                            data-keyboard="false" tabindex="-1"
-                                            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="staticBackdropLabel">Alasan
-                                                            Penolakan
-                                                        </h5>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form action="">
-                                                            <textarea name="alasan" class="form-control"></textarea>
-                                                        </form>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">Tutup</button>
-                                                            <button type="button"
-                                                                class="btn btn-danger">Tolak</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @if ($reimbursement->menyetujui == 'Aris')
+                                            <a href="{{ route('admin.reimbursement.setujui_RB', $reimbursement->id) }}"
+                                                class="btn btn-primary"><i
+                                                    class="fa-solid fa-square-check fa-beat"></i>&nbsp;Verify</a>
+                                            &nbsp; &nbsp;
+                                            <a href="{{ route('admin.reimbursement.tolak_reimbursement', $reimbursement->id) }}"
+                                                class="btn btn-danger">
+                                                <i class="fa-solid fa-xmark fa-beat"></i>&nbsp;Tolak</a>
+                                            &nbsp; &nbsp;
+                                        @else
+                                            <button class="btn btn-primary"><i
+                                                    class="fa-solid fa-square-check fa-beat"></i>&nbsp;Verify</button>
+                                            &nbsp; &nbsp;
+                                            <a href="{{ route('admin.reimbursement.tolak_reimbursement', $reimbursement->id) }}"
+                                                class="btn btn-danger">
+                                                <i class="fa-solid fa-xmark fa-beat"></i>&nbsp;Tolak</a>
+                                            &nbsp; &nbsp;
+                                        @endif
+
                                         <a href="{{ route('admin.reimbursement') }}" class="btn btn-warning"><i
                                                 class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
                                     @elseif ($reimbursement->status_approved == 'rejected' && $reimbursement->status_paid == 'pending')

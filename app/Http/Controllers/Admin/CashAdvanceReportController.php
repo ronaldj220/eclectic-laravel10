@@ -116,6 +116,7 @@ class CashAdvanceReportController extends Controller
                 'nominal_ca' => $nominal,
                 'pemohon' => $result[0]->pemohon,
                 'nama_menyetujui' => $result[0]->menyetujui,
+                'no_telp' => $result[0]->no_telp
             ]
         );
     }
@@ -136,6 +137,7 @@ class CashAdvanceReportController extends Controller
         $cashAdvance->accounting = $request->accounting;
         $cashAdvance->kasir = $request->kasir;
         $cashAdvance->menyetujui = $request->nama_menyetujui;
+        $cashAdvance->no_telp = $request->no_telp;
         $cashAdvance->save();
 
         foreach ($request->deskripsi as $deskripsi => $value) {
@@ -198,6 +200,24 @@ class CashAdvanceReportController extends Controller
             $data = DB::table('admin_cash_advance_report')->find($id);
             $no_doku = $data->no_doku;
             return redirect()->route('admin.cash_advance_report')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil Diajukan! Mohon Menunggu Kepastian ya... Semoga diterima!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.cash_advance_report')->with('gagal', $e->getMessage());
+        }
+    }
+    public function reject_cash_advance_report($id)
+    {
+        try {
+            $data = DB::table('admin_cash_advance')->where('id', $id)->first();
+            try {
+                DB::table('admin_cash_advance')->where('id', $id)->update([
+                    'status_approved' => 'rejected',
+                    'status_paid' => 'pending'
+                ]);
+                $no_doku = $data->no_doku;
+                return redirect()->route('admin.cash_advance_report')->with('error', 'Data dengan no dokumen' . $no_doku . ' tidak disetujui! Mohon Ajukan CA yang berbeda!');
+            } catch (\Exception $e) {
+                return redirect()->route('admin.cash_advance_report')->with('gagal', $e->getMessage());
+            }
         } catch (\Exception $e) {
             return redirect()->route('admin.cash_advance_report')->with('gagal', $e->getMessage());
         }
@@ -300,5 +320,41 @@ class CashAdvanceReportController extends Controller
         ]);
         $no_doku = $data->no_doku;
         return redirect()->route('admin.cash_advance_report')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dibayar!');
+    }
+    public function kirim_WA($id)
+    {
+        $cash_advance = DB::table('admin_cash_advance_report')->find($id);
+
+        $nomorTelepon = [
+            $cash_advance->no_telp,
+        ];
+
+        // Membangun pesan yang diinginkan
+        $pesan = "[Ini Adalah Pesan Dari Sistem]\nAda Permohonan CAR No. " . $cash_advance->no_doku . " Dari " . $cash_advance->pemohon . " Menunggu Approval. \nKlik Disini untuk Melihat ";
+
+        $urlWhatsApp = 'https://api.whatsapp.com/send';
+
+        $berhasilDikirim = [];
+
+        foreach ($nomorTelepon as $nomor) {
+            try {
+                $url = $urlWhatsApp . '?phone=' . $nomor . '&text=' . urlencode($pesan);
+                $berhasilDikirim[] = $nomor;
+            } catch (\Exception $e) {
+                // Tangani kesalahan yang terjadi
+                dd($e->getMessage());
+            }
+        }
+
+        // Lakukan penanganan sesuai kebutuhan dengan menggunakan array berhasilDikirim
+        if (!empty($berhasilDikirim)) {
+            // Redirect ke halaman WhatsApp
+            $redirectUrl = $urlWhatsApp . '?phone=' . implode(',', $berhasilDikirim) . '&text=' . urlencode($pesan);
+            header("Location: " . $redirectUrl);
+            exit();
+            // dd($redirectUrl);
+        } else {
+            return redirect()->back()->with('error', 'Gagal mengirim pesan WhatsApp.');
+        }
     }
 }

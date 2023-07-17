@@ -390,6 +390,13 @@
                                                             title="View">
                                                             <i class="fa-solid fa-eye" style="color: #900C3F"></i>
                                                         </a>
+                                                        &nbsp;
+                                                        <a href="{{ route('admin.cash_advance_report.kirim_WA', $item->id) }}"
+                                                            data-toggle="tooltip" data-placement="bottom"
+                                                            title="Kirim WA">
+                                                            <i class="fa-brands fa-whatsapp"
+                                                                style="color: #900C3F"></i>
+                                                        </a>
                                                     </td>
                                                 @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')
                                                     <td style="text-align: center;color: #0097B2;">

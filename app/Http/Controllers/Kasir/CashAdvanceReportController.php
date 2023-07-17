@@ -174,13 +174,18 @@ class CashAdvanceReportController extends Controller
     public function getNominal(Request $request)
     {
         $tipe_ca_id = $request->input('tipe_ca_id');
-        $result = DB::select('SELECT nominal, pemohon, menyetujui FROM admin_cash_advance WHERE no_doku = ?', [$tipe_ca_id]);
 
-        return response()->json([
-            'nominal_ca' => $result[0]->nominal,
-            'pemohon' => $result[0]->pemohon,
-            'menyetujui' => $result[0]->menyetujui
-        ]);
+        $result = DB::select('SELECT * FROM admin_cash_advance WHERE no_doku = ?', [$tipe_ca_id]);
+        $nominal = number_format($result[0]->nominal, 2, '.', '');
+
+        return response()->json(
+            [
+                'nominal_ca' => $nominal,
+                'pemohon' => $result[0]->pemohon,
+                'nama_menyetujui' => $result[0]->menyetujui,
+                'no_telp' => $result[0]->no_telp
+            ]
+        );
     }
     public function simpan_CAR(Request $request)
     {

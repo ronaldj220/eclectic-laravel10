@@ -114,7 +114,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="">
+                    <form action="{{ route('kasir.purchase_request.paid_PR', $PR->id) }}" method="POST">
                         @csrf
                         <input type="text" name="no_ref" class="form-control"
                             placeholder="Masukkan Nomor Referensi">

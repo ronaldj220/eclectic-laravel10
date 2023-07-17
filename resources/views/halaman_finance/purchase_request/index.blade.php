@@ -250,6 +250,13 @@
                                                                     <i class="fa-solid fa-print"
                                                                         style="color: #900C3F"></i>
                                                                 </a>
+                                                                &nbsp; &nbsp; &nbsp;
+                                                                <a href="{{ route('kasir.purchase_request.excel_PR', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Download Excel">
+                                                                    <i class="fa-solid fa-file-excel"
+                                                                        style="color: #900C3F"></i>
+                                                                </a>
                                                             </div>
                                                         </td>
                                                     @elseif ($item->status_approved == 'rejected' && $item->status_paid == 'pending')
@@ -262,6 +269,13 @@
                                                                     data-toggle="tooltip" data-placement="bottom"
                                                                     title="Print Dokumen">
                                                                     <i class="fa-solid fa-print"
+                                                                        style="color: #900C3F"></i>
+                                                                </a>
+                                                                &nbsp; &nbsp; &nbsp;
+                                                                <a href="{{ route('kasir.purchase_request.excel_PR', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Download Excel">
+                                                                    <i class="fa-solid fa-file-excel"
                                                                         style="color: #900C3F"></i>
                                                                 </a>
                                                             </div>
@@ -277,6 +291,13 @@
                                                                     data-toggle="tooltip" data-placement="bottom"
                                                                     title="Print Dokumen">
                                                                     <i class="fa-solid fa-print"
+                                                                        style="color: #900C3F"></i>
+                                                                </a>
+                                                                &nbsp; &nbsp; &nbsp;
+                                                                <a href="{{ route('kasir.purchase_request.excel_PR', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Download Excel">
+                                                                    <i class="fa-solid fa-file-excel"
                                                                         style="color: #900C3F"></i>
                                                                 </a>
                                                             </div>
@@ -301,6 +322,13 @@
                                                                     title="Bayar">
                                                                     <i class="fa fa-credit-card"
                                                                         style="color:#900C3F"></i>
+                                                                </a>
+                                                                &nbsp; &nbsp; &nbsp;
+                                                                <a href="{{ route('kasir.purchase_request.excel_PR', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Download Excel">
+                                                                    <i class="fa-solid fa-file-excel"
+                                                                        style="color: #900C3F"></i>
                                                                 </a>
                                                             </div>
                                                         </td>

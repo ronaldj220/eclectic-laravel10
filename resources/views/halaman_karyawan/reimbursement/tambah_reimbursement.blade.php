@@ -236,8 +236,9 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Menyetujui</label>
-                                            <select class="form-control" id="exampleFormControlSelect1"
-                                                name="nama_menyetujui">
+                                            <select class="form-control" id="menyetujui" name="nama_menyetujui"
+                                                onchange="updateFields2()"
+                                                data-url="{{ route('karyawan.reimbursement.getNomor') }}">
                                                 <option value=""> --- Pilih --- </option>
                                                 @foreach ($menyetujui as $item)
                                                     <option value="{{ $item->nama }}">{{ $item->nama }}</option>
@@ -251,6 +252,27 @@
                                             * Yacob (Keperluan Office) <br>
                                             * Richard (Keperluan Marketing)
                                         </div>
+                                        <div class="form-group" hidden>
+                                            <label for="exampleInputPassword1">Nomor Telepon</label>
+                                            <input type="text" class="form-control" id="no_telp" name="no_telp"
+                                                readonly>
+                                        </div>
+                                        @if (Auth::guard('karyawan')->user()->jabatan == 'Project Manager')
+                                            <div class="form-group" style="margin-top: 10px">
+                                                <label for="">File Excel</label> <br>
+                                                <input type="file" id="file-input" accept=".xlsx">
+                                            </div>
+                                        @elseif (Auth::guard('karyawan')->user()->jabatan == 'Support Manager')
+                                            <div class="form-group" style="margin-top: 10px">
+                                                <label for="">File Excel</label> <br>
+                                                <input type="file" id="file-input" accept=".xlsx">
+                                            </div>
+                                        @elseif (Auth::guard('karyawan')->user()->jabatan == 'Staff')
+                                            <div class="form-group" style="margin-top: 10px">
+                                                <label for="">File Excel</label> <br>
+                                                <input type="file" id="file-input" accept=".xlsx">
+                                            </div>
+                                        @endif
                                         @if (Auth::guard('karyawan')->user()->jabatan == 'Project Manager')
                                             <div class="form-group" style="margin-top: 10px">
                                                 <label for="exampleInputPassword1">File Bukti</label>
@@ -573,7 +595,8 @@
                                                 <input type="number" class="form-control" name='hari_ts2[]'>
                                             </div>
                                         </div>
-                                        <div class = 'col-md-6'>
+                                        
+                                        <div class = 'col-md-4'>
                                             <div class="form-group">
                                                 <label for="exampleInputPassword1" hidden>Mata Uang</label>
                                                 <select class="form-control" id="exampleFormControlSelect1" name="kurs_ts[]" hidden>
@@ -584,6 +607,7 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        
                                         <div class='col-md-4'>
                                             <div class="form-group">
                                                 <label for="exampleInputPassword1" hidden>Nominal</label>
@@ -596,9 +620,10 @@
                                                 <input type="text" class="form-control" name='hari_ts1[]' value = {{ $nominal_awal[0]->hari }} hidden>
                                             </div>
                                         </div>
+                                        
                                     </div>
                                     <div class = 'row'>
-                                        <div class='col-md-2'>
+                                        <div class='col-md-12'>
                                             <div class="form-group">
                                                 <button name="delete${i}" id="delete${i}" onclick="deleteRow(this)" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
                                             </div>
@@ -748,6 +773,77 @@
             var id = $('#id' + row).val();
             $('#delete' + row).closest('center').remove();
         }
+
+        function updateFields2() {
+            var selectedSupplier = document.getElementById("menyetujui").value;
+            var url = document.getElementById("menyetujui").getAttribute("data-url");
+
+            // Lakukan permintaan AJAX ke endpoint getDataBySupplier
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        document.getElementById("no_telp").value = response.keterangan;
+                    } else {
+                        document.getElementById("pemohon").value = "";
+                        document.getElementById("menyetujui").value = "";
+                    }
+                }
+            };
+            xhr.open("GET", url + "?menyetujui=" + selectedSupplier);
+            xhr.send();
+        }
+    </script>
+
+    <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script>
+
+    <script>
+        const input = document.getElementById('file-input');
+        input.addEventListener('change', function() {
+            readXlsxFile(input.files[0]).then(function(data) {
+                console.log(data);
+
+                // Trace data bagian Deskripsi
+                const deskripsiData = [];
+                for (let i = 0; i < data.length; i++) {
+                    const deskripsi = data[4][1]; // Asumsikan Deskripsi berada di kolom kedua (indeks 1)
+                    deskripsiData.push(deskripsi);
+                }
+                // console.log(deskripsiData);
+
+                // // Trace data bagian No Bukti
+                const nobuData = data[4][5]; // Asumsikan No Bukti berada di kolom keempat (indeks 3)
+                // console.log(nobuData);
+
+
+                // Tampilkan data deskripsi dalam textarea
+                const textarea = document.querySelectorAll('textarea[name="deskripsi[]"]');
+                for (let i = 0; i < textarea.length; i++) {
+                    textarea[i].value = deskripsiData[4] ||
+                        ''; // Jika data tidak ada, beri nilai default string kosong
+                }
+
+
+                // // Tampilkan data No Bukti dalam input text
+                const nobuInputs = document.querySelectorAll('input[name="nobu[]"]');
+                for (let i = 0; i < nobuInputs.length; i++) {
+                    nobuInputs[i].value = nobuData ||
+                        ''; // Jika data tidak ada, beri nilai default string kosong
+                }
+
+                // Trace data bagian Nominal
+                const nominalData = data[4][7]; // Asumsikan Nominal berada di kolom keenam (indeks 5)
+                // console.log(nominalData);
+
+                // Tampilkan data Nominal dalam input number
+                const nominalInputs = document.querySelectorAll('input[name="nom_rb[]"]');
+                for (let i = 0; i < nominalInputs.length; i++) {
+                    nominalInputs[i].value = nominalData ||
+                        ''; // Jika data tidak ada, beri nilai default string kosong
+                }
+            });
+        });
     </script>
 </body>
 

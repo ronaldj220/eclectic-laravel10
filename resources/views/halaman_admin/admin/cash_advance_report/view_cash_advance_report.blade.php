@@ -181,8 +181,21 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary text-center">Bayar CAR dengan No
-                                {{ $cash_advance_report->no_doku }}</h6>
+                            <h6 class="m-0 font-weight-bold text-primary text-center">
+                                @if ($cash_advance_report->status_approved == 'rejected' && $cash_advance_report->status_paid == 'rejected')
+                                    Lihat CAR dengan No
+                                    {{ $cash_advance_report->no_doku }}
+                                @elseif ($cash_advance_report->status_approved == 'pending' && $cash_advance_report->status_paid == 'pending')
+                                    Lihat CAR dengan No
+                                    {{ $cash_advance_report->no_doku }}
+                                @elseif ($cash_advance_report->status_approved == 'approved' && $cash_advance_report->status_paid == 'pending')
+                                    Lihat CAR dengan No
+                                    {{ $cash_advance_report->no_doku }}
+                                @elseif ($cash_advance_report->status_approved == 'approved' && $cash_advance_report->status_paid == 'paid')
+                                    Bayar CAR dengan No
+                                    {{ $cash_advance_report->no_doku }}
+                                @endif
+                            </h6>
                         </div>
                         <div class="card-body">
                             <form
@@ -198,17 +211,19 @@
                                                 {{ date('d/m/Y', strtotime($cash_advance_report->tgl_persetujuan)) }}
                                             </div>
                                         </thead>
+                                    @elseif ($cash_advance_report->status_approved == 'approved' && $cash_advance_report->status_paid == 'paid')
+                                        @if ($nominal < $cash_advance_report->nominal_ca)
+                                            <thead>
+                                                <div class="alert alert-danger" role="alert">
+                                                    Ada Kelebihan Dana Sejumlah
+                                                    {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 0, ',', '.') }}.
+                                                    <br> Silahkan ditransfer ke Finance Eclectic di Nomor Rekening <br>
+                                                    4632005788 (BCA) A/N PT. ECLECTIC CONSULTING
+                                                </div>
+                                            </thead>
+                                        @endif
                                     @endif
-                                    @if ($nominal < $cash_advance_report->nominal_ca)
-                                        <thead>
-                                            <div class="alert alert-danger" role="alert">
-                                                Ada Kelebihan Dana Sejumlah
-                                                {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 0, ',', '.') }}.
-                                                <br> Silahkan ditransfer ke Finance Eclectic di Nomor Rekening <br>
-                                                4632005788 (BCA) A/N PT. ECLECTIC CONSULTING
-                                            </div>
-                                        </thead>
-                                    @endif
+
 
                                     <!-- Details -->
                                 </table>
@@ -252,7 +267,7 @@
                                             <td class="text-center" style="max-width: 5%;">{{ $item->curr }}
                                             </td>
                                             <td class="text-right">
-                                                {{ number_format($item->nominal, 0, ',', '.') }}
+                                                {{ number_format($item->nominal, 2, ',', '.') }}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -260,21 +275,21 @@
                                     <tr style="font-weight: bold">
                                         <td colspan="3" class="text-right">Jumlah</td>
                                         <td class="text-center">{{ $item->curr }}</td>
-                                        <td class="text-right">{{ number_format($nominal, 0, ',', '.') }}</td>
+                                        <td class="text-right">{{ number_format($nominal, 2, ',', '.') }}</td>
                                     </tr>
                                     <tr style="font-weight: bold">
                                         <td colspan="3" class="text-right">Cash Advance
                                             {{ $cash_advance_report->tipe_ca }}</td>
                                         <td class="text-center">{{ $item->curr }}</td>
                                         <td class="text-right">
-                                            {{ number_format($cash_advance_report->nominal_ca, 0, ',', '.') }}</td>
+                                            {{ number_format($cash_advance_report->nominal_ca, 2, ',', '.') }}</td>
                                     </tr>
                                     @if ($nominal < $cash_advance_report->nominal_ca)
                                         <tr style="font-weight: bold">
                                             <td colspan="3" class="text-right">Lebih</td>
                                             <td class="text-center">{{ $item->curr }}</td>
                                             <td class="text-right">
-                                                {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 0, ',', '.') }}
+                                                {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 2, ',', '.') }}
                                             </td>
                                         </tr>
                                     @elseif ($nominal > $cash_advance_report->nominal_ca)
@@ -282,7 +297,7 @@
                                             <td colspan="3" class="text-right" style="color: red">Kurang</td>
                                             <td class="text-center" style="color: red">{{ $item->curr }}</td>
                                             <td class="text-right" style="color: red">
-                                                {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 0, ',', '.') }}
+                                                {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 2, ',', '.') }}
                                             </td>
                                         </tr>
                                     @elseif ($nominal = $cash_advance_report->nominal_ca)
@@ -290,7 +305,7 @@
                                             <td colspan="3" class="text-right">Kurang</td>
                                             <td class="text-center">{{ $item->curr }}</td>
                                             <td class="text-right">
-                                                {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 0, ',', '.') }}
+                                                {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 2, ',', '.') }}
                                             </td>
                                         </tr>
                                     @endif
@@ -325,28 +340,40 @@
                                     </div>
                                 </div>
                                 <div class="container d-flex justify-content-center">
-                                    @if ($cash_advance_report->status_approved == 'approved' && $cash_advance_report->status_paid == 'pending')
-                                        @if ($nominal < $cash_advance_report->nominal_ca)
-                                            <!-- Button trigger modal -->
-                                            <button type="button" class="btn btn-primary" data-toggle="modal"
-                                                data-target="#staticBackdrop"><i
-                                                    class="fa-solid fa-cash-register fa-beat"></i>
-                                                Bayar
-                                            </button>
+                                    @if ($cash_advance_report->status_approved == 'rejected' && $cash_advance_report->status_paid == 'rejected')
+
+                                        @if ($cash_advance_report->menyetujui == 'Aris')
+                                            <a href="{{ route('admin.cash_advance_report.setujui_cash_advance_report', $cash_advance_report->id) }}"
+                                                class="btn btn-primary"><i
+                                                    class="fa-solid fa-square-check fa-beat"></i>&nbsp;Verify</a>
                                             &nbsp; &nbsp;
-                                        @elseif ($nominal > $cash_advance_report->nominal_ca)
-                                            <a href="{{ route('admin.cash_advance_report') }}"
+                                            <a href="{{ route('admin.cash_advance_report.tolak_CAR', $cash_advance_report->id) }}"
                                                 class="btn btn-danger"><i
-                                                    class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
-                                        @elseif ($nominal = $cash_advance_report->nominal_ca)
-                                            <a href="{{ route('admin.cash_advance_report') }}"
+                                                    class="fa-solid fa-xmark fa-beat"></i>&nbsp;Tolak</a>
+                                            &nbsp; &nbsp;
+                                        @else
+                                            <button class="btn btn-primary"><i
+                                                    class="fa-solid fa-square-check fa-beat"></i>&nbsp;Verify</button>
+                                            &nbsp; &nbsp;
+                                            <a href="{{ route('admin.cash_advance_report.tolak_CAR', $cash_advance_report->id) }}"
                                                 class="btn btn-danger"><i
-                                                    class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
+                                                    class="fa-solid fa-xmark fa-beat"></i>&nbsp;Tolak</a>
+                                            &nbsp; &nbsp;
                                         @endif
-                                    @elseif ($cash_advance_report->status_approved == 'rejected' && $cash_advance_report->status_paid == 'rejected')
-                                        <button class="btn btn-primary"><i
-                                                class="fa-solid fa-square-check fa-beat"></i>&nbsp;Verify</button>
-                                        <a href="{{ route('admin.cash_advance_report') }}" class="btn btn-danger"><i
+
+                                        <a href="{{ route('admin.cash_advance_report') }}" class="btn btn-warning"><i
+                                                class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
+                                    @elseif ($cash_advance_report->status_approved == 'rejected' && $cash_advance_report->status_paid == 'pending')
+                                        <a href="{{ route('admin.cash_advance_report') }}" class="btn btn-warning"><i
+                                                class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
+                                    @elseif ($cash_advance_report->status_approved == 'pending' && $cash_advance_report->status_paid == 'pending')
+                                        <a href="{{ route('admin.cash_advance_report') }}" class="btn btn-warning"><i
+                                                class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
+                                    @elseif ($cash_advance_report->status_approved == 'approved' && $cash_advance_report->status_paid == 'pending')
+                                        <a href="{{ route('admin.cash_advance_report') }}" class="btn btn-warning"><i
+                                                class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
+                                    @elseif ($cash_advance_report->status_approved == 'approved' && $cash_advance_report->status_paid == 'paid')
+                                        <a href="{{ route('admin.cash_advance_report') }}" class="btn btn-warning"><i
                                                 class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
                                     @endif
 

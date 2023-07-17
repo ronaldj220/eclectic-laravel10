@@ -251,7 +251,11 @@
                                             <input type="text" class="form-control" id="menyetujui"
                                                 name="nama_menyetujui" readonly>
                                         </div>
-
+                                        <div class="form-group" hidden>
+                                            <label for="exampleInputPassword1">Nomor Telepon</label>
+                                            <input type="text" class="form-control" id="no_telp" name="no_telp"
+                                                readonly>
+                                        </div>
                                         <div class="form-group mt-3">
                                             <div id="detail"></div>
                                         </div>
@@ -445,8 +449,9 @@
                         success: function(data) {
                             $("#nominal_ca").val(data.nominal_ca);
                             $("#pemohon").val(data.pemohon);
-                            $("#menyetujui").val(data.menyetujui);
-                            console.log(data);
+                            $("#menyetujui").val(data.nama_menyetujui);
+                            $("#no_telp").val(data.no_telp);
+                            // console.log(data);
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
                             // Handle error

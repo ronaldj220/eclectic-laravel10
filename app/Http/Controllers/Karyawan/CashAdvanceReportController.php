@@ -78,13 +78,18 @@ class CashAdvanceReportController extends Controller
     public function getNominal(Request $request)
     {
         $tipe_ca_id = $request->input('tipe_ca_id');
-        $result = DB::select('SELECT nominal, pemohon, menyetujui FROM admin_cash_advance WHERE no_doku = ?', [$tipe_ca_id]);
 
-        return response()->json([
-            'nominal_ca' => $result[0]->nominal,
-            'pemohon' => $result[0]->pemohon,
-            'menyetujui' => $result[0]->menyetujui
-        ]);
+        $result = DB::select('SELECT * FROM admin_cash_advance WHERE no_doku = ?', [$tipe_ca_id]);
+        $nominal = number_format($result[0]->nominal, 2, '.', '');
+
+        return response()->json(
+            [
+                'nominal_ca' => $nominal,
+                'pemohon' => $result[0]->pemohon,
+                'nama_menyetujui' => $result[0]->menyetujui,
+                'no_telp' => $result[0]->no_telp
+            ]
+        );
     }
     public function simpan_CAR(Request $request)
     {
@@ -95,12 +100,14 @@ class CashAdvanceReportController extends Controller
         $cashAdvance->no_doku = $request->no_doku;
         $cashAdvance->tgl_diajukan = $tgl_diajukan;
         $cashAdvance->tipe_ca = $request->tipe_ca_id;
-        $cashAdvance->nominal_ca = $request->nominal_ca;
+        $nominalCa = str_replace(',', '', $request->nominal_ca);
+        $cashAdvance->nominal_ca = $nominalCa;
         $cashAdvance->judul_doku = $request->judul_doku;
         $cashAdvance->pemohon = $request->pemohon;
         $cashAdvance->accounting = $request->accounting;
         $cashAdvance->kasir = $request->kasir;
         $cashAdvance->menyetujui = $request->nama_menyetujui;
+        $cashAdvance->no_telp = $request->no_telp;
         $cashAdvance->save();
 
         foreach ($request->deskripsi as $deskripsi => $value) {

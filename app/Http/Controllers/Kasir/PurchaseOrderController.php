@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Kasir;
 
+use App\Exports\Kasir\PurchaseOrderExports;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Purchase_Order;
 use App\Models\Admin\Purchase_Order_Detail;
@@ -10,6 +11,7 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PurchaseOrderController extends Controller
 {
@@ -297,5 +299,9 @@ class PurchaseOrderController extends Controller
             $PO_detail->save();
         }
         return redirect()->route('kasir.purchase_order')->with('success', 'Data Purchase Order berhasil disimpan.');
+    }
+    public function excel_PO($id)
+    {
+        return Excel::download(new PurchaseOrderExports($id), 'PO_Kasir_' . $id . '.xlsx');
     }
 }

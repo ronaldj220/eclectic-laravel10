@@ -101,8 +101,10 @@
             @if ($PR->status_approved == 'rejected' && $PR->status_paid == 'rejected')
                 <button class="btn btn-primary"><i class="fa-solid fa-square-check fa-beat"></i>&nbsp;Verify</button>
                 &nbsp; &nbsp;
-
-                <a href="{{ route('admin.purchase_request') }}" class="btn btn-danger"><i
+                <a href="{{ route('admin.purchase_request.tolak_PR', $PR->id) }}" class="btn btn-danger"><i
+                        class="fa-solid fa-xmark fa-beat"></i>&nbsp;Tolak</a>
+                &nbsp; &nbsp;
+                <a href="{{ route('admin.purchase_request') }}" class="btn btn-warning"><i
                         class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
             @elseif ($PR->status_approved == 'rejected' && $PR->status_paid == 'pending')
                 <a href="{{ route('admin.purchase_request') }}" class="btn btn-danger"><i

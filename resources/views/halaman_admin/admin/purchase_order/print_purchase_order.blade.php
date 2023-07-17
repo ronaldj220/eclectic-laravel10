@@ -53,10 +53,10 @@
                     <td class="text-center" style="max-width: 5%;">{{ $no++ . '.' }}</td>
                     <td style="text-transform: capitalize;">{{ $item->judul }}
                         @if ($item->tgl_1 && $item->tgl_2)
-                            {{ date('d/m/Y', strtotime($item->tgl_1)) }} -
-                            {{ date('d/m/Y', strtotime($item->tgl_2)) }}
+                            {{ date('d/m/y', strtotime($item->tgl_1)) }} -
+                            {{ date('d/m/y', strtotime($item->tgl_2)) }}
                         @elseif ($item->tgl_1)
-                            {{ date('d/m/Y', strtotime($item->tgl_1)) }}
+                            {{ date('d/m/y', strtotime($item->tgl_1)) }}
                         @endif
                     </td>
                     <td style="text-transform: capitalize; text-align: center">{{ $item->jumlah }}</td>
@@ -78,7 +78,7 @@
                         {{ $item->PPH }}</td>
                     <td style="text-transform: capitalize; text-align: right">
                         @if ($item->curr == 'IDR')
-                            {{ number_format($item->nominal, 0, ',', '.') }}
+                            {{ number_format($item->nominal, 2, ',', '.') }}
                         @elseif ($item->curr == 'USD')
                             {{ number_format($item->nominal, 2, ',', '.') }}
                         @elseif ($item->curr == 'SGD')
@@ -104,7 +104,7 @@
                 </td>
                 <td class="text-end">
                     @if ($item->curr == 'IDR')
-                        {{ number_format($nominal, 0, ',', '.') }}
+                        {{ number_format($nominal, 2, ',', '.') }}
                     @elseif ($item->curr == 'USD')
                         {{ number_format($nominal, 2, ',', '.') }}
                     @elseif ($item->curr == 'SGD')
@@ -129,7 +129,7 @@
                 </td>
                 <td class="text-end">
                     @if ($item->curr == 'IDR')
-                        {{ number_format($PPN, 0, ',', '.') }}
+                        {{ number_format($PPN, 2, ',', '.') }}
                     @elseif ($item->curr == 'USD')
                         {{ number_format($PPN, 2, ',', '.') }}
                     @elseif ($item->curr == 'SGD')
@@ -154,7 +154,7 @@
                 </td>
                 <td class="text-end "@if ($PPH != 0) style="color: red" @endif>
                     @if ($item->curr == 'IDR')
-                        {{ number_format($PPH, 0, ',', '.') }}
+                        {{ number_format($PPH, 2, ',', '.') }}
                     @elseif ($item->curr == 'USD')
                         {{ number_format($PPH, 2, ',', '.') }}
                     @elseif ($item->curr == 'SGD')
@@ -179,7 +179,7 @@
                 </td>
                 <td class="text-end "@if ($PPH_4 != 0) style="color: red" @endif>
                     @if ($item->curr == 'IDR')
-                        {{ number_format($PPH_4, 0, ',', '.') }}
+                        {{ number_format($PPH_4, 2, ',', '.') }}
                     @elseif ($item->curr == 'USD')
                         {{ number_format($PPH_4, 2, ',', '.') }}
                     @elseif ($item->curr == 'SGD')
@@ -204,7 +204,7 @@
                 </td>
                 <td class="text-end">
                     @if ($item->curr == 'IDR')
-                        {{ number_format($grand_total, 0, ',', '.') }}
+                        {{ number_format($grand_total, 2, ',', '.') }}
                     @elseif ($item->curr == 'USD')
                         {{ number_format($grand_total, 2, ',', '.') }}
                     @elseif ($item->curr == 'SGD')
@@ -256,7 +256,7 @@
                     @else
                         <div class="col">
                             <table class="table table-borderless table-sm"
-                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 225px; margin-right: -10px;">
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
                                 <tr class="text-center">
                                     <td>Approved on {{ date('d/m/Y', strtotime($PO->tgl_approval)) }}
                                     </td>

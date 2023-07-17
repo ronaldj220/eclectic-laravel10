@@ -50,13 +50,13 @@
                 </td>
                 <td></td>
                 <td class="text-center">{{ $cash_advance->curr }}</td>
-                <td class="text-end">{{ number_format($nominal, 0, ',', '.') }}</td>
+                <td class="text-end">{{ number_format($nominal, 2, ',', '.') }}</td>
             </tr>
             <!-- Total Price -->
             <tr style="font-weight: bold">
                 <td colspan="3" class="text-end">Jumlah</td>
                 <td class="text-center">{{ $cash_advance->curr }}</td>
-                <td class="text-end">{{ number_format($nominal, 0, ',', '.') }}</td>
+                <td class="text-end">{{ number_format($nominal, 2, ',', '.') }}</td>
             </tr>
         </table>
 

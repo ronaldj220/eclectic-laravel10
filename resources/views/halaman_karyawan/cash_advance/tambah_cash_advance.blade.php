@@ -234,13 +234,19 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Menyetujui</label>
-                                            <select class="form-control" id="exampleFormControlSelect1"
-                                                name="nama_menyetujui">
+                                            <select class="form-control" id="menyetujui" name="nama_menyetujui"
+                                                onchange="updateFields2()"
+                                                data-url="{{ route('karyawan.cash_advance.getNomor') }}">
                                                 <option value=""> --- Pilih --- </option>
                                                 @foreach ($menyetujui as $item)
                                                     <option value="{{ $item->nama }}">{{ $item->nama }}</option>
                                                 @endforeach
                                             </select>
+                                        </div>
+                                        <div class="form-group" hidden>
+                                            <label for="exampleInputPassword1">Nomor Telepon</label>
+                                            <input type="text" class="form-control" id="no_telp" name="no_telp"
+                                                readonly>
                                         </div>
                                         <div class="form-text text-muted"
                                             style="font-size: 16px; font-family: Arial; color: red">
@@ -318,7 +324,28 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('assets') }}/js/sb-admin-2.min.js"></script>
+    <script>
+        function updateFields2() {
+            var selectedSupplier = document.getElementById("menyetujui").value;
+            var url = document.getElementById("menyetujui").getAttribute("data-url");
 
+            // Lakukan permintaan AJAX ke endpoint getDataBySupplier
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        document.getElementById("no_telp").value = response.keterangan;
+                    } else {
+                        document.getElementById("pemohon").value = "";
+                        document.getElementById("menyetujui").value = "";
+                    }
+                }
+            };
+            xhr.open("GET", url + "?menyetujui=" + selectedSupplier);
+            xhr.send();
+        }
+    </script>
 </body>
 @include('sweetalert::alert')
 

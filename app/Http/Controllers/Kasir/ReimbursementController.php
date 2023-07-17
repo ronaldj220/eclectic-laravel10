@@ -408,6 +408,7 @@ class ReimbursementController extends Controller
         $reimbursement->accounting = $request->accounting;
         $reimbursement->kasir = $request->kasir;
         $reimbursement->menyetujui = $request->nama_menyetujui;
+        $reimbursement->no_telp_direksi = $request->no_telp;
         if ($request->project === 'RB (Reimbursement)') {
             $reimbursement->halaman = 'RB';
         } elseif ($request->project === 'TS (Timesheet Support)') {
@@ -522,5 +523,28 @@ class ReimbursementController extends Controller
             }
         }
         return redirect()->route('kasir.reimbursement')->with('success', 'Data berhasil diajukan!');
+    }
+    public function getNomor(Request $request)
+    {
+        $menyetujui = $request->input('menyetujui');
+
+        $details = DB::table('menyetujui')->where('nama', $menyetujui)->get();
+
+        if ($details->count() > 0) {
+
+            foreach ($details as $detail) {
+                $no_telp[] = $detail->no_telp;
+            }
+
+            $data = [
+                'keterangan' => $no_telp,
+            ];
+
+            // Mengirim data ke tampilan sebagai respons JSON
+            return response()->json($data);
+        } else {
+            // Jika data tidak ditemukan, mengirim respons JSON dengan data kosong
+            return response()->json([]);
+        }
     }
 }

@@ -241,7 +241,6 @@
             </div>
         </div>
         <div class="container d-flex justify-content-center">
-
             <a href="{{ route('karyawan.purchase_order') }}" class="btn btn-danger"><i
                     class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
         </div>

@@ -171,4 +171,27 @@ class CashAdvanceController extends Controller
         ]);
         return redirect()->route('direksi.cash_advance')->with('success', 'Data Cash Advance Berhasil Diajukan');
     }
+    public function getNomor(Request $request)
+    {
+        $menyetujui = $request->input('menyetujui');
+
+        $details = DB::table('menyetujui')->where('nama', $menyetujui)->get();
+
+        if ($details->count() > 0) {
+
+            foreach ($details as $detail) {
+                $no_telp[] = $detail->no_telp;
+            }
+
+            $data = [
+                'keterangan' => $no_telp,
+            ];
+
+            // Mengirim data ke tampilan sebagai respons JSON
+            return response()->json($data);
+        } else {
+            // Jika data tidak ditemukan, mengirim respons JSON dengan data kosong
+            return response()->json([]);
+        }
+    }
 }
