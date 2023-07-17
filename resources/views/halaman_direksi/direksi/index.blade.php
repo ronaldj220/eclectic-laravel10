@@ -195,6 +195,11 @@
                         </div>
                     @endif
                     <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-start mb-4">
+                        <a href="https://drive.google.com/file/d/1BygET-_qrafRbWvjUho_qb8m3GOdQzqF/view?usp=sharing"><i
+                                class="fa-solid fa-cloud-arrow-down"></i> Download</a>
+                    </div>
+                    <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-center mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Dashboard (Direksi)</h1>
                     </div>

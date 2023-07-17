@@ -193,6 +193,35 @@
                             </button>
                         </div>
                     @endif
+                    @if (Auth::guard('karyawan')->user()->jabatan == 'Konsultan')
+                        <!-- Page Heading -->
+                        <div class="d-sm-flex align-items-center justify-content-start mb-4">
+                            <a
+                                href="https://drive.google.com/file/d/1FYmGvS7aYSU4HFpk7zngHP5TPRfcQSVf/view?usp=sharing"><i
+                                    class="fa-solid fa-cloud-arrow-down"></i> Download</a>
+                        </div>
+                    @elseif (Auth::guard('karyawan')->user()->jabatan == 'Project Manager')
+                        <!-- Page Heading -->
+                        <div class="d-sm-flex align-items-center justify-content-start mb-4">
+                            <a
+                                href="https://drive.google.com/file/d/1AFEoQgVbNCqmZuyB98W3pvWQflVISr-5/view?usp=sharing"><i
+                                    class="fa-solid fa-cloud-arrow-down"></i> Download</a>
+                        </div>
+                    @elseif (Auth::guard('karyawan')->user()->jabatan == 'Support Manager')
+                        <!-- Page Heading -->
+                        <div class="d-sm-flex align-items-center justify-content-start mb-4">
+                            <a
+                                href="https://drive.google.com/file/d/12wT--gAnZQ_AlJP3K1Nt1ihK6VIDz9vl/view?usp=sharing"><i
+                                    class="fa-solid fa-cloud-arrow-down"></i> Download</a>
+                        </div>
+                    @elseif (Auth::guard('karyawan')->user()->jabatan == 'Staff')
+                        <!-- Page Heading -->
+                        <div class="d-sm-flex align-items-center justify-content-start mb-4">
+                            <a
+                                href="https://drive.google.com/file/d/17x55LBokLfndB4p8Yrw6SMmFDoRrFLn0/view?usp=sharing"><i
+                                    class="fa-solid fa-cloud-arrow-down"></i> Download</a>
+                        </div>
+                    @endif
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-center mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Dashboard (Karyawan)</h1>

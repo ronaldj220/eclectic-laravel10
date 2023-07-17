@@ -178,6 +178,11 @@
                 <div class="container">
 
                     <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-start mb-4">
+                        <a href="https://drive.google.com/file/d/1RJmZuL2LmXJKe3NlkAESjgsCJc9pcX8l/view?usp=sharing"><i
+                                class="fa-solid fa-cloud-arrow-down"></i> Download</a>
+                    </div>
+                    <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-center mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Dashboard (Administrator)</h1>
                     </div>
