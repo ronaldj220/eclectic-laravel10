@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS `accounting` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.accounting: ~1 rows (approximately)
-DELETE FROM `accounting`;
 INSERT INTO `accounting` (`id`, `nama`, `created_at`, `updated_at`) VALUES
 	(1, 'Naumi. T. R', NULL, NULL);
 
@@ -57,7 +56,6 @@ CREATE TABLE IF NOT EXISTS `admin_cash_advance` (
 ) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.admin_cash_advance: ~27 rows (approximately)
-DELETE FROM `admin_cash_advance`;
 INSERT INTO `admin_cash_advance` (`id`, `no_doku`, `tgl_diajukan`, `tgl_diajukan2`, `judul_doku`, `curr`, `nominal`, `pemohon`, `accounting`, `kasir`, `menyetujui`, `no_telp`, `status_approved`, `status_paid`, `tgl_approval`, `alasan`, `created_at`, `updated_at`) VALUES
 	(1, '23/VI/CA/00001', '2023-06-02', NULL, 'DL Telkom w/ Aris Ulama, NTT IT, ASG, GKM', 'IDR', 1000000.00000, 'Yacob', 'Naumi. T. R', 'Suzy. A', 'Aris', '+62 881-3236-918', 'approved', 'paid', '2023-06-05', NULL, NULL, NULL),
 	(2, '23/VI/CA/00002', '2023-06-05', NULL, 'Tagihan Skyloft Soho 1678 Juni 2023', 'IDR', 1567954.00000, 'Suzy. A', 'Naumi. T. R', 'Suzy. A', 'Yacob', '+62 881-3236-918', 'approved', 'paid', '2023-06-05', NULL, NULL, NULL),
@@ -111,7 +109,6 @@ CREATE TABLE IF NOT EXISTS `admin_cash_advance_report` (
 ) ENGINE=InnoDB AUTO_INCREMENT=196 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.admin_cash_advance_report: ~30 rows (approximately)
-DELETE FROM `admin_cash_advance_report`;
 INSERT INTO `admin_cash_advance_report` (`id`, `no_doku`, `tgl_diajukan`, `judul_doku`, `tipe_ca`, `nominal_ca`, `pemohon`, `accounting`, `kasir`, `menyetujui`, `no_telp`, `status_approved`, `status_paid`, `tgl_persetujuan`, `alasan`, `no_referensi`, `created_at`, `updated_at`) VALUES
 	(1, '23/CAR/06/00001', '2023-06-10', 'Tagihan Skyloft Soho 1678 Juni 2023', '23/VI/CA/00002', 1567954.00, 'Suzy. A', 'Naumi. T. R', 'Suzy. A', 'Yacob', '+62 881-3236-918', 'approved', 'paid', '2023-06-12', NULL, NULL, '2023-06-08 20:10:12', '2023-06-08 20:10:12'),
 	(2, '23/CAR/06/00002', '2023-06-10', 'Sewa Kost Dokumen & Akomodasi SIDO, DL SAP', '23/V/CA/00015', 5000000.00, 'Zhomi', 'Naumi. T. R', 'Suzy. A', 'Yacob', '+62 881-3236-918', 'approved', 'paid', '2023-06-12', NULL, NULL, '2023-06-08 20:20:35', '2023-06-08 20:20:35'),
@@ -162,8 +159,7 @@ CREATE TABLE IF NOT EXISTS `admin_cash_advance_report_detail` (
   KEY `admin_cash_advance_report_detail_fk_ca_foreign` (`fk_ca`)
 ) ENGINE=InnoDB AUTO_INCREMENT=291 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table eclectic.admin_cash_advance_report_detail: ~196 rows (approximately)
-DELETE FROM `admin_cash_advance_report_detail`;
+-- Dumping data for table eclectic.admin_cash_advance_report_detail: ~197 rows (approximately)
 INSERT INTO `admin_cash_advance_report_detail` (`id`, `deskripsi`, `bukti_ca`, `no_bukti`, `curr`, `nominal`, `tanggal_1`, `tanggal_2`, `keperluan`, `fk_ca`, `created_at`, `updated_at`) VALUES
 	(1, 'Water PAM', NULL, 'UT23060750', 'IDR', 65500.00, '2023-04-20', '2023-05-20', NULL, 1, '2023-06-08 20:10:12', '2023-06-08 20:10:12'),
 	(2, 'Air Mineral', NULL, 'SL23060192', 'IDR', 84000.00, '2023-04-20', '2023-05-20', NULL, 1, '2023-06-08 20:10:12', '2023-06-08 20:10:12'),
@@ -384,8 +380,7 @@ CREATE TABLE IF NOT EXISTS `admin_purchase_order` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table eclectic.admin_purchase_order: ~24 rows (approximately)
-DELETE FROM `admin_purchase_order`;
+-- Dumping data for table eclectic.admin_purchase_order: ~29 rows (approximately)
 INSERT INTO `admin_purchase_order` (`id`, `no_doku`, `tgl_purchasing`, `tipe_pr`, `supplier`, `pemohon`, `accounting`, `kasir`, `menyetujui`, `status_approved`, `status_paid`, `tgl_approval`, `alasan`, `no_referensi`, `created_at`, `updated_at`) VALUES
 	(1, '01/PO/06/2023', '2023-06-02', '23/VI/PR/00001', 'PT. Padi Internet', 'Zhomi', 'Naumi. T. R', 'Suzy. A', 'Yacob', 'approved', 'pending', '2023-06-05', NULL, NULL, '2023-06-19 08:07:32', '2023-06-19 08:07:32'),
 	(2, '02/PO/06/2023', '2023-06-03', '23/VI/PR/00002', 'Harris Hotel Sentul City', 'Novi', 'Naumi. T. R', 'Suzy. A', 'Richard', 'approved', 'pending', '2023-06-05', NULL, NULL, '2023-06-19 20:28:05', '2023-06-19 20:28:05'),
@@ -442,8 +437,7 @@ CREATE TABLE IF NOT EXISTS `admin_purchase_order_detail` (
   CONSTRAINT `admin_purchase_order_detail_fk_po_foreign` FOREIGN KEY (`fk_po`) REFERENCES `admin_purchase_order` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table eclectic.admin_purchase_order_detail: ~29 rows (approximately)
-DELETE FROM `admin_purchase_order_detail`;
+-- Dumping data for table eclectic.admin_purchase_order_detail: ~34 rows (approximately)
 INSERT INTO `admin_purchase_order_detail` (`id`, `judul`, `tgl_1`, `tgl_2`, `jumlah`, `satuan`, `curr`, `nominal`, `PPN`, `PPH`, `PPH_4`, `PPH_21`, `diskon`, `ctm_1`, `ctm_2`, `fk_po`, `created_at`, `updated_at`) VALUES
 	(1, 'Padi Colocation Server 2U Padi Enterprise 2 Mbps (Periode: Juni 2023)', NULL, NULL, 1, 'PC', 'IDR', 3200000.00000, 11, NULL, NULL, NULL, NULL, NULL, NULL, 1, '2023-06-19 08:07:32', '2023-06-19 08:07:32'),
 	(2, 'Harris Hotel Sentul City an Hermes', NULL, NULL, 1, 'PC', 'IDR', 3467500.00000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, '2023-06-19 20:28:05', '2023-06-19 20:28:05'),
@@ -497,8 +491,7 @@ CREATE TABLE IF NOT EXISTS `admin_purchase_request` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table eclectic.admin_purchase_request: ~24 rows (approximately)
-DELETE FROM `admin_purchase_request`;
+-- Dumping data for table eclectic.admin_purchase_request: ~29 rows (approximately)
 INSERT INTO `admin_purchase_request` (`id`, `no_doku`, `tgl_diajukan`, `pemohon`, `menyetujui`, `status_paid`, `status_approved`, `tgl_approval`, `alasan`, `no_referensi`, `created_at`, `updated_at`) VALUES
 	(1, '23/VI/PR/00001', '2023-06-01', 'Zhomi', 'Yacob', 'pending', 'approved', NULL, NULL, NULL, '2023-06-13 20:22:02', '2023-06-13 20:22:02'),
 	(2, '23/VI/PR/00002', '2023-06-03', 'Novi', 'Richard', 'pending', 'approved', NULL, NULL, NULL, '2023-06-14 00:43:47', '2023-06-14 00:43:47'),
@@ -548,8 +541,7 @@ CREATE TABLE IF NOT EXISTS `admin_purchase_request_detail` (
   CONSTRAINT `admin_purchase_request_detail_fk_pr_foreign` FOREIGN KEY (`fk_pr`) REFERENCES `admin_purchase_request` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table eclectic.admin_purchase_request_detail: ~28 rows (approximately)
-DELETE FROM `admin_purchase_request_detail`;
+-- Dumping data for table eclectic.admin_purchase_request_detail: ~33 rows (approximately)
 INSERT INTO `admin_purchase_request_detail` (`id`, `judul`, `tgl_1`, `tgl_2`, `jumlah`, `satuan`, `tgl_pakai`, `project`, `fk_pr`, `created_at`, `updated_at`) VALUES
 	(1, 'Padi Colocation Server 2U Padi Enterprise 2 Mbps (Periode: Juni 2023)', NULL, NULL, 1, 'PC', '2023-06-01', NULL, 1, '2023-06-13 20:22:02', '2023-06-13 20:22:02'),
 	(2, 'Harris Hotel Sentul City an Hermes', '2023-06-04', '2023-06-09', 1, 'PC', '2023-06-03', 'Training JOB Medco', 2, '2023-06-14 00:43:47', '2023-06-14 00:43:47'),
@@ -603,8 +595,7 @@ CREATE TABLE IF NOT EXISTS `admin_rb_detail` (
   KEY `admin_rb_detail_fk_rb_foreign` (`fk_rb`)
 ) ENGINE=InnoDB AUTO_INCREMENT=170 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table eclectic.admin_rb_detail: ~148 rows (approximately)
-DELETE FROM `admin_rb_detail`;
+-- Dumping data for table eclectic.admin_rb_detail: ~157 rows (approximately)
 INSERT INTO `admin_rb_detail` (`id`, `deskripsi`, `bukti_reim`, `no_bukti`, `curr`, `nominal`, `tanggal_1`, `tanggal_2`, `keperluan`, `fk_rb`, `created_at`, `updated_at`) VALUES
 	(1, 'Uang Makan Team Project Lira', '1686027140_0.png', '1', 'IDR', 425000.00000, '2023-05-29', '2023-05-31', 'Lira', 1, '2023-06-05 21:52:20', '2023-06-05 21:52:20'),
 	(2, 'Uang Makan Team Project Lira', '1686027140_1.png', '2', 'IDR', 100000.00000, '2023-06-02', NULL, 'Lira', 1, '2023-06-05 21:52:20', '2023-06-05 21:52:20'),
@@ -789,8 +780,7 @@ CREATE TABLE IF NOT EXISTS `admin_reimbursement` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table eclectic.admin_reimbursement: ~60 rows (approximately)
-DELETE FROM `admin_reimbursement`;
+-- Dumping data for table eclectic.admin_reimbursement: ~62 rows (approximately)
 INSERT INTO `admin_reimbursement` (`id`, `no_doku`, `tgl_diajukan`, `judul_doku`, `pemohon`, `accounting`, `kasir`, `menyetujui`, `bukti_timesheet_project`, `bukti_support_ticket`, `bukti_support_lembur`, `halaman`, `status_approved`, `status_paid`, `alasan`, `tgl_persetujuan`, `no_referensi`, `no_telp_direksi`, `created_at`, `updated_at`) VALUES
 	(1, '00001/RB/VI/23', '2023-06-06', 'Uang Makan Team Project Lira', 'Mohammad Fariz Hadian', 'Naumi. T. R', 'Suzy. A', 'Sujiono', NULL, NULL, NULL, 'RB', 'approved', 'paid', NULL, '2023-06-05', NULL, NULL, '2023-06-05 21:52:20', '2023-06-05 21:52:20'),
 	(2, '00002/RB/VI/23', '2023-06-06', 'Dinas Onsite PT. Sido Muncul', 'Ari Dwiyanto', 'Naumi. T. R', 'Suzy. A', 'Sujiono', NULL, NULL, NULL, 'RB', 'approved', 'paid', NULL, '2023-06-06', NULL, NULL, '2023-06-05 22:12:27', '2023-06-05 22:12:27'),
@@ -871,8 +861,7 @@ CREATE TABLE IF NOT EXISTS `admin_support_lembur_detail` (
   CONSTRAINT `admin_support_lembur_detail_fk_support_lembur_foreign` FOREIGN KEY (`fk_support_lembur`) REFERENCES `admin_reimbursement` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table eclectic.admin_support_lembur_detail: ~17 rows (approximately)
-DELETE FROM `admin_support_lembur_detail`;
+-- Dumping data for table eclectic.admin_support_lembur_detail: ~16 rows (approximately)
 INSERT INTO `admin_support_lembur_detail` (`id`, `nama_karyawan`, `aliases`, `curr`, `nominal_awal`, `jam`, `fk_support_lembur`, `created_at`, `updated_at`) VALUES
 	(1, 'Stefanus Daniel', 'GDE', 'IDR', 80000, 24.5, 14, '2023-06-08 22:53:22', '2023-06-08 22:53:22'),
 	(2, 'Stefanus Daniel', 'PWC', 'IDR', 80000, 13, 14, '2023-06-08 22:53:22', '2023-06-08 22:53:22'),
@@ -908,7 +897,6 @@ CREATE TABLE IF NOT EXISTS `admin_support_ticket_detail` (
 ) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.admin_support_ticket_detail: ~33 rows (approximately)
-DELETE FROM `admin_support_ticket_detail`;
 INSERT INTO `admin_support_ticket_detail` (`id`, `nama_karyawan`, `aliases`, `curr`, `nominal_awal`, `jam`, `fk_support_ticket`, `created_at`, `updated_at`) VALUES
 	(1, 'Ari Dwiyanto', 'SSN', 'IDR', 80000, 6, 13, '2023-06-08 22:27:54', '2023-06-08 22:27:54'),
 	(2, 'Ari Dwiyanto', 'Talasi', 'IDR', 80000, 1, 13, '2023-06-08 22:27:54', '2023-06-08 22:27:54'),
@@ -961,7 +949,6 @@ CREATE TABLE IF NOT EXISTS `admin_timesheet_project_detail` (
 ) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.admin_timesheet_project_detail: ~70 rows (approximately)
-DELETE FROM `admin_timesheet_project_detail`;
 INSERT INTO `admin_timesheet_project_detail` (`id`, `nama_karyawan`, `curr`, `nominal_awal`, `hari_awal`, `hari`, `nominal`, `fk_timesheet_project`, `created_at`, `updated_at`) VALUES
 	(1, 'Yulianto', 'IDR', 3000000, 21, 21, 3000000, 7, '2023-06-07 21:33:10', '2023-06-07 21:33:10'),
 	(2, 'Made Jeremy Bern Bryan', 'IDR', 3000000, 21, 14, 2000000, 7, '2023-06-07 21:33:10', '2023-06-07 21:33:10'),
@@ -1047,7 +1034,6 @@ CREATE TABLE IF NOT EXISTS `client` (
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.client: ~21 rows (approximately)
-DELETE FROM `client`;
 INSERT INTO `client` (`id`, `kode_project`, `nama_perusahaan`, `aliases`, `group`, `created_at`, `updated_at`) VALUES
 	(1, NULL, 'PT. Sewu Segar Nusantara', 'SSN', NULL, NULL, NULL),
 	(2, NULL, 'PT. Asia Pacific Fibers, Tbk', 'APF', NULL, NULL, NULL),
@@ -1085,7 +1071,6 @@ CREATE TABLE IF NOT EXISTS `failed_jobs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.failed_jobs: ~0 rows (approximately)
-DELETE FROM `failed_jobs`;
 
 -- Dumping structure for table eclectic.fee_project
 CREATE TABLE IF NOT EXISTS `fee_project` (
@@ -1097,7 +1082,6 @@ CREATE TABLE IF NOT EXISTS `fee_project` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.fee_project: ~1 rows (approximately)
-DELETE FROM `fee_project`;
 INSERT INTO `fee_project` (`id`, `nominal`, `created_at`, `updated_at`) VALUES
 	(1, 80000, NULL, NULL);
 
@@ -1112,7 +1096,6 @@ CREATE TABLE IF NOT EXISTS `fee_timesheet` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.fee_timesheet: ~1 rows (approximately)
-DELETE FROM `fee_timesheet`;
 INSERT INTO `fee_timesheet` (`id`, `hari`, `nominal`, `created_at`, `updated_at`) VALUES
 	(1, 21, 3000000, NULL, NULL);
 
@@ -1133,7 +1116,6 @@ CREATE TABLE IF NOT EXISTS `karyawan` (
 ) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.karyawan: ~42 rows (approximately)
-DELETE FROM `karyawan`;
 INSERT INTO `karyawan` (`id`, `email`, `nama`, `jabatan`, `password`, `no_rekening`, `bank`, `signature`, `created_at`, `updated_at`) VALUES
 	(1, 'fariz@eclectic.co.id', 'Mohammad Fariz Hadian', 'Project Manager', '$2y$10$PX1piYgculbDytxXqaqUw.y7lDDJQ/QKzcRrhPAlg2PrKLdF8C0Ki', '1360011797575', 'Mandiri', 'NULL', '2023-06-09 03:39:22', NULL),
 	(2, 'ari.dwiyanto@eclectic.co.id', 'Ari Dwiyanto', 'Konsultan', '$2y$10$83oHMGFygwJVW6Qthz3osuS.JcG/uMhr9ME1YkHs1G9QicrBev5d2', NULL, NULL, NULL, NULL, NULL),
@@ -1190,7 +1172,6 @@ CREATE TABLE IF NOT EXISTS `kasir` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.kasir: ~1 rows (approximately)
-DELETE FROM `kasir`;
 INSERT INTO `kasir` (`id`, `email`, `password`, `nama`, `created_at`, `updated_at`) VALUES
 	(1, 'suzy@eclectic.co.id', '$2y$10$H4hQuZdL/1bye3ABNxcy5uKJ48m34/v3MQE61q87N.lILWftEcdmm', 'Suzy. A', NULL, NULL);
 
@@ -1204,7 +1185,6 @@ CREATE TABLE IF NOT EXISTS `kurs` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.kurs: ~4 rows (approximately)
-DELETE FROM `kurs`;
 INSERT INTO `kurs` (`id`, `mata_uang`, `created_at`, `updated_at`) VALUES
 	(1, 'IDR', NULL, NULL),
 	(2, 'SGD', NULL, NULL),
@@ -1223,7 +1203,6 @@ CREATE TABLE IF NOT EXISTS `master_po` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.master_po: ~1 rows (approximately)
-DELETE FROM `master_po`;
 INSERT INTO `master_po` (`id`, `VAT`, `PPH`, `PPH_4`, `created_at`, `updated_at`) VALUES
 	(1, 0.11, 0.02, 0.1, '2023-06-15 08:57:43', '2023-06-15 08:57:47');
 
@@ -1242,7 +1221,6 @@ CREATE TABLE IF NOT EXISTS `menyetujui` (
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.menyetujui: ~4 rows (approximately)
-DELETE FROM `menyetujui`;
 INSERT INTO `menyetujui` (`id`, `email`, `nama`, `password`, `jabatan`, `signature`, `no_telp`, `created_at`, `updated_at`) VALUES
 	(1, 'richard@eclectic.co.id', 'Richard', '$2y$10$tau2RcJRmMkDqUU8Q.WCL./MJ8MHGQXo2X.VQsPvuRRoERV4evdGq', 'Head of Business Development', NULL, '+62 881-3236-918', NULL, NULL),
 	(2, 'yacob@eclectic.co.id', 'Yacob', '$2y$10$EKz5gzX95HcbvOH/ycEO5.foJjJph2psnEnfwfWwkMvWQVvKyuMuO', 'Direktur', NULL, '+62 881-3236-918', NULL, NULL),
@@ -1257,8 +1235,7 @@ CREATE TABLE IF NOT EXISTS `migrations` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=175 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table eclectic.migrations: ~72 rows (approximately)
-DELETE FROM `migrations`;
+-- Dumping data for table eclectic.migrations: ~75 rows (approximately)
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(85, '2014_10_12_000000_create_users_table', 1),
 	(86, '2014_10_12_100000_create_password_reset_tokens_table', 1),
@@ -1345,7 +1322,6 @@ CREATE TABLE IF NOT EXISTS `password_reset_tokens` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.password_reset_tokens: ~0 rows (approximately)
-DELETE FROM `password_reset_tokens`;
 
 -- Dumping structure for table eclectic.personal_access_tokens
 CREATE TABLE IF NOT EXISTS `personal_access_tokens` (
@@ -1365,7 +1341,6 @@ CREATE TABLE IF NOT EXISTS `personal_access_tokens` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.personal_access_tokens: ~0 rows (approximately)
-DELETE FROM `personal_access_tokens`;
 
 -- Dumping structure for table eclectic.supplier
 CREATE TABLE IF NOT EXISTS `supplier` (
@@ -1381,8 +1356,7 @@ CREATE TABLE IF NOT EXISTS `supplier` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table eclectic.supplier: ~21 rows (approximately)
-DELETE FROM `supplier`;
+-- Dumping data for table eclectic.supplier: ~23 rows (approximately)
 INSERT INTO `supplier` (`id`, `nama_supplier`, `PIC`, `menyetujui`, `no_rekening`, `bank`, `pemilik_bank`, `created_at`, `updated_at`) VALUES
 	(1, 'PT. Padi Internet', 'Zhomi', 'Yacob', NULL, NULL, NULL, NULL, NULL),
 	(2, 'Harris Hotel Sentul City', 'Novi', 'Richard', NULL, NULL, NULL, NULL, NULL),
@@ -1423,7 +1397,6 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table eclectic.users: ~1 rows (approximately)
-DELETE FROM `users`;
 INSERT INTO `users` (`id`, `email`, `nama`, `password`, `jabatan`, `no_rekening`, `bank`, `created_at`, `updated_at`) VALUES
 	(1, 'zhomi@eclectic.co.id', 'Zhomi', '$2y$10$0Mc0e7w/T26s3aHS9FEqTeFOmO1Aagd/KEZs98AUa3azm53WleelO', 'Admin', NULL, NULL, '2023-06-05 21:24:28', '2023-06-05 21:24:28');
 
