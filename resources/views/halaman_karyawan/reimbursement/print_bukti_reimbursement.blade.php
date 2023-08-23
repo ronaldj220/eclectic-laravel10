@@ -31,8 +31,8 @@
                         <td class="text-center">
                             <p>{{ $no++ . '.' }}</p>
                             <div class="image-container">
-                                <img src="{{ asset('bukti_reim/' . $item->bukti_reim) }}" alt=""
-                                    style="max-width: 110%">
+                                <img src="{{ asset('/main/public/bukti_RB_admin/' . $item->bukti_reim) }}"
+                                    alt="" style="max-width: 110%">
                             </div>
                             <div class="text-container">
                                 @if ($item->curr == 'IDR')

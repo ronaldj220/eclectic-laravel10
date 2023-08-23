@@ -38,6 +38,11 @@ class ReimbursementController extends Controller
                     ->where('status_paid', 'pending');
             })
             ->orWhere(function ($query) use ($menyetujui) {
+                $query->where('pemohon', $menyetujui)
+                    ->where('status_approved', 'approved')
+                    ->where('status_paid', 'paid');
+            })
+            ->orWhere(function ($query) use ($menyetujui) {
                 $query->where('pemohon', '<>', $menyetujui)
                     ->where('status_approved', 'rejected')
                     ->where('status_paid', 'pending');
@@ -84,7 +89,11 @@ class ReimbursementController extends Controller
             $results_TS = []; // Array untuk menyimpan hasil perhitungan masing-masing item
 
             foreach ($timesheet_project_detail as $item) {
-                $result = ($item->nominal_awal / $item->hari_awal) * $item->hari;
+                if ($item->hari >= 19) {
+                    $result = $item->nominal_awal;
+                } else {
+                    $result = ($item->nominal_awal / $item->hari_awal) * $item->hari;
+                }
                 $results_TS[] = $result; // Tambahkan hasil ke array
             }
             $total_TS = array_sum($results_TS);
@@ -164,7 +173,11 @@ class ReimbursementController extends Controller
             $results_TS = []; // Array untuk menyimpan hasil perhitungan masing-masing item
 
             foreach ($timesheet_project_detail as $item) {
-                $result = ($item->nominal_awal / $item->hari_awal) * $item->hari;
+                if ($item->hari >= 19) {
+                    $result = $item->nominal_awal;
+                } else {
+                    $result = ($item->nominal_awal / $item->hari_awal) * $item->hari;
+                }
                 $results_TS[] = $result; // Tambahkan hasil ke array
             }
             $total_TS = array_sum($results_TS);
@@ -276,9 +289,9 @@ class ReimbursementController extends Controller
                 ]);
             }
             $no_doku = $data->no_doku;
-            return redirect()->route('direksi.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil disetujui. Tunggu Pembayaran ya!');
+            return redirect()->route('direksi.beranda')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil disetujui.');
         } catch (\Exception $e) {
-            return redirect()->route('direksi.reimbursement')->with('gagal', $e->getMessage());
+            return redirect()->route('direksi.beranda')->with('gagal', $e->getMessage());
         }
     }
     public function tolak_reimbursement($id, Request $request)
@@ -308,9 +321,9 @@ class ReimbursementController extends Controller
             }
             $no_doku = $data->no_doku;
             $alasan = $request->alasan;
-            return redirect()->route('direksi.reimbursement')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan Reimbursement yang berbeda!');
+            return redirect()->route('direksi.beranda')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan Reimbursement yang berbeda!');
         } catch (\Exception $e) {
-            return redirect()->route('direksi.reimbursement')->with('gagal', $e->getMessage());
+            return redirect()->route('direksi.beranda')->with('gagal', $e->getMessage());
         }
     }
     public function tambah_RB()
@@ -358,7 +371,7 @@ class ReimbursementController extends Controller
         $tgl_diajukan = $tanggal->format('Y-m-d');
 
         $reimbursement = new Reimbursement();
-        $reimbursement->no_doku = $request->no_doku;
+        $reimbursement->no_doku_real = $request->no_doku;
         $reimbursement->tgl_diajukan = $tgl_diajukan;
         $reimbursement->judul_doku = $request->judul_doku;
         $reimbursement->pemohon = $request->pemohon;
@@ -379,18 +392,10 @@ class ReimbursementController extends Controller
 
                 if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
                     $file = $request->file('foto')[$deskripsi];
-                    // Menggunakan Intervention Image untuk memuat gambar
-                    $image = Image::make($file);
 
-                    // Mengatur ukuran maksimum yang diinginkan (misalnya 800 piksel lebar dan 600 piksel tinggi)
-                    $image->resize(800, 600, function ($constraint) {
-                        $constraint->aspectRatio(); // Mempertahankan aspek rasio gambar
-                        $constraint->upsize(); // Memastikan gambar tidak diperbesar jika lebih kecil dari ukuran yang ditentukan
-                    });
-
-                    // Menyimpan gambar yang telah dikompresi
-                    $filePath = public_path('bukti_reim/') . time() . '.' . $file->getClientOriginalExtension();
-                    $image->save($filePath);
+                    // Menyimpan gambar asli tanpa kompresi
+                    $filePath = 'bukti_RB_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('bukti_RB_admin'), $filePath);
                     $fileName = basename($filePath);
 
                     $rb_detail->bukti_reim = $fileName;

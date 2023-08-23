@@ -36,19 +36,22 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
                 href="{{ route('direksi.beranda') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
                 </div>
-                <div class="sidebar-brand-text mx-3">pt. eclectic</div>
+                <div class="sidebar-brand-text">
+                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
+                </div>
+
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item ">
                 <a class="nav-link" href="{{ route('direksi.beranda') }}">
-                    <i class="fa-solid fa-home fa-beat-fade"></i>
+                    <i class="fa-solid fa-home"></i>
                     <span>Beranda</span></a>
             </li>
 
@@ -58,9 +61,10 @@
             <!-- Nav Item - Charts -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('direksi.reimbursement') }}">
-                    <i class="fa-solid fa-money-bill-transfer fa-beat-fade"></i>
+                    <i class="fa-solid fa-hand-holding-heart"></i>
                     <span>Reimbursement</span></a>
             </li>
+
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
@@ -68,10 +72,9 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('direksi.cash_advance') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-sack-dollar"></i>
                     <span>Cash Advance</span></a>
             </li>
-
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
@@ -79,32 +82,46 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('direksi.cash_advance_report') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
                     <span>Cash Advance Report</span></a>
             </li>
+
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
-
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('direksi.purchase_request') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-chart-bar"></i>
                     <span>Purchase Request</span></a>
             </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
+            <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('direksi.purchase_order') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-cart-arrow-down"></i>
                     <span>Purchase Order</span></a>
+            </li>
+
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="https://drive.google.com/file/d/1BygET-_qrafRbWvjUho_qb8m3GOdQzqF/view?usp=sharing">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span>Help</span></a>
             </li>
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
+
 
         </ul>
         <!-- End of Sidebar -->
@@ -143,7 +160,8 @@
 
                                 <a class="dropdown-item" href="{{ route('direksi.beranda.profile') }}">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
+                                    Profile ({{ Auth::guard('direksi')->user()->nama }}) |
+                                    {{ Auth::guard('direksi')->user()->jabatan }}
                                 </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -177,9 +195,9 @@
                                                 value="{{ $no_dokumen }}">
                                         </div>
                                         <div class="form-group">
-                                            <label for="exampleInputPassword1">Tanggal Purchasing</label>
+                                            <label for="exampleInputPassword1">Tanggal Invoice</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="tgl_diajukan" value="{{ date('d/m/Y') }}" readonly>
+                                                name="tgl_diajukan" value="{{ date('d/m/Y') }}">
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Nomor PR</label>
@@ -233,6 +251,93 @@
                                             * Sujiono (Keperluan Project) <br>
                                             * Yacob (Keperluan Office) <br>
                                             * Richard (Keperluan Marketing)
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="VAT"
+                                                        value="VAT" data-target="VATTextbox"
+                                                        onchange="toggleTextbox(this)">
+                                                    <label class="form-check-label" for="VAT">PPN</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="PPh"
+                                                        value="PPh" onchange="toggleTextbox(this)"
+                                                        data-target="PPhTextbox">
+                                                    <label class="form-check-label" for="PPh">PPh</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="PPh4"
+                                                        value="PPh_4" onchange="toggleTextbox(this)"
+                                                        data-target="PPh4Textbox">
+                                                    <label class="form-check-label" for="PPh_4">PPh 4 Ayat
+                                                        21</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="PPh21"
+                                                        value="PPh21" onchange="toggleTextbox(this)"
+                                                        data-target="PPh21Textbox">
+                                                    <label class="form-check-label" for="PPh_4">PPh 21</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="Diskon"
+                                                        value="Diskon" onchange="toggleTextbox(this)"
+                                                        data-target="DiskonTextbox">
+                                                    <label class="form-check-label" for="PPh_4">Diskon</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="Ctm"
+                                                        value="Ctm" onchange="toggleTextbox(this)"
+                                                        data-target="CtmTextbox">
+                                                    <label class="form-check-label" for="PPh_4">Lain-lain</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div id="VATTextbox" style="display: none;">
+                                                            <input type="text" id="VATInput" name="vat[]"
+                                                                class="form-control" placeholder="Enter PPN value">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div id="PPhTextbox" style="display: none;">
+                                                            <input type="text" id="PPhInput" name="pph[]"
+                                                                class="form-control" placeholder="Enter PPh value">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div id="PPh4Textbox" style="display: none;">
+                                                            <input type="text" id="PPh4Input" name="pph_4[]"
+                                                                class="form-control"
+                                                                placeholder="Enter PPh 4 Ayat 2 value">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div id="PPh21Textbox" style="display: none;">
+                                                            <input type="text" id="PPh21Input" name="pph_21[]"
+                                                                class="form-control" placeholder="Enter PPh 21 value">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div id="DiskonTextbox" style="display: none;">
+                                                            <input type="text" id="PPh4Input" name="diskon[]"
+                                                                class="form-control" placeholder="Enter diskon value">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div id="CtmTextbox" style="display: none;">
+                                                            <input type="text" id="CtmInput" name="lain-lain[]"
+                                                                class="form-control" placeholder="Lain-lain"> &nbsp;
+                                                            <input type="number" id="CtmInput"
+                                                                name="lain-lain_nom[]" class="form-control"
+                                                                placeholder="Enter Other Values">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="form-group mt-3">
                                             <div id="detail"></div>
@@ -327,7 +432,7 @@
                             <div class="form-group">
                                 <div class="form-row">
                                     <div class="col">
-                                        <input type="number" class="form-control" placeholder="Jumlah" name="jum[]" id="jum${i}" >
+                                        <input type="number" class="form-control" placeholder="Jumlah" name="jum[]" id="jum${i}" step="0.001">
                                     </div>
                                     <div class="col">
                                         <input type="text" class="form-control" placeholder="Qty" name="qty[]" id="qty${i}" >
@@ -351,71 +456,20 @@
                                     </div>
                                 </div>
                             </div>
-                          </div>
-                          <div class="col-md-12">
-                              <div class="form-group">
-                                  <div class="form-check form-check-inline">
-                                      <input class="form-check-input" type="checkbox" id="VAT" value="VAT" onchange="toggleTextbox('VATTextbox')">
-                                      <label class="form-check-label" for="VAT">PPN</label>
-                                  </div>
-                                  <div class="form-check form-check-inline">
-                                      <input class="form-check-input" type="checkbox" id="PPh" value="PPh" onchange="toggleTextbox('PPhTextbox')">
-                                      <label class="form-check-label" for="PPh">PPh</label>
-                                  </div>
-                                  <div class="form-check form-check-inline">
-                                      <input class="form-check-input" type="checkbox" id="PPh4" value="PPh_4" onchange="toggleTextbox('PPh4Textbox')">
-                                      <label class="form-check-label" for="PPh_4">PPh 4 Ayat 21</label>
-                                  </div>
-                                  <div class="form-check form-check-inline">
-                                      <input class="form-check-input" type="checkbox" id="PPh21" value="PPh21" onchange="toggleTextbox('PPh21Textbox')">
-                                      <label class="form-check-label" for="PPh_4">PPh 21</label>
-                                  </div>
-                                  <div class="form-check form-check-inline">
-                                      <input class="form-check-input" type="checkbox" id="Diskon" value="Diskon" onchange="toggleTextbox('DiskonTextbox')">
-                                      <label class="form-check-label" for="PPh_4">Diskon</label>
-                                  </div>
-                                  <div class="form-check form-check-inline">
-                                      <input class="form-check-input" type="checkbox" id="Ctm" value="Ctm" onchange="toggleTextbox('CtmTextbox')">
-                                      <label class="form-check-label" for="PPh_4">Lain-lain</label>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="col-md-12">
-                              <div class="form-group">
-                                  <div class="row">
-                                      <div class="col">
-                                          <div id="VATTextbox" style="display: none;">
-                                              <input type="text" id="VATInput" name="vat[]" class="form-control" placeholder="Enter PPN value">
-                                          </div>
-                                      </div>
-                                      <div class="col">
-                                          <div id="PPhTextbox" style="display: none;">
-                                              <input type="text" id="PPhInput" name="pph[]" class="form-control" placeholder="Enter PPh value">
-                                          </div>
-                                      </div>
-                                      <div class="col">
-                                          <div id="PPh4Textbox" style="display: none;">
-                                              <input type="text" id="PPh4Input" name="pph_4[]" class="form-control" placeholder="Enter PPh 4 Ayat 2 value">
-                                          </div>
-                                      </div>
-                                      <div class="col">
-                                          <div id="PPh21Textbox" style="display: none;">
-                                              <input type="text" id="PPh21Input" name="pph_21[]" class="form-control" placeholder="Enter PPh 21 value">
-                                          </div>
-                                      </div>
-                                      <div class="col">
-                                          <div id="DiskonTextbox" style="display: none;">
-                                              <input type="text" id="PPh4Input" name="diskon[]" class="form-control" placeholder="Enter diskon value">
-                                          </div>
-                                      </div>
-                                      <div class="col">
-                                          <div id="CtmTextbox" style="display: none;">
-                                              <input type="text" id="CtmInput" name="lain-lain[]" class="form-control" placeholder="Lain-lain"> &nbsp;
-                                              <input type="number" id="CtmInput" name="lain-lain_nom[]" class="form-control" placeholder="Enter Other Values">
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
+                            <div class = 'col-md-12'>
+                                <div class="form-group">
+                                    <div class="form-row">
+                                        <div class="col">
+                                            <label for="">Tanggal </label>
+                                            <input type="date" class="form-control" placeholder="Tanggal" name='tgl_1[]'>
+                                        </div>
+                                        <div class="col">
+                                            <label for="">Tanggal</label>
+                                            <input type="date" class="form-control" placeholder="Tanggal" name='tgl_2[]'>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                           </div>
                       </div>
                       <div class = 'row'>
@@ -495,14 +549,14 @@
             xhr.send();
         }
 
-        function toggleTextbox(elementId) {
-            var checkbox = document.getElementById(elementId.replace("Textbox", ""));
-            var textbox = document.getElementById(elementId);
+        function toggleTextbox(checkbox) {
+            var targetId = checkbox.getAttribute("data-target");
+            var targetElement = document.getElementById(targetId);
 
             if (checkbox.checked) {
-                textbox.style.display = "flex";
+                targetElement.style.display = "flex";
             } else {
-                textbox.style.display = "none";
+                targetElement.style.display = "none";
             }
         }
     </script>

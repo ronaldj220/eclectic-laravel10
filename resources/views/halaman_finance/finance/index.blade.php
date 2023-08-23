@@ -36,19 +36,21 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
                 href="{{ route('kasir.beranda') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
                 </div>
-                <div class="sidebar-brand-text mx-3">pt. eclectic</div>
+                <div class="sidebar-brand-text">
+                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
+                </div>
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.beranda') }}">
-                    <i class="fa-solid fa-home fa-beat-fade"></i>
+                    <i class="fa-solid fa-home"></i>
                     <span>Beranda</span></a>
             </li>
 
@@ -58,7 +60,7 @@
             <!-- Nav Item - Charts -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.reimbursement') }}">
-                    <i class="fa-solid fa-money-bill-transfer fa-beat-fade"></i>
+                    <i class="fa-solid fa-hand-holding-heart"></i>
                     <span>Reimbursement</span></a>
             </li>
             <!-- Divider -->
@@ -68,7 +70,7 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.cash_advance') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-sack-dollar"></i>
                     <span>Cash Advance</span></a>
             </li>
 
@@ -78,7 +80,7 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.cash_advance_report') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
                     <span>Cash Advance Report</span></a>
             </li>
 
@@ -88,7 +90,7 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.purchase_request') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-chart-bar"></i>
                     <span>Purchase Request</span></a>
             </li>
 
@@ -98,8 +100,19 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.purchase_order') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-cart-arrow-down"></i>
                     <span>Purchase Order</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="https://drive.google.com/file/d/1uCNOVvTxZFA5X6Qeyqae2CbhJ5hq903y/view?usp=sharing">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span>Help</span></a>
             </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
@@ -158,13 +171,19 @@
                                 <span
                                     class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::guard('kasir')->user()->nama }}
                                     <br>
-                                    <small>Kasir</small></span>
+                                    <small>Finance</small></span>
                                 <img class="img-profile rounded-circle"
                                     src="{{ asset('assets') }}/img/undraw_profile_3.svg">
                             </a>
                             <!-- Dropdown - User Information -->
+
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
+
+                                <a class="dropdown-item" href="{{ route('kasir.beranda.profile') }}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile ({{ Auth::guard('kasir')->user()->nama }}) | Finance
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal"
                                     data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -180,16 +199,19 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-start mb-4">
-                        <a href="https://drive.google.com/file/d/1uCNOVvTxZFA5X6Qeyqae2CbhJ5hq903y/view?usp=sharing"><i
-                                class="fa-solid fa-cloud-arrow-down"></i> Download</a>
-                    </div>
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-center mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard (Finance)</h1>
-                    </div>
-
+                    @if (session('success'))
+                        <script>
+                            window.addEventListener('DOMContentLoaded', function() {
+                                Swal.fire({
+                                    title: 'Berhasil!',
+                                    text: '{{ session('success') }}',
+                                    icon: 'success',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            });
+                        </script>
+                    @endif
                     <table class="table table-borderless table-lg"
                         style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 16px; margin-right: 150px">
                         <tr>
@@ -234,110 +256,38 @@
                     </table>
                     <br>
                     <!-- Begin Page Content -->
-                    <div class="container-fluid" style="margin-right: 60px">
+                    <div style="border: 0px">
                         <!-- DataTales Example -->
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
+                        <div class="card shadow">
+                            <div class="card-header">
                                 <h6 class="m-0 font-weight-bold text-primary text-center">Documents Need Payment</h6>
                             </div>
                             <div class="card-body">
-
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" width="100%" cellspacing="0">
+                                    <table class="table table-bordered">
                                         <thead class="text-center">
                                             <tr>
-                                                <th style="width: 2%">No Dokumen</th>
-
-                                                @if ($reimbursement && count($reimbursement) > 0)
-                                                    @php
-                                                        $item = $reimbursement[0];
-                                                    @endphp
-                                                    @if ($item->status_approved == 'approved' && $item->status_paid == 'pending')
-                                                        <th style="width: 3%">Status</th>
-                                                    @endif
-                                                @endif
+                                                <th>No Dokumen</th>
+                                                <th>Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if ($reimbursement)
-                                                @foreach ($reimbursement as $item)
-                                                    <tr>
-                                                        <td><a
-                                                                href="{{ route('kasir.reimbursement.view_reimbursement', $item->id) }}">{{ $item->no_doku }}</a>
-                                                        </td>
-                                                        @if ($item->status_approved == 'approved' && $item->status_paid == 'pending')
-                                                            <td style="text-align: center; color: #FF914D">
-                                                                <label style="font-weight: bold">Waiting For
-                                                                    Payment</label>
-                                                            </td>
-                                                        @endif
-                                                    </tr>
-                                                @endforeach
-                                            @endif
-                                            @if ($CA)
-                                                @foreach ($CA as $item)
-                                                    <tr>
-                                                        <td><a
-                                                                href="{{ route('kasir.cash_advance.view_cash_advance', $item->id) }}">{{ $item->no_doku }}</a>
-                                                        </td>
-                                                        @if ($item->status_approved == 'approved' && $item->status_paid == 'pending')
-                                                            <td style="text-align: center; color: #FF914D">
-                                                                <label style="font-weight: bold">Waiting For
-                                                                    Payment</label>
-                                                            </td>
-                                                        @endif
-                                                    </tr>
-                                                @endforeach
-                                            @endif
-                                            @if ($CAR)
-                                                @foreach ($CAR as $item)
-                                                    <tr>
-                                                        <td><a
-                                                                href="{{ route('kasir.cash_advance_report.view_cash_advance_report', $item->id) }}">{{ $item->no_doku }}</a>
-                                                        </td>
-                                                        @if ($item->status_approved == 'approved' && $item->status_paid == 'pending')
-                                                            <td style="text-align: center; color: #FF914D">
-                                                                <label style="font-weight: bold">Waiting For
-                                                                    Payment</label>
-                                                            </td>
-                                                        @endif
-                                                    </tr>
-                                                @endforeach
-                                            @endif
-                                            @if ($PR)
-                                                @foreach ($PR as $item)
-                                                    <tr>
-                                                        <td><a
-                                                                href="{{ route('kasir.purchase_request.view_PR', $item->id) }}">{{ $item->no_doku }}</a>
-                                                        </td>
-                                                        @if ($item->status_approved == 'approved' && $item->status_paid == 'pending')
-                                                            <td style="text-align: center; color: #FF914D">
-                                                                <label style="font-weight: bold">Waiting For
-                                                                    Payment</label>
-                                                            </td>
-                                                        @endif
-                                                    </tr>
-                                                @endforeach
-                                            @endif
-                                            @if ($PO)
-                                                @foreach ($PO as $item)
-                                                    <tr>
-                                                        <td><a
-                                                                href="{{ route('kasir.reimbursement.view_reimbursement', $item->id) }}">{{ $item->no_doku }}</a>
-                                                        </td>
-                                                        @if ($item->status_approved == 'approved' && $item->status_paid == 'pending')
-                                                            <td style="text-align: center; color: #FF914D">
-                                                                <label style="font-weight: bold">Waiting For
-                                                                    Payment</label>
-                                                            </td>
-                                                        @endif
-                                                    </tr>
-                                                @endforeach
-                                            @endif
+                                            @foreach ($combinedData as $item)
+                                                <tr>
+                                                    <td>
+                                                        <a
+                                                            href="{{ $item->source == 'reimbursement' ? route('kasir.reimbursement.view_reimbursement', $item->id) : ($item->source == 'cash_advance' ? route('kasir.cash_advance.view_cash_advance', $item->id) : ($item->source == 'cash_advance_report' ? route('kasir.cash_advance_report.view_cash_advance_report', $item->id) : ($item->source == 'purchase_request' ? route('kasir.purchase_request.view_PR', $item->id) : route('kasir.purchase_order.view_PO', $item->id)))) }}">{{ $item->no_doku_real }}</a>
+                                                    </td>
+                                                    <td style="text-align: center; color: #FF914D">
+                                                        <label style="font-weight: bold">Waiting For
+                                                            Payment</label>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                     <!-- /.container-fluid -->
-                                    {{ $reimbursement->links('pagination::bootstrap-5') }}
+                                    {{ $combinedData->links('pagination::bootstrap-5') }}
                                 </div>
                             </div>
                         </div>
@@ -346,125 +296,7 @@
                 </div>
                 <!-- /.container-fluid -->
 
-                <!-- Begin Page Content -->
-                <div class="container">
 
-
-                    <div class="row" style="justify-content: center">
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-5 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                RB (need payment)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                {{ $dataRB }}
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Earnings (Annual) Card Example -->
-                        <div class="col-xl-3 col-md-5 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                CA (need payment)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                {{ $dataCA }}
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Tasks Card Example -->
-                        <div class="col-xl-3 col-md-5 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">CAR
-                                                (need payment)
-                                            </div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                                                        {{ $dataCAR }}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" style=" justify-content: center">
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-5 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                PR (need payment)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                {{ $dataPR }}
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Earnings (Annual) Card Example -->
-                        <div class="col-xl-3 col-md-5 mb-4">
-                            <div class="card border-left-danger shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                                PO (need payment)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                {{ $dataPO }}
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                    </div>
-
-
-
-                </div>
-                <!-- /.container-fluid -->
 
 
             </div>
@@ -522,6 +354,7 @@
     <script src="{{ asset('assets') }}/js/sb-admin-2.min.js"></script>
 
     <script src="{{ asset('assets/js/tooltip.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 </body>

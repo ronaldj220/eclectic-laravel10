@@ -22,6 +22,7 @@
 
     <link rel="icon" href="{{ asset('logo.png') }}">
 
+
 </head>
 
 <body id="page-top">
@@ -36,19 +37,22 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
                 href="{{ route('admin.beranda') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
                 </div>
-                <div class="sidebar-brand-text mx-3">pt. eclectic</div>
+                <div class="sidebar-brand-text">
+                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
+                </div>
+
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.beranda') }}">
-                    <i class="fa-solid fa-home fa-beat-fade"></i>
+                    <i class="fa-solid fa-home"></i>
                     <span>Beranda</span></a>
             </li>
 
@@ -64,7 +68,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog fa-beat-fade"></i>
+                    <i class="fas fa-fw fa-cog"></i>
                     <span>Master</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -94,6 +98,7 @@
                     </div>
                 </div>
             </li>
+
             <!-- Divider -->
             <hr class="sidebar-divider">
 
@@ -106,7 +111,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                     aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder fa-beat-fade"></i>
+                    <i class="fas fa-fw fa-folder"></i>
                     <span>Transaksi</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
@@ -122,7 +127,15 @@
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
+            <hr class="sidebar-divider">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="https://drive.google.com/file/d/1RJmZuL2LmXJKe3NlkAESjgsCJc9pcX8l/view?usp=sharing">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span>Help</span></a>
+            </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
@@ -162,7 +175,11 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-
+                                <a class="dropdown-item"
+                                    href="{{ route('admin.admin.edit_admin', Auth::user()->id) }}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile ({{ Auth::user()->nama }}) | {{ Auth::user()->jabatan }}
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal"
                                     data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -185,14 +202,18 @@
                         </div>
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
+                                <a href="{{ route('admin.reimbursement.new_doc_RB') }}" class="btn btn-success">
+                                    <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Buat RB (Desktop)
+                                </a>
+                                &nbsp;
                                 <a href="{{ route('admin.reimbursement.tambah_reimbursement') }}"
                                     class="btn btn-success">
-                                    <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Ajukan RB
+                                    <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Buat RB (Mobile) Beta
                                 </a>
 
 
-                                <form id="formBulan" action="{{ route('admin.reimbursement.bulan') }}"
-                                    method="GET" class="ml-auto">
+                                <form id="formBulan" action="{{ route('admin.reimbursement') }}" method="GET"
+                                    class="ml-auto">
                                     {{ csrf_field() }}
                                     <div class="form-group">
                                         <label for="bulan">Bulan</label>
@@ -200,9 +221,9 @@
                                             value="{{ request('bulan') }}">
                                     </div>
                                 </form>
+
                                 &nbsp;
-                                <form action="{{ route('admin.reimbursement') }}" style="margin-top: 30px"
-                                    method="GET">
+                                <form action="" style="margin-top: 30px">
                                     {{ csrf_field() }}
                                     <div class="form-group">
                                         <input type="search" class="form-control" id="exampleFormControlInput1"
@@ -210,26 +231,37 @@
                                     </div>
                                 </form>
 
+
                             </div>
 
-                            @if (Session::has('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ Session::get('success') }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            @elseif (Session::has('error'))
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {{ Session::get('error') }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
+                            @if (session('success'))
+                                <script>
+                                    window.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            title: 'Berhasil!',
+                                            text: '{{ session('success') }}',
+                                            icon: 'success',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                    });
+                                </script>
+                            @elseif (session('error'))
+                                <script>
+                                    window.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            title: 'Gagal!',
+                                            text: '{{ session('error') }}',
+                                            icon: 'error',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                    });
+                                </script>
                             @endif
                             <div class="table-responsive">
                                 <table class="table table-bordered" width="100%" cellspacing="0">
-                                    <thead class="text-center">
+                                    <thead style="text-align: center">
                                         <tr>
                                             <th style="width: 2%">No Dokumen</th>
                                             <th style="width: 0%">Tanggal</th>
@@ -243,6 +275,9 @@
                                                     <th style="width: 3%">Status</th>
                                                     <th style="width: 3%">Aksi</th>
                                                 @elseif ($item->status_approved == 'rejected' && $item->status_paid == 'pending')
+                                                    <th style="width: 3%">Status</th>
+                                                    <th style="width: 3%">Aksi</th>
+                                                @elseif ($item->status_approved == 'hold' && $item->status_paid == 'hold')
                                                     <th style="width: 3%">Status</th>
                                                     <th style="width: 3%">Aksi</th>
                                                 @elseif ($item->status_approved == 'pending' && $item->status_paid == 'pending')
@@ -263,7 +298,15 @@
                                         @if ($reimbursement)
                                             @foreach ($reimbursement as $item)
                                                 <tr>
-                                                    <td>{{ $item->no_doku }}</td>
+                                                    @if ($item->status_approved == 'hold' && $item->status_paid == 'hold')
+                                                        <td><a
+                                                                href="{{ route('admin.reimbursement.lihat_reimbursement', $item->id) }}">{{ $item->no_doku_draft }}</a>
+                                                        </td>
+                                                    @else
+                                                        <td><a
+                                                                href="{{ route('admin.reimbursement.lihat_reimbursement', $item->id) }}">{{ $item->no_doku_real }}</a>
+                                                        </td>
+                                                    @endif
                                                     <td>{{ date('d.m.Y', strtotime($item->tgl_diajukan)) }}</td>
                                                     <td>{{ $item->judul_doku }}</td>
                                                     <td>{{ $item->pemohon }}</td>
@@ -280,8 +323,6 @@
                                                                 <i class="fa-solid fa-file-excel"
                                                                     style="color: #900C3F"></i>
                                                             </a>
-
-
                                                             <a href="{{ route('admin.reimbursement.print_reimbursement', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Print Dokumen">
@@ -289,25 +330,7 @@
                                                                     style="color: #900C3F"></i>
                                                             </a>
 
-                                                            @if ($item->halaman == 'TS')
-                                                                <a href="{{ asset('bukti_TS_karyawan/' . $item->bukti_timesheet_project) }}"
-                                                                    download>
-                                                                    <i class="fa-solid fa-business-time"
-                                                                        style="color: #900C3F"></i>
-                                                                </a>
-                                                            @elseif ($item->halaman == 'ST')
-                                                                <a href="{{ asset('bukti_ST_karyawan/' . $item->bukti_support_ticket) }}"
-                                                                    download>
-                                                                    <i class="fa-solid fa-business-time"
-                                                                        style="color: #900C3F"></i>
-                                                                </a>
-                                                            @elseif ($item->halaman == 'SL')
-                                                                <a href="{{ asset('bukti_SL_karyawan/' . $item->bukti_support_lembur) }}"
-                                                                    download>
-                                                                    <i class="fa-solid fa-business-time"
-                                                                        style="color: #900C3F"></i>
-                                                                </a>
-                                                            @elseif ($item->halaman == 'RB')
+                                                            @if ($item->halaman == 'RB')
                                                                 <a href="{{ route('admin.reimbursement.print_bukti_reimbursement', $item->id) }}"
                                                                     data-toggle="tooltip" data-placement="bottom"
                                                                     title="Print Bukti">
@@ -322,13 +345,40 @@
                                                                 <i class="fa-solid fa-eye" style="color: #900C3F"></i>
                                                             </a>
 
-                                                            <a href="{{ route('admin.reimbursement.edit_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('admin.reimbursement.edit_RB', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Edit">
                                                                 <i class="fa-solid fa-pen-to-square"
                                                                     style="color: #900C3F"></i>
                                                             </a>
 
+                                                            <a href="{{ route('admin.reimbursement.delete_RB', $item->id) }}"
+                                                                data-toggle="tooltip" data-placement="bottom"
+                                                                title="Hapus"><i class="fa-solid fa-trash"
+                                                                    style="color: #900C3F"></i></a>
+                                                        </td>
+                                                    @elseif ($item->status_approved == 'hold' && $item->status_approved == 'hold')
+                                                        <td style="text-align: center; color: #0097B2">
+                                                            <label style="font-weight: bold">Draft</label>
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <a href="{{ route('admin.reimbursement.lihat_reimbursement', $item->id) }}"
+                                                                data-toggle="tooltip" data-placement="bottom"
+                                                                title="View">
+                                                                <i class="fa-solid fa-eye" style="color: #900C3F"></i>
+                                                            </a>
+                                                            &nbsp;
+                                                            <a href="{{ route('admin.reimbursement.edit_doc_RB', $item->id) }}"
+                                                                data-toggle="tooltip" data-placement="bottom"
+                                                                title="Edit">
+                                                                <i class="fa-solid fa-pen-to-square"
+                                                                    style="color: #900C3F"></i>
+                                                            </a>
+                                                            &nbsp;
+                                                            <a href="{{ route('admin.reimbursement.delete_RB', $item->id) }}"
+                                                                data-toggle="tooltip" data-placement="bottom"
+                                                                title="Hapus"><i class="fa-solid fa-trash"
+                                                                    style="color: #900C3F"></i></a>
                                                         </td>
                                                     @elseif ($item->status_approved == 'rejected' && $item->status_paid == 'pending')
                                                         <td style="text-align: center; color: #FF3131">
@@ -544,14 +594,14 @@
             $('#bulan').change(function() {
                 $('#formBulan').submit(); // Mengirimkan form saat bulan berubah
             });
-            $('#cari').change(function() {
-                $('#formCari').submit(); // Mengirimkan form saat bulan berubah
-            });
         });
     </script>
+    <script></script>
 
 
-    @include('sweetalert::alert')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 
 
 </body>

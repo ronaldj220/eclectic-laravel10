@@ -6,33 +6,59 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class BerandaController extends Controller
 {
     public function index()
     {
         $title = 'Beranda';
-        $dataReimbursement = DB::table('admin_reimbursement')
-            ->whereIn('status_approved', ['approved'])
-            ->whereIn('status_paid', ['pending'])
-            ->paginate(10);
-        $dataCA = DB::table('admin_cash_advance')
-            ->whereIn('status_approved', ['approved'])
-            ->whereIn('status_paid', ['pending'])
-            ->paginate(10);
-        $dataCAR = DB::table('admin_cash_advance_report')
-            ->whereIn('status_approved', ['approved'])
-            ->whereIn('status_paid', ['pending'])
-            ->paginate(10);
-        $dataPR = DB::table('admin_purchase_request')
-            ->whereIn('status_approved', ['approved'])
-            ->whereIn('status_paid', ['pending'])
-            ->paginate(10);
-        $dataPO = DB::table('admin_purchase_order')
-            ->whereIn('status_approved', ['approved'])
-            ->whereIn('status_paid', ['pending'])
-            ->paginate(10);
 
+        $reimbursementQuery = DB::table('admin_reimbursement')
+            ->select('id', 'no_doku_real', 'pemohon', DB::raw("'reimbursement' as source"))
+            ->whereIn('status_approved', ['approved'])
+            ->whereIn('status_paid', ['pending']);
+
+        $cashAdvanceQuery = DB::table('admin_cash_advance')
+            ->select('id', 'no_doku', 'pemohon', DB::raw("'cash_advance' as source"))
+            ->whereIn('status_approved', ['approved'])
+            ->whereIn('status_paid', ['pending']);
+
+        $cashAdvanceReportQuery = DB::table('admin_cash_advance_report')
+            ->select('id', 'no_doku', 'pemohon', DB::raw("'cash_advance_report' as source"))
+            ->whereIn('status_approved', ['approved'])
+            ->whereIn('status_paid', ['pending']);
+
+        $purchaseOrderQuery = DB::table('admin_purchase_order')
+            ->select('id', 'no_doku', 'pemohon', DB::raw("'purchase_order' as source"))
+            ->whereIn('status_approved', ['approved'])
+            ->whereIn('status_paid', ['pending']);
+
+        $combinedData = $reimbursementQuery
+            ->union($cashAdvanceQuery)
+            ->union($cashAdvanceReportQuery)
+            ->union($purchaseOrderQuery)
+            ->orderBy('no_doku_real', 'desc')
+            ->get();
+
+        // Manual pagination
+        $perPage = 10; // Jumlah item per halaman
+        $currentPage = request()->get('page', 1); // Ambil nomor halaman dari query string
+
+        // Ambil data untuk halaman saat ini
+        $currentPageData = collect($combinedData)->forPage($currentPage, $perPage);
+
+        // Buat pagination
+        $pagination = new \Illuminate\Pagination\LengthAwarePaginator(
+            $currentPageData,
+            count($combinedData),
+            $perPage,
+            $currentPage,
+            [
+                'path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(), // Untuk mengambil path URL yang benar
+                'query' => request()->query(), // Untuk mempertahankan query string saat pindah halaman
+            ]
+        );
         $RB = DB::table('admin_reimbursement')
             ->where('status_approved', 'approved')
             ->where('status_paid', 'pending')
@@ -55,16 +81,34 @@ class BerandaController extends Controller
             ->count();
         return view('halaman_finance.finance.index', [
             'title' => $title,
-            'reimbursement' => $dataReimbursement,
-            'CA' => $dataCA,
-            'CAR' => $dataCAR,
-            'PR' => $dataPR,
-            'PO' => $dataPO,
+            'combinedData' => $pagination,
             'dataRB' => $RB,
             'dataCA' => $CA,
             'dataCAR' => $CAR,
             'dataPR' => $PR,
             'dataPO' => $PO
         ]);
+    }
+    public function profile()
+    {
+        $title = 'Profil Finance';
+        return view('halaman_finance.finance.profile', [
+            'title' => $title
+        ]);
+    }
+    public function update_profile(Request $request, $id)
+    {
+        try {
+            DB::table('karyawan')->where('id', $id)->update([
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'nama' => $request->nama,
+                'no_rekening' => $request->no_rekening,
+                'bank' => $request->bank,
+            ]);
+            return redirect()->route('kasir.beranda')->with('success', 'Profile Finance Berhasil Diperbarui!');
+        } catch (\Exception $e) {
+            return redirect()->route('kasir.beranda')->with('gagal', $e->getMessage());
+        }
     }
 }

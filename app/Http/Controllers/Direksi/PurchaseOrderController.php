@@ -36,6 +36,11 @@ class PurchaseOrderController extends Controller
                     ->where('status_paid', 'pending');
             })
             ->orWhere(function ($query) use ($menyetujui) {
+                $query->where('pemohon', $menyetujui)
+                    ->where('status_approved', 'approved')
+                    ->where('status_paid', 'paid');
+            })
+            ->orWhere(function ($query) use ($menyetujui) {
                 $query->where('pemohon', '<>', $menyetujui)
                     ->where('status_approved', 'rejected')
                     ->where('status_paid', 'pending');
@@ -60,18 +65,19 @@ class PurchaseOrderController extends Controller
     public function view_PO($id)
     {
         $title = 'Lihat Purchase Order';
-        $PO = DB::table('admin_purchase_order')->where('id', $id)->first();
+        $PO = DB::table('admin_purchase_order')->find($id);
+        $PO_Nominal = DB::table('admin_purchase_order')->where('id', $id)->get();
         $PO_detail = DB::table('admin_purchase_order_detail')->where('fk_po', $id)->get();
         $nominal_PO = DB::table('admin_purchase_order_detail')->where('fk_po', $id)->sum('nominal');
-        $PO_Detail = DB::table('admin_purchase_order_detail')->where('fk_po', $id)->get();
         $results = [];
-        foreach ($PO_Detail as $item) {
-            $result = ($item->PPN / 100) * $item->nominal;
-            $PPH = ($item->PPH / 100) * $item->nominal;
-            $PPH_4 = ($item->PPH_4 / 100) * $item->nominal;
+        foreach ($PO_Nominal as $item) {
+            $result = ($item->PPN / 100) * $nominal_PO;
+            $PPH = ($item->PPH / 100) * $nominal_PO;
+            $PPH_4 = ($item->PPH_4 / 100) * $nominal_PO;
+            $ctm_2 = ($item->ctm_2 / 100) * $nominal_PO;
             $results[] = $result; // Tambahkan hasil ke array
         }
-        $grand_total = $nominal_PO + $result - $PPH;
+        $grand_total = $nominal_PO + $result - $PPH - $PPH_4 - $ctm_2;
 
 
         $carbonDate = Carbon::createFromFormat('Y-m-d', $PO->tgl_purchasing)->locale('id');
@@ -85,6 +91,7 @@ class PurchaseOrderController extends Controller
             'PPN' => $result,
             'PPH' => $PPH,
             'PPH_4' => $PPH_4,
+            'ctm_2' => $ctm_2,
             'grand_total' => $grand_total,
             'tgl_purchasing' => $formattedDate
         ]);
@@ -100,7 +107,7 @@ class PurchaseOrderController extends Controller
             ]);
             $data = DB::table('admin_purchase_order')->where('id', $id)->first();
             $no_doku = $data->no_doku;
-            return redirect()->route('direksi.purchase_order')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil diajukan! Tunggu Pembayaran ya!');
+            return redirect()->route('direksi.purchase_order')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil diajukan!');
         } catch (\Exception $e) {
             return redirect()->route('direksi.purchase_order')->with('gagal', $e->getMessage());
         }
@@ -264,6 +271,8 @@ class PurchaseOrderController extends Controller
             $PO_detail = new Purchase_Order_Detail();
             $PO_detail->judul = $value;
             $PO_detail->jumlah = $request->jum[$keterangan];
+            $PO_detail->tgl_1 = isset($request->tgl_1[$keterangan]) ? $request->tgl_1[$keterangan] : null;
+            $PO_detail->tgl_2 = isset($request->tgl_2[$keterangan]) ? $request->tgl_2[$keterangan] : null;
             $PO_detail->satuan = $request->qty[$keterangan];
             $PO_detail->curr = $request->kurs[$keterangan];
             $PO_detail->nominal = $request->nom[$keterangan];

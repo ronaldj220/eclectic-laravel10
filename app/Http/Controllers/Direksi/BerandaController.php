@@ -14,7 +14,7 @@ class BerandaController extends Controller
         $title = 'Beranda';
         $menyetujui = Auth::guard('direksi')->user()->nama;
         $dataReimbursement = DB::table('admin_reimbursement')
-            ->orderBy('no_doku', 'asc')
+            ->orderBy('no_doku_real', 'asc')
             ->whereIn('status_approved', ['pending'])
             ->whereIn('status_paid', ['pending'])
             ->where('menyetujui', $menyetujui)
@@ -93,20 +93,15 @@ class BerandaController extends Controller
     }
     public function update_profile(Request $request, $id)
     {
-        $folderPath = public_path('ttd_direksi/'); // create signatures folder in public directory
-        $image_parts = explode(";base64,", $request->signed);
-        $image_type_aux = explode("image/", $image_parts[0]);
-        $image_type = $image_type_aux[1];
-        $image_base64 = base64_decode($image_parts[1]);
-        $namaFileSignature = uniqid() . '.' . $image_type; // Generate unique filename for the signature
-
-        $file = $folderPath . $namaFileSignature;
-        file_put_contents($file, $image_base64);
-
         DB::table('menyetujui')->where('id', $id)->update([
-            'signature' => $namaFileSignature
+            'email' => $request->email,
+            'nama' => $request->nama,
+            'jabatan' => $request->jabatan,
+            'no_telp' => $request->no_telp,
+            'no_rekening' => $request->no_rekening,
+            'bank' => $request->bank
         ]);
 
-        return redirect()->route('direksi.beranda')->with('success', 'TTD Direksi Berhasil Diperbarui!');
+        return redirect()->route('direksi.beranda')->with('success', 'Profil Direksi Berhasil Diperbarui!');
     }
 }

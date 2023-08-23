@@ -53,7 +53,12 @@
                             @endif
                         </td>
                         <td class="text-center" style="max-width: 12%; word-break: break-all;">
-                            {{ $item->jumlah }}</td>
+                            @if (floor($item->jumlah) == $item->jumlah)
+                                {{ number_format($item->jumlah, 0, ',', '.') }}
+                            @else
+                                {{ number_format($item->jumlah, 1, ',', '.') }}
+                            @endif
+                        </td>
                         <td class="text-center" style="max-width: 12%; word-break: break-all;">
                             {{ $item->satuan }}</td>
                         <td class="text-center" style="max-width: 12%; word-break: break-all;">
@@ -63,7 +68,7 @@
                     </tr>
                 @endforeach
             </table>
-            <div class="container  text-center" style="margin-top: 20px">
+            <div class="container  text-center">
                 <div class="row gx-5">
                     <div class="col">
                         <div class="p-3">
@@ -78,14 +83,14 @@
 
                                     <td style="width: 50%; text-align: center; ">
                                         <div style="font-weight: bold;">Pembuat,</div>
-                                        <div style="margin-top: 40px"></div>
+                                        <div style="margin-top: 70px"></div>
 
                                         <div style="text-align: center; margin-top: -3px;">
                                             {{ $PR->pemohon }}</div>
                                     </td>
                                     <td style="width: 50%; text-align: center;">
                                         <div style="font-weight: bold;">Menyetujui,</div>
-                                        <div style="margin-top: 40px"></div>
+                                        <div style="margin-top: 70px"></div>
 
                                         <div style="text-align: center; margin-top: -3px;">
                                             {{ $PR->menyetujui }}</div>
@@ -99,24 +104,41 @@
         </div>
         <div class="container d-flex justify-content-center">
             @if ($PR->status_approved == 'rejected' && $PR->status_paid == 'rejected')
-                <button class="btn btn-primary"><i class="fa-solid fa-square-check fa-beat"></i>&nbsp;Verify</button>
-                &nbsp; &nbsp;
-                <a href="{{ route('admin.purchase_request.tolak_PR', $PR->id) }}" class="btn btn-danger"><i
-                        class="fa-solid fa-xmark fa-beat"></i>&nbsp;Tolak</a>
-                &nbsp; &nbsp;
-                <a href="{{ route('admin.purchase_request') }}" class="btn btn-warning"><i
-                        class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
-            @elseif ($PR->status_approved == 'rejected' && $PR->status_paid == 'pending')
-                <a href="{{ route('admin.purchase_request') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
-            @elseif ($PR->status_approved == 'pending' && $PR->status_paid == 'pending')
-                <a href="{{ route('admin.purchase_request') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
-            @elseif ($PR->status_approved == 'approved' && $PR->status_paid == 'pending')
-                <a href="{{ route('admin.purchase_request') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
+                @if ($PR->menyetujui == 'Aris')
+                    <a href="{{ route('admin.purchase_request.acc_PR', $PR->id) }}" class="btn btn-primary"><i
+                            class="fa-solid fa-square-check fa-beat"></i>&nbsp;Verify</a>
+                @else
+                    <button class="btn btn-primary"><i
+                            class="fa-solid fa-square-check fa-beat"></i>&nbsp;Verify</button>
+                    &nbsp; &nbsp;
+                    <a href="{{ route('admin.purchase_request.tolak_PR', $PR->id) }}" class="btn btn-danger"><i
+                            class="fa-solid fa-xmark fa-beat"></i>&nbsp;Tolak</a>
+                @endif
             @endif
         </div>
+        @if ($PR->status_approved == 'approved' && $PR->status_paid == 'pending')
+            <div class="container" style="margin-top: -30px">
+                <div class="row">
+                    <div class="col">
+                    </div>
+                    @if ($PR->menyetujui == 'Aris')
+                        <div class="col">
+                        </div>
+                    @else
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 430px;">
+                                <tr class="text-center">
+                                    <td>Approved on
+                                        {{ date('d/m/Y', strtotime($PR->tgl_approval)) }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @endif
     </form>
 
 </body>

@@ -39,19 +39,22 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
                 href="{{ route('admin.beranda') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
                 </div>
-                <div class="sidebar-brand-text mx-3">pt. eclectic</div>
+                <div class="sidebar-brand-text">
+                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
+                </div>
+
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.beranda') }}">
-                    <i class="fa-solid fa-home fa-beat-fade"></i>
+                    <i class="fa-solid fa-home"></i>
                     <span>Beranda</span></a>
             </li>
 
@@ -67,7 +70,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog fa-beat-fade"></i>
+                    <i class="fas fa-fw fa-cog"></i>
                     <span>Master</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -110,7 +113,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                     aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder fa-beat-fade"></i>
+                    <i class="fas fa-fw fa-folder"></i>
                     <span>Transaksi</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
@@ -126,7 +129,15 @@
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
+            <hr class="sidebar-divider">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="https://drive.google.com/file/d/1RJmZuL2LmXJKe3NlkAESjgsCJc9pcX8l/view?usp=sharing">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span>Help</span></a>
+            </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
@@ -167,6 +178,11 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item"
+                                    href="{{ route('admin.admin.edit_admin', Auth::user()->id) }}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile ({{ Auth::user()->nama }}) | {{ Auth::user()->jabatan }}
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal"
                                     data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -192,7 +208,7 @@
                                 </div>
                                 <div class="card-body">
                                     <form action="{{ route('admin.cash_advance.simpan_cash_advance') }}"
-                                        method="POST">
+                                        method="POST" id="formId">
                                         @csrf
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">No Dokumen</label>
@@ -283,11 +299,8 @@
                                             * Richard (Keperluan Marketing)
                                         </div>
                                         <div class="d-flex justify-content-center" style="margin-top: 20px">
-                                            <button type="submit" class="btn btn-primary"><i
+                                            <button type="submit" class="btn btn-primary" id="submitBtn"><i
                                                     class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Submit</button>
-                                            &nbsp;&nbsp;
-                                            <a href="{{ route('admin.cash_advance') }}" class="btn btn-danger"><i
-                                                    class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
                                         </div>
                                     </form>
                                 </div>
@@ -341,7 +354,27 @@
             </div>
         </div>
     </div>
+    <script>
+        document.getElementById('submitBtn').addEventListener('click', function(event) {
+            event.preventDefault(); // Untuk mencegah pengiriman formulir secara otomatis
 
+            Swal.fire({
+                title: 'Apakah anda yakin ingin submit? ',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                denyButtonText: `Jangan Simpan`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Tindakan jika tombol "Save" diklik
+                    document.getElementById('formId').submit(); // Submit formulir secara manual
+                } else if (result.isDenied) {
+                    // Tindakan jika tombol "Don't save" diklik
+                    Swal.fire('Perubahan tidak akan disimpan', '', 'info');
+                }
+            });
+        });
+    </script>
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('assets') }}/vendor/jquery/jquery.min.js"></script>
     <script src="{{ asset('assets') }}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -373,8 +406,8 @@
             xhr.send();
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
-@include('sweetalert::alert')
 
 
 </html>

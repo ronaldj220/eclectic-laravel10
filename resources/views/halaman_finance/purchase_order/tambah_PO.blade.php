@@ -36,19 +36,21 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
                 href="{{ route('kasir.beranda') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
                 </div>
-                <div class="sidebar-brand-text mx-3">pt. eclectic</div>
+                <div class="sidebar-brand-text">
+                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
+                </div>
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.beranda') }}">
-                    <i class="fa-solid fa-home fa-beat-fade"></i>
+                    <i class="fa-solid fa-home"></i>
                     <span>Beranda</span></a>
             </li>
 
@@ -58,7 +60,7 @@
             <!-- Nav Item - Charts -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.reimbursement') }}">
-                    <i class="fa-solid fa-money-bill-transfer fa-beat-fade"></i>
+                    <i class="fa-solid fa-hand-holding-heart"></i>
                     <span>Reimbursement</span></a>
             </li>
             <!-- Divider -->
@@ -68,7 +70,7 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.cash_advance') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-sack-dollar"></i>
                     <span>Cash Advance</span></a>
             </li>
 
@@ -78,7 +80,7 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.cash_advance_report') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
                     <span>Cash Advance Report</span></a>
             </li>
 
@@ -88,7 +90,7 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.purchase_request') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-chart-bar"></i>
                     <span>Purchase Request</span></a>
             </li>
 
@@ -98,8 +100,19 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.purchase_order') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-cart-arrow-down"></i>
                     <span>Purchase Order</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="https://drive.google.com/file/d/1uCNOVvTxZFA5X6Qeyqae2CbhJ5hq903y/view?usp=sharing">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span>Help</span></a>
             </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
@@ -134,13 +147,19 @@
                                 <span
                                     class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::guard('kasir')->user()->nama }}
                                     <br>
-                                    <small>Kasir</small></span>
+                                    <small>Finance</small></span>
                                 <img class="img-profile rounded-circle"
                                     src="{{ asset('assets') }}/img/undraw_profile_3.svg">
                             </a>
                             <!-- Dropdown - User Information -->
+
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
+
+                                <a class="dropdown-item" href="{{ route('kasir.beranda.profile') }}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile ({{ Auth::guard('kasir')->user()->nama }}) | Finance
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
@@ -173,7 +192,7 @@
                                                 value="{{ $no_dokumen }}">
                                         </div>
                                         <div class="form-group">
-                                            <label for="exampleInputPassword1">Tanggal Purchasing</label>
+                                            <label for="exampleInputPassword1">Tanggal Invoice</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
                                                 name="tgl_diajukan" value="{{ date('d/m/Y') }}">
                                         </div>
@@ -326,7 +345,7 @@
                                         <input type="number" class="form-control" placeholder="Jumlah" name="jum[]" id="jum${i}" >
                                     </div>
                                     <div class="col">
-                                        <input type="text" class="form-control" placeholder="Qty" name="qty[]" id="qty${i}" >
+                                        <input type="text" class="form-control" placeholder="Qty" name="qty[]" id="qty${i}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -491,15 +510,21 @@
             xhr.send();
         }
 
-        function toggleTextbox(elementId) {
-            var checkbox = document.getElementById(elementId.replace("Textbox", ""));
-            var textbox = document.getElementById(elementId);
+        var numInputs = 6; // Jumlah input (sesuaikan dengan jumlah input yang ada)
 
-            if (checkbox.checked) {
-                textbox.style.display = "flex";
+        function toggleInput(elementId) {
+            var input = document.getElementById(elementId);
+            if (input.style.display === "none") {
+                input.style.display = "flex";
             } else {
-                textbox.style.display = "none";
+                input.style.display = "none";
             }
+        }
+
+        function toggleCheckbox(index) {
+            var checkboxId = "checkbox" + index;
+            var elementId = checkboxId.replace("checkbox", "Textbox");
+            toggleInput(elementId);
         }
     </script>
 </body>

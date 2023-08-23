@@ -22,31 +22,34 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::guard('web')->attempt($credentials)) {
+        $remember = $request->has('remember');
+        // dd($remember);
+
+        if (Auth::guard('web')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
             return redirect()->route('admin.beranda');
         }
 
-        if (Auth::guard('karyawan')->attempt($credentials)) {
+        if (Auth::guard('karyawan')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
             return redirect()->route('karyawan.beranda');
         }
-        if (Auth::guard('direksi')->attempt($credentials)) {
+        if (Auth::guard('direksi')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
             return redirect()->route('direksi.beranda');
         }
-        if (Auth::guard('kasir')->attempt($credentials)) {
+        if (Auth::guard('kasir')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
             return redirect()->route('kasir.beranda');
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+            'email' => 'Email atau Password salah! Silahkan Lakukan Login Kembali.',
+        ]);
     }
     public function logout(Request $request)
     {

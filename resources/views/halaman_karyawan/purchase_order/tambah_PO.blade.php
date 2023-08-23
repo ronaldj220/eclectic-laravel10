@@ -214,6 +214,21 @@
                                             <input type="text" class="form-control" name="pemohon" id="pemohon"
                                                 readonly>
                                         </div>
+                                        <div class="form-group" hidden>
+                                            <label for="exampleInputPassword1">Pemilik Bank (A/N)</label>
+                                            <input type="text" class="form-control" name="pemilik_bank"
+                                                id="pemilik_bank" readonly>
+                                        </div>
+                                        <div class="form-group" hidden>
+                                            <label for="exampleInputPassword1">Nama Bank</label>
+                                            <input type="text" class="form-control" name="bank" id="bank"
+                                                readonly>
+                                        </div>
+                                        <div class="form-group" hidden>
+                                            <label for="exampleInputPassword1">No Rekening</label>
+                                            <input type="text" class="form-control" name="no_rek" id="no_rek"
+                                                readonly>
+                                        </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Accounting</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
@@ -333,7 +348,7 @@
                                           <input type="number" class="form-control" placeholder="Jumlah" name="jum[]" id="jum${i}" >
                                       </div>
                                       <div class="col">
-                                          <input type="text" class="form-control" placeholder="Qty" name="qty[]" id="qty${i}" >
+                                          <input type="text" class="form-control" placeholder="Qty" name="qty[]" id="qty${i}" readonly >
                                       </div>
                                   </div>
                               </div>
@@ -488,6 +503,9 @@
                         var response = JSON.parse(xhr.responseText);
                         document.getElementById("pemohon").value = response.pemohon;
                         document.getElementById("menyetujui").value = response.menyetujui;
+                        document.getElementById("pemilik_bank").value = response.pemilik_bank;
+                        document.getElementById("bank").value = response.bank;
+                        document.getElementById("no_rek").value = response.no_rekening;
                     } else {
                         document.getElementById("pemohon").value = "";
                         document.getElementById("menyetujui").value = "";

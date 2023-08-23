@@ -15,48 +15,47 @@ use Intervention\Image\ImageManagerStatic as Image;
 
 class CashAdvanceReportController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Cash Advance Report';
         $kasir = Auth::guard('kasir')->user()->nama;
-        $dataCAR = DB::table('admin_cash_advance_report')
-            ->where(function ($query) use ($kasir) {
-                $query->where('pemohon', $kasir)
-                    ->where('status_approved', 'approved')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($kasir) {
-                $query->where('pemohon', $kasir)
-                    ->where(function ($query) {
-                        $query->where('status_approved', 'rejected')
-                            ->orWhere('status_paid', 'rejected');
-                    });
-            })
-            ->orWhere(function ($query) use ($kasir) {
-                $query->where('pemohon', $kasir)
-                    ->where('status_approved', 'pending')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($kasir) {
-                $query->where('pemohon', '<>', $kasir)
-                    ->where('status_approved', 'approved')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($kasir) {
-                $query->where('pemohon', '<>', $kasir)
-                    ->where('status_approved', 'pending')
-                    ->where('status_paid', 'pending');
-            })
-            ->where(function ($query) use ($kasir) {
-                $query->where('pemohon', $kasir);
-            })
-            ->orWhere(function ($query) {
-                $query->where('status_approved', 'approved')
-                    ->where('status_paid', 'pending');
-            })
-            ->orderBy('no_doku', 'desc')
-            ->orderByRaw("CASE WHEN status_approved = 'approved' AND status_paid = 'pending' THEN 0 WHEN status_approved = 'pending' OR status_paid = 'pending' THEN 1 ELSE 2 END, CASE WHEN pemohon = 'Suzy. A' THEN 1 ELSE 2 END")
-            ->paginate(10);
+        if ($request->has('search')) {
+            $dataCAR = DB::table('admin_cash_advance_report')
+                ->where('judul_doku', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('pemohon', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('tipe_ca', 'LIKE', '%' . $request->search . '%')
+                ->orderBy('no_doku', 'desc')
+                ->paginate(100);
+        } elseif ($request->has('bulan')) {
+            $query = DB::table('admin_cash_advance_report')
+                ->orderBy('no_doku', 'asc')
+                ->orderByRaw("
+            CASE
+                WHEN status_approved = 'approved' THEN 1
+                WHEN status_approved = 'pending' THEN 2
+                WHEN status_approved = 'rejected' THEN 3
+                ELSE 4
+            END
+        ");
+
+            // Memeriksa apakah parameter bulan dikirimkan dalam request POST
+            if ($request->has('bulan')) {
+                $bulan = $request->bulan;
+                $query->whereMonth('tgl_diajukan', date('m', strtotime($bulan)))
+                    ->whereYear('tgl_diajukan', date('Y', strtotime($bulan)));
+            }
+
+            $dataCAR = $query->paginate(100);
+        } else {
+            $dataCAR = DB::table('admin_cash_advance_report')
+                ->orderBy('no_doku', 'desc')
+                ->where('pemohon', $kasir)
+                ->orWhere('kasir', $kasir)
+                ->whereIn('status_approved', ['rejected', 'approved'])
+                ->whereIn('status_paid', ['rejected', 'pending'])
+                ->paginate(20);
+        }
+
         return view('halaman_finance.cash_advance_report.index', [
             'title' => $title,
             'cash_advance_report' => $dataCAR
@@ -74,6 +73,17 @@ class CashAdvanceReportController extends Controller
             'cash_advance_report' => $data_CAR,
             'data_CAR' => $cash_advance_report_detail,
             'nominal' => $nominal_CAR
+        ]);
+    }
+    public function view_CA($id)
+    {
+        $title = 'Lihat CA';
+        $cash_advance = CashAdvanceReport::find($id);
+        $nominal_CA = DB::table('admin_cash_advance')->where('id', $id)->sum('nominal');
+        return view('halaman_finance.cash_advance_report.view_CA', [
+            'title' => $title,
+            'cash_advance' => $cash_advance,
+            'nominal' => $nominal_CA
         ]);
     }
     public function print_cash_advance_report($id)
@@ -122,8 +132,8 @@ class CashAdvanceReportController extends Controller
     }
     public function paid_CAR($id, Request $request)
     {
-        $data = DB::table('admin_cash_advance')->find($id);
-        DB::table('admin_cash_advance')->where('id', $id)->update([
+        $data = DB::table('admin_cash_advance_report')->find($id);
+        DB::table('admin_cash_advance_report')->where('id', $id)->update([
             'status_approved' => 'approved',
             'status_paid' => 'paid',
             'no_referensi' => $request->no_ref
@@ -136,13 +146,16 @@ class CashAdvanceReportController extends Controller
         $title = 'Cash Advance Report';
         $AWAL = 'CAR';
         $bulanRomawi = array("", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12");
-        $noUrutAkhir = DB::table('admin_cash_advance_report')->whereMonth('tgl_diajukan', '=', date('m'))->count();
+        $noUrutAkhir = DB::table('admin_cash_advance_report')
+            ->whereRaw('MONTH(tgl_diajukan) = MONTH(CURRENT_DATE())')
+            ->whereRaw('YEAR(tgl_diajukan) = YEAR(CURRENT_DATE())')
+            ->count();
         $no = 1;
         // dd($noUrutAkhir);
         $no_dokumen = null;
         $currentMonth = date('n');
         if (date('j') == 1) {
-            $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($no));
+            $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir));
         } else {
             if ($noUrutAkhir) {
                 $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
@@ -202,6 +215,7 @@ class CashAdvanceReportController extends Controller
         $cashAdvance->accounting = $request->accounting;
         $cashAdvance->kasir = $request->kasir;
         $cashAdvance->menyetujui = $request->nama_menyetujui;
+        $cashAdvance->no_telp = $request->no_telp;
         $cashAdvance->save();
 
         foreach ($request->deskripsi as $deskripsi => $value) {
@@ -210,19 +224,12 @@ class CashAdvanceReportController extends Controller
 
             if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
                 $file = $request->file('foto')[$deskripsi];
-                // Menggunakan Intervention Image untuk memuat gambar
-                $image = Image::make($file);
 
-                // Mengatur ukuran maksimum yang diinginkan (misalnya 800 piksel lebar dan 600 piksel tinggi)
-                $image->resize(800, 600, function ($constraint) {
-                    $constraint->aspectRatio(); // Mempertahankan aspek rasio gambar
-                    $constraint->upsize(); // Memastikan gambar tidak diperbesar jika lebih kecil dari ukuran yang ditentukan
-                });
-
-                // Menyimpan gambar yang telah dikompresi
-                $filePath = public_path('bukti_CAR_karyawan/') . time() . '.' . $file->getClientOriginalExtension();
-                $image->save($filePath);
+                // Menyimpan gambar asli tanpa kompresi
+                $filePath = 'bukti_CAR_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('bukti_CAR_admin'), $filePath);
                 $fileName = basename($filePath);
+
                 $CA_detail->bukti_ca = $fileName;
             }
 
@@ -235,5 +242,6 @@ class CashAdvanceReportController extends Controller
             $CA_detail->fk_ca = $cashAdvance->id;
             $CA_detail->save();
         }
+        return redirect()->route('kasir.cash_advance_report')->with('success', 'Data Cash Advance Report Berhasil Diajukan!');
     }
 }

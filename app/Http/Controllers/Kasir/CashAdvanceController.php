@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Kasir;
 
 use App\Exports\Kasir\CashAdvanceExports;
 use App\Http\Controllers\Controller;
+use App\Models\Admin\CashAdvanceReport;
+use Carbon\Carbon;
 use DateTime;
 use Dflydev\DotAccessData\Data;
 use Illuminate\Http\Request;
@@ -13,48 +15,55 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class CashAdvanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Cash Advance';
         $kasir = Auth::guard('kasir')->user()->nama;
-        $dataCA = DB::table('admin_cash_advance')
-            ->where(function ($query) use ($kasir) {
-                $query->where('pemohon', $kasir)
-                    ->where('status_approved', 'approved')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($kasir) {
-                $query->where('pemohon', $kasir)
-                    ->where(function ($query) {
-                        $query->where('status_approved', 'rejected')
-                            ->orWhere('status_paid', 'rejected');
-                    });
-            })
-            ->orWhere(function ($query) use ($kasir) {
-                $query->where('pemohon', $kasir)
-                    ->where('status_approved', 'pending')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($kasir) {
-                $query->where('pemohon', '<>', $kasir)
-                    ->where('status_approved', 'approved')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($kasir) {
-                $query->where('pemohon', '<>', $kasir)
-                    ->where('status_approved', 'pending')
-                    ->where('status_paid', 'pending');
-            })
-            ->where(function ($query) use ($kasir) {
-                $query->where('pemohon', $kasir);
-            })
-            ->orWhere(function ($query) {
-                $query->where('status_approved', 'approved')
-                    ->where('status_paid', 'pending');
-            })
-            ->orderBy('no_doku', 'desc')
-            ->orderByRaw("CASE WHEN status_approved = 'approved' AND status_paid = 'pending' THEN 0 WHEN status_approved = 'pending' OR status_paid = 'pending' THEN 1 ELSE 2 END, CASE WHEN pemohon = 'Suzy. A' THEN 1 ELSE 2 END")
-            ->paginate(10);
+        if ($request->has('search')) {
+            $dataCA = DB::table('admin_cash_advance')
+                ->where('admin_cash_advance.pemohon', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('admin_cash_advance.judul_doku', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('b.no_doku', 'LIKE', '%' . $request->search . '%')
+                ->select('admin_cash_advance.id', 'admin_cash_advance.no_doku', 'admin_cash_advance.tgl_diajukan', 'admin_cash_advance.judul_doku', 'admin_cash_advance.pemohon', 'b.id as id_car', 'b.no_doku as tipe_car', 'admin_cash_advance.status_approved', 'admin_cash_advance.status_paid')
+                ->leftJoin('admin_cash_advance_report as b', 'admin_cash_advance.no_doku', '=', 'b.tipe_ca')
+                ->orderBy('admin_cash_advance.no_doku', 'desc')
+                ->whereIn('admin_cash_advance.status_approved', ['approved'])
+                ->whereIn('admin_cash_advance.status_paid', ['pending'])
+                ->paginate(100);
+        } elseif ($request->has('bulan')) {
+            $query =  DB::table('admin_cash_advance')
+                ->select('admin_cash_advance.id', 'admin_cash_advance.no_doku', 'admin_cash_advance.tgl_diajukan', 'admin_cash_advance.judul_doku', 'admin_cash_advance.pemohon', 'b.id as id_car', 'b.no_doku as tipe_car', 'admin_cash_advance.status_approved', 'admin_cash_advance.status_paid')
+                ->leftJoin('admin_cash_advance_report as b', 'admin_cash_advance.no_doku', '=', 'b.tipe_ca')
+                ->orderBy('admin_cash_advance.no_doku', 'asc')
+                ->whereIn('admin_cash_advance.status_approved', ['approved'])
+                ->whereIn('admin_cash_advance.status_paid', ['pending']);
+
+            // Memeriksa apakah parameter bulan dikirimkan dalam request POST
+            if ($request->has('bulan')) {
+                $bulan = $request->input('bulan'); // Ambil nilai bulan dari input form
+
+                // Pisahkan nilai bulan dan tahun dari input bulan
+                list($tahun, $bulan) = explode('-', $bulan);
+                $query = DB::table('admin_cash_advance')
+                    ->select('admin_cash_advance.id', 'admin_cash_advance.no_doku', 'admin_cash_advance.tgl_diajukan', 'admin_cash_advance.judul_doku', 'admin_cash_advance.pemohon', 'b.id as id_car', 'b.no_doku as tipe_car', 'admin_cash_advance.status_approved', 'admin_cash_advance.status_paid')
+                    ->leftJoin('admin_cash_advance_report as b', 'admin_cash_advance.no_doku', '=', 'b.tipe_ca')
+                    ->whereMonth('admin_cash_advance.tgl_diajukan', $bulan)
+                    ->whereYear('admin_cash_advance.tgl_diajukan', $tahun)
+                    ->orderBy('admin_cash_advance.no_doku', 'asc');
+            }
+            $dataCA = $query->paginate(100);
+        } else {
+            $dataCA = DB::table('admin_cash_advance')
+                ->select('admin_cash_advance.id', 'admin_cash_advance.no_doku', 'admin_cash_advance.tgl_diajukan', 'admin_cash_advance.judul_doku', 'admin_cash_advance.pemohon', 'b.id as id_car', 'b.no_doku as tipe_car', 'admin_cash_advance.status_approved', 'admin_cash_advance.status_paid')
+                ->leftJoin('admin_cash_advance_report as b', 'admin_cash_advance.no_doku', '=', 'b.tipe_ca')
+                ->orderBy('admin_cash_advance.no_doku', 'desc')
+                ->where('admin_cash_advance.pemohon', $kasir)
+                ->orWhere('admin_cash_advance.kasir', $kasir)
+                ->whereIn('admin_cash_advance.status_approved', ['approved'])
+                ->whereIn('admin_cash_advance.status_paid', ['pending'])
+                ->paginate(20);
+        }
+
         return view('halaman_finance.cash_advance.index', [
             'title' => $title,
             'cash_advance' => $dataCA
@@ -65,14 +74,6 @@ class CashAdvanceController extends Controller
         $title = 'Lihat Cash Advance';
         $cashadvance = DB::table('admin_cash_advance')->find($id);
         $nominal_CA = DB::table('admin_cash_advance')->where('id', $id)->sum('nominal');
-        // $namaKaryawan = Auth::user()->nama;
-        // $dataKaryawan = DB::table('karyawan')->where('nama', $namaKaryawan)->select('nama', 'bank', 'no_rekening', 'signature')->first();
-        // $namaMenyetujui = Auth::guard('direksi')->user()->nama;
-        // $direksi = DB::table('menyetujui AS m')
-        //     ->join('admin_cash_advance AS a', 'm.nama', '=', 'a.menyetujui')
-        //     ->select('m.nama', 'm.signature')
-        //     ->where('m.nama', $namaMenyetujui)
-        //     ->get();
         return view('halaman_finance.cash_advance.view_cash_advance', [
             'title' => $title,
             'cash_advance' => $cashadvance,
@@ -80,23 +81,25 @@ class CashAdvanceController extends Controller
 
         ]);
     }
+    public function view_CAR($id)
+    {
+        $title = 'Lihat CAR';
+        $cashAdvanceReport = CashAdvanceReport::find($id);
+        $CAR_Detail = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->get();
+        $nominal = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->sum('nominal');
+
+        return view('halaman_finance.cash_advance.view_CAR', [
+            'title' => $title,
+            'CAR' => $cashAdvanceReport,
+            'CAR_Detail' => $CAR_Detail,
+            'nominal' => $nominal
+        ]);
+    }
     public function print_cash_advance($id)
     {
         $title = 'Cetak Cash Advance';
         $cashadvance = DB::table('admin_cash_advance')->find($id);
         $nominal_CA = DB::table('admin_cash_advance')->where('id', $id)->sum('nominal');
-        // $namaKaryawan = Auth::guard('karyawan')->user()->nama;
-        // $dataKaryawan = DB::table('karyawan')->where('nama', $namaKaryawan)->select('nama', 'bank', 'no_rekening', 'signature')->first();
-        // $namaMenyetujui = Auth::guard('direksi')->user()->nama;
-        // $direksi = DB::table('menyetujui AS m')
-        //     ->join('admin_reimbursement AS a', 'm.nama', '=', 'a.menyetujui')
-        //     ->select('m.nama', 'm.signature')
-        //     ->where('m.nama', $namaMenyetujui)
-        //     ->get();
-
-        // $dataUser = DB::table('users')->select('no_rekening', 'bank', 'nama')->first();
-
-
         return view('halaman_finance.cash_advance.print_cash_advance', [
             'title' => $title,
             'cash_advance' => $cashadvance,
@@ -126,7 +129,8 @@ class CashAdvanceController extends Controller
         DB::table('admin_cash_advance')->where('id', $id)->update([
             'status_approved' => 'approved',
             'status_paid' => 'paid',
-            'no_referensi' => $request->no_ref
+            'no_referensi' => $request->no_ref,
+            'tgl_bayar' => Carbon::now()
         ]);
         $no_doku = $data->no_doku;
         return redirect()->route('kasir.cash_advance')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dibayar!');
@@ -136,19 +140,18 @@ class CashAdvanceController extends Controller
         $title = 'Tambah Cash Advance';
         $AWAL = 'CA';
         $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
-        $noUrutAkhir = DB::table('admin_cash_advance')->whereMonth('tgl_diajukan', '=', date('m'))->count();
+        $noUrutAkhir = DB::table('admin_cash_advance')
+            ->whereRaw('MONTH(tgl_diajukan) = MONTH(CURRENT_DATE())')
+            ->whereRaw('YEAR(tgl_diajukan) = YEAR(CURRENT_DATE())')
+            ->count();
         $no = 1;
-        // dd($noUrutAkhir);
         $no_dokumen = null;
         $currentMonth = date('n');
-        if (date('j') == 1) {
-            $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($no));
+        // dd($noUrutAkhir);
+        if ($currentMonth) {
+            $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
         } else {
-            if ($noUrutAkhir) {
-                $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
-            } else {
-                $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($no));
-            }
+            $no_dokumen = date('y') . '/' . $bulanRomawi[$currentMonth] . '/' . $AWAL . '/' . sprintf("%05s", abs($no + 1));
         }
 
         $accounting = DB::select('SELECT * FROM accounting');

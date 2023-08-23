@@ -39,19 +39,22 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
                 href="{{ route('admin.beranda') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
                 </div>
-                <div class="sidebar-brand-text mx-3">pt. eclectic</div>
+                <div class="sidebar-brand-text">
+                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
+                </div>
+
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.beranda') }}">
-                    <i class="fa-solid fa-home fa-beat-fade"></i>
+                    <i class="fa-solid fa-home"></i>
                     <span>Beranda</span></a>
             </li>
 
@@ -67,7 +70,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog fa-beat-fade"></i>
+                    <i class="fas fa-fw fa-cog"></i>
                     <span>Master</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -110,7 +113,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                     aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder fa-beat-fade"></i>
+                    <i class="fas fa-fw fa-folder"></i>
                     <span>Transaksi</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
@@ -126,7 +129,15 @@
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
+            <hr class="sidebar-divider">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="https://drive.google.com/file/d/1RJmZuL2LmXJKe3NlkAESjgsCJc9pcX8l/view?usp=sharing">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span>Help</span></a>
+            </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
@@ -147,11 +158,6 @@
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
-
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
@@ -167,6 +173,11 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item"
+                                    href="{{ route('admin.admin.edit_admin', Auth::user()->id) }}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile ({{ Auth::user()->nama }}) | {{ Auth::user()->jabatan }}
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal"
                                     data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -191,7 +202,7 @@
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <form action="{{ route('admin.purchase_request.simpan_purchase_request') }}"
+                                    <form action="{{ route('admin.purchase_request.update_PR', $PR->id) }}"
                                         method="POST">
                                         @csrf
                                         <div class="form-group">
@@ -203,7 +214,8 @@
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Tanggal</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="tgl_diajukan" value="{{ date('d/m/Y') }}">
+                                                name="tgl_diajukan"
+                                                value="{{ $PR->tgl_diajukan ? date('d/m/Y', strtotime($PR->tgl_diajukan)) : '' }}">
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Pemohon</label>
@@ -217,7 +229,9 @@
                                                 name="nama_menyetujui">
                                                 <option value=""> --- Pilih --- </option>
                                                 @foreach ($menyetujui as $item)
-                                                    <option value="{{ $item->nama }}">{{ $item->nama }}</option>
+                                                    <option value="{{ $item->nama }}"
+                                                        {{ $item->nama == $PR->menyetujui ? 'selected' : '' }}>
+                                                        {{ $item->nama }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -313,7 +327,7 @@
                             <div class = 'col-md-12'>
                                 <div class="form-group">
                                     <label for="">Keterangan</label>
-                                    <input type="text" class="form-control" name="ket[]">
+                                    <input type="text" class="form-control" name="ket[]" value="{{ $PR_detail->judul }}">
                                 </div>
                             </div>
                             <div class = 'col-md-12'>
@@ -321,11 +335,11 @@
                                     <div class="form-row">
                                         <div class="col">
                                             <label for="">Tanggal</label>
-                                            <input type="date" class="form-control" placeholder="Tanggal" name='tgl_1[]'>
+                                            <input type="date" class="form-control" placeholder="Tanggal" name='tgl_1[]' value="{{ $PR_detail->tgl_1 }}">
                                         </div>
                                         <div class="col">
                                             <label for="">Tanggal</label>
-                                            <input type="date" class="form-control" placeholder="Tanggal" name='tgl_2[]'>
+                                            <input type="date" class="form-control" placeholder="Tanggal" name='tgl_2[]' value="{{ $PR_detail->tgl_2 }}">
                                         </div>
                                     </div>
                                 </div>
@@ -334,10 +348,10 @@
                                 <div class="form-group">
                                     <div class="form-row">
                                         <div class="col">
-                                            <input type="number" class="form-control" placeholder="Jumlah" name='jum[]'>
+                                            <input type="number" class="form-control" placeholder="Jumlah" name='jum[]' value="{{ $PR_detail->jumlah }}">
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="form-control" placeholder="Qty" name='qty[]'>
+                                            <input type="text" class="form-control" placeholder="Qty" name='qty[]' value = "{{ $PR_detail->satuan }}">
                                         </div>
                                     </div>
                                 </div>
@@ -347,11 +361,11 @@
                                     <div class="form-row">
                                         <div class="col">
                                             <label for="">Tanggal Pakai</label>
-                                            <input type="date" class="form-control" placeholder="Jumlah" name='tgl_pakai[]'>
+                                            <input type="date" class="form-control" placeholder="Jumlah" name='tgl_pakai[]' value="{{ $PR_detail->tgl_pakai }}">
                                         </div>
                                         <div class="col">
                                             <label for="">Nama Project</label>
-                                            <input type="text" class="form-control" placeholder="Project" name='project[]'>
+                                            <input type="text" class="form-control" placeholder="Project" name='project[]' value="{{ $PR_detail->project }}">
                                         </div>
                                     </div>
                                 </div>

@@ -30,28 +30,21 @@
                         @endif
                         <td class="text-center">
                             <p>{{ $no++ . '.' }}</p>
-                            @if (Auth::user()->jabatan == 'Admin')
-                                <div class="image-container">
-                                    <img src="{{ asset('bukti_reim/' . $item->bukti_reim) }}" alt=""
-                                        style="max-width: 110%">
-                                </div>
-                            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Konsultan')
-                                <div class="image-container">
-                                    <img src="{{ asset('bukti_reim/' . $item->bukti_reim) }}" alt=""
-                                        style="max-width: 110%">
-                                </div>
-                            @endif
+                            <div class="image-container">
+                                <img src="{{ asset('/main/public/bukti_RB_admin/' . $item->bukti_reim) }}"
+                                    alt="" style="max-width: 110%">
+                            </div>
 
                             <div class="text-container">
                                 @if ($item->curr == 'IDR')
-                                    <p> Rp. {{ number_format($item->nominal, 0, ',', '.') }}
+                                    <p> Rp. {{ number_format($item->nominal, 2, ',', '.') }}
                                     </p>
                                 @elseif ($item->curr == 'USD')
-                                    <p>$ {{ number_format($item->nominal, 0, ',', '.') }}</p>
+                                    <p>$ {{ number_format($item->nominal, 2, ',', '.') }}</p>
                                 @elseif ($item->curr == 'SGD')
-                                    <p>$ {{ number_format($item->nominal, 0, ',', '.') }}</p>
+                                    <p>$ {{ number_format($item->nominal, 2, ',', '.') }}</p>
                                 @elseif ($item->curr == 'EUR')
-                                    <p>&euro;{{ number_format($item->nominal, 0, ',', '.') }}</p>
+                                    <p>&euro;{{ number_format($item->nominal, 2, ',', '.') }}</p>
                                 @endif
 
 

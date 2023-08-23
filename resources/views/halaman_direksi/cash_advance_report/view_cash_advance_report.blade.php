@@ -56,7 +56,23 @@
                     <td class="text-center" style="max-width: 5%;">{{ $no++ . '.' }}
                     </td>
                     <td style="text-transform:capitalize;">{{ $item->deskripsi }}
-                        {{ date('d/m/Y', strtotime($item->tanggal_1)) }}
+                        @if ($item->tanggal_1 && $item->tanggal_2)
+                            @php
+                                $tanggal1 = \Carbon\Carbon::parse($item->tanggal_1);
+                                $tanggal2 = \Carbon\Carbon::parse($item->tanggal_2);
+                                $selisihHari = $tanggal2->diffInDays($tanggal1);
+                            @endphp
+                            {{ date('d/m/y', strtotime($item->tanggal_1)) }} -
+                            {{ date('d/m/y', strtotime($item->tanggal_2)) }}
+                            @if ($item->keperluan)
+                                ({{ $item->keperluan }})
+                            @endif
+                        @elseif ($item->tanggal_1)
+                            {{ date('d/m/y', strtotime($item->tanggal_1)) }}
+                            @if ($item->keperluan)
+                                ({{ $item->keperluan }})
+                            @endif
+                        @endif
                     </td>
                     <td class="text-center" style="max-width: 12%; word-break: break-all;">
                         {{ $item->no_bukti }}</td>

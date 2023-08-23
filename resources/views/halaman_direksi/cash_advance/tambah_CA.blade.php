@@ -36,19 +36,22 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
                 href="{{ route('direksi.beranda') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
                 </div>
-                <div class="sidebar-brand-text mx-3">pt. eclectic</div>
+                <div class="sidebar-brand-text">
+                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
+                </div>
+
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item ">
                 <a class="nav-link" href="{{ route('direksi.beranda') }}">
-                    <i class="fa-solid fa-home fa-beat-fade"></i>
+                    <i class="fa-solid fa-home"></i>
                     <span>Beranda</span></a>
             </li>
 
@@ -58,9 +61,10 @@
             <!-- Nav Item - Charts -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('direksi.reimbursement') }}">
-                    <i class="fa-solid fa-money-bill-transfer fa-beat-fade"></i>
+                    <i class="fa-solid fa-hand-holding-heart"></i>
                     <span>Reimbursement</span></a>
             </li>
+
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
@@ -68,7 +72,7 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('direksi.cash_advance') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-sack-dollar"></i>
                     <span>Cash Advance</span></a>
             </li>
 
@@ -78,7 +82,7 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('direksi.cash_advance_report') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
                     <span>Cash Advance Report</span></a>
             </li>
 
@@ -88,23 +92,36 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('direksi.purchase_request') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-chart-bar"></i>
                     <span>Purchase Request</span></a>
             </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
+            <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('direksi.purchase_order') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-cart-arrow-down"></i>
                     <span>Purchase Order</span></a>
             </li>
 
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="https://drive.google.com/file/d/1BygET-_qrafRbWvjUho_qb8m3GOdQzqF/view?usp=sharing">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span>Help</span></a>
+            </li>
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
+
 
         </ul>
         <!-- End of Sidebar -->
@@ -167,7 +184,8 @@
 
                                 <a class="dropdown-item" href="{{ route('direksi.beranda.profile') }}">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
+                                    Profile ({{ Auth::guard('direksi')->user()->nama }}) |
+                                    {{ Auth::guard('direksi')->user()->jabatan }}
                                 </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal"
                                     data-target="#logoutModal">

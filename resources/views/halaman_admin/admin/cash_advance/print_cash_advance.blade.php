@@ -47,6 +47,15 @@
                 <td class="text-center">{{ $no++ . '.' }}</td>
                 <td>
                     {{ $cash_advance->judul_doku }}
+                    @if ($cash_advance->tgl_diajukan && $cash_advance->tgl_diajukan2)
+                        @php
+                            $tanggal1 = \Carbon\Carbon::parse($cash_advance->tgl_diajukan);
+                            $tanggal2 = \Carbon\Carbon::parse($cash_advance->tgl_diajukan2);
+                        @endphp
+                        {{ date('d/m/y', strtotime($cash_advance->tgl_diajukan)) }} -
+                        {{ date('d/m/y', strtotime($cash_advance->tgl_diajukan2)) }}
+                    @elseif ($cash_advance->tgl_diajukan)
+                    @endif
                 </td>
                 <td></td>
                 <td class="text-center">{{ $cash_advance->curr }}</td>
@@ -62,7 +71,7 @@
 
         <div>
             <table class="table is-striped table-bordered border-dark text-center"
-                style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                 <tr style="height:2cm;">
                     <td style="width:25%">
                         <div class="center" style="font-weight: bold">Pemohon,</div>

@@ -11,16 +11,16 @@
 
 </head>
 
-<body>
+<body onload="window.print()">
     <!-- Begin Page Content -->
     <div class="container" style="margin-right: 60px; ">
-        <figure class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+        <figure class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
             <b><a style="text-transform: uppercase;">cash advance</a></b>
             <br>
             <a style="text-transform: capitalize;">PT. Eclectic Consulting</a>
         </figure>
         <table class="table table-borderless table-sm"
-            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 12px">
+            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: -5px;">
             <tr>
                 <td>No<br>Tanggal</td>
                 <td>: {{ $cash_advance->no_doku }}<br>: {{ date('d.m.Y', strtotime($cash_advance->tgl_diajukan)) }}
@@ -29,7 +29,7 @@
         </table>
 
         <table class="table is-striped table-bordered border-dark table-sm"
-            style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+            style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
             <thead>
                 <tr>
                     <th class="text-center" style="width: 3%">No.</th>
@@ -45,28 +45,28 @@
             <?php $no = 1; ?>
             <tr>
                 <td class="text-center">{{ $no++ . '.' }}</td>
-                <td>{{ $cash_advance->judul_doku }}</td>
+                <td>
+                    {{ $cash_advance->judul_doku }}
+                </td>
                 <td></td>
                 <td class="text-center">{{ $cash_advance->curr }}</td>
-                <td class="text-end">{{ number_format($nominal, 0, ',', '.') }}</td>
+                <td class="text-end">{{ number_format($nominal, 2, ',', '.') }}</td>
             </tr>
             <!-- Total Price -->
             <tr style="font-weight: bold">
                 <td colspan="3" class="text-end">Jumlah</td>
                 <td class="text-center">{{ $cash_advance->curr }}</td>
-                <td class="text-end">{{ number_format($nominal, 0, ',', '.') }}</td>
+                <td class="text-end">{{ number_format($nominal, 2, ',', '.') }}</td>
             </tr>
         </table>
 
         <div>
             <table class="table is-striped table-bordered border-dark text-center"
-                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                <tr style="height:3cm;">
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
+                <tr style="height:2cm;">
                     <td style="width:25%">
                         <div class="center" style="font-weight: bold">Pemohon,</div>
-                        <div style="text-align: center;">
-                            <div style="margin-top: 40px"></div>
-                        </div>
+                        <div style="margin-top: 40px"></div>
                         <div class="center">{{ $cash_advance->pemohon }}</div>
                     </td>
                     <td style="width:25%">
@@ -91,14 +91,43 @@
             <div class="container" style="margin-top: -20px">
                 <div class="row">
                     <div class="col">
-                        <table class="table table-borderless table-sm"
-                            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 12px; margin-left: 170px; margin-right: -10px;">
-                            <tr class="text-center">
-                                <td>Approved on {{ date('d/m/Y', strtotime($cash_advance->tgl_persetujuan)) }}
-                                </td>
-                            </tr>
-                        </table>
                     </div>
+                    @if ($cash_advance->menyetujui == 'Aris')
+                        <div class="col">
+                        </div>
+                    @else
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                <tr class="text-center">
+                                    <td>Approved on {{ date('d/m/Y', strtotime($cash_advance->tgl_approval)) }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+        @elseif ($cash_advance->status_approved == 'approved' && $cash_advance->status_paid == 'paid')
+            <div class="container" style="margin-top: -20px">
+                <div class="row">
+                    <div class="col">
+                    </div>
+                    @if ($cash_advance->menyetujui == 'Aris')
+                        <div class="col">
+                        </div>
+                    @else
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                <tr class="text-center">
+                                    <td>Approved on {{ date('d/m/Y', strtotime($cash_advance->tgl_approval)) }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    @endif
                 </div>
             </div>
         @endif
@@ -122,14 +151,14 @@
                 width: 125px;
                 margin-right: -30px;
                 /* Sesuaikan ukuran gambar sesuai kebutuhan */
-                margin-top: 60px
+                margin-top: 55px
             }
 
             #ttdImage2 {
                 width: 125px;
                 margin-right: -30px;
                 /* Sesuaikan ukuran gambar sesuai kebutuhan */
-                margin-top: 65px
+                margin-top: 50px
             }
         }
 

@@ -40,19 +40,22 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
                 href="{{ route('admin.beranda') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
                 </div>
-                <div class="sidebar-brand-text mx-3">pt. eclectic</div>
+                <div class="sidebar-brand-text">
+                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
+                </div>
+
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.beranda') }}">
-                    <i class="fa-solid fa-home fa-beat-fade"></i>
+                    <i class="fa-solid fa-home"></i>
                     <span>Beranda</span></a>
             </li>
 
@@ -68,7 +71,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog fa-beat-fade"></i>
+                    <i class="fas fa-fw fa-cog"></i>
                     <span>Master</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -111,7 +114,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                     aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder fa-beat-fade"></i>
+                    <i class="fas fa-fw fa-folder"></i>
                     <span>Transaksi</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
@@ -127,7 +130,15 @@
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
+            <hr class="sidebar-divider">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="https://drive.google.com/file/d/1RJmZuL2LmXJKe3NlkAESjgsCJc9pcX8l/view?usp=sharing">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span>Help</span></a>
+            </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
@@ -168,6 +179,11 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item"
+                                    href="{{ route('admin.admin.edit_admin', Auth::user()->id) }}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile ({{ Auth::user()->nama }}) | {{ Auth::user()->jabatan }}
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal"
                                     data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -193,7 +209,7 @@
                                 </div>
                                 <div class="card-body">
                                     <form action="{{ route('admin.reimbursement.simpan_reimbursement') }}"
-                                        method="POST" enctype="multipart/form-data">
+                                        method="POST" enctype="multipart/form-data" id="formId">
                                         @csrf
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">No Dokumen</label>
@@ -210,6 +226,8 @@
                                             <label for="exampleInputPassword1">Keterangan</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
                                                 name="judul_doku">
+                                            <small id="emailHelp" class="form-text text-muted">Contoh: keperluan
+                                                kantor, keperluan project ABC, keperluan tender ABC.</small>
                                         </div>
                                         <div class="form-group">
                                             <label for="exampleInputPassword1">Pemohon</label>
@@ -256,31 +274,6 @@
                                             <input type="text" class="form-control" id="no_telp" name="no_telp"
                                                 readonly>
                                         </div>
-                                        <div class="form-group" style="margin-top: 10px">
-                                            <label for="">File Excel</label> <br>
-                                            <input type="file" id="file-input" accept=".xlsx">
-                                        </div>
-                                        <div class="form-group" style="margin-top: 10px">
-                                            <label for="exampleInputPassword1">File Bukti</label>
-                                            <input type="file"
-                                                class="form-control-file @error('bukti') is-invalid @enderror"
-                                                name='bukti' accept='.pdf, .zip, .rar'>
-                                            <br>
-                                            <small id="passwordHelpBlock" class="form-text text-muted"
-                                                style="font-family: Arial, Helvetica, sans-serif; margin-top: -10px">
-                                                Gunakan PDF atau ZIP atau RAR
-                                            </small>
-                                            @error('bukti')
-                                                <div class="alert alert-danger alert-dismissible fade show"
-                                                    role="alert">
-                                                    {{ $message }}
-                                                    <button type="button" class="close" data-dismiss="alert"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                            @enderror
-                                        </div>
 
                                         <div class="form-group" style="margin-top: 10px; margin-bottom: 2px">
                                             <label for="">Pilih</label>
@@ -316,14 +309,13 @@
                                             <div id="detail"></div>
                                         </div>
                                         <div class="d-flex justify-content-center" style="margin-top: 20px">
-                                            <a href="javascript:;" class="btn btn-info" onclick="getRadioValue()"><i
+                                            <a href="javascript:;" class="btn btn-info"
+                                                onclick="confirmBeforeAddRB()"><i
                                                     class="fa-solid fa-circle-plus fa-bounce"></i>&nbsp;Tambah RB</a>
                                             &nbsp;&nbsp;
-                                            <button type="submit" class="btn btn-primary"><i
+                                            <button type="submit" id="submitBtn" class="btn btn-primary"
+                                                style="display: none"><i
                                                     class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Submit</button>
-                                            &nbsp;&nbsp;
-                                            <a href="{{ route('admin.reimbursement') }}" class="btn btn-danger"><i
-                                                    class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
                                         </div>
                                     </form>
                                 </div>
@@ -378,6 +370,28 @@
         </div>
     </div>
 
+    <script>
+        document.getElementById('submitBtn').addEventListener('click', function(event) {
+            event.preventDefault(); // Untuk mencegah pengiriman formulir secara otomatis
+
+            Swal.fire({
+                title: 'Apakah anda yakin ingin submit? ',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                denyButtonText: `Jangan Simpan`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Tindakan jika tombol "Save" diklik
+                    document.getElementById('formId').submit(); // Submit formulir secara manual
+                } else if (result.isDenied) {
+                    // Tindakan jika tombol "Don't save" diklik
+                    Swal.fire('Perubahan tidak akan disimpan', '', 'info');
+                }
+            });
+        });
+    </script>
+
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('assets') }}/vendor/jquery/jquery.min.js"></script>
     <script src="{{ asset('assets') }}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -389,6 +403,50 @@
     <script src="{{ asset('assets') }}/js/sb-admin-2.min.js"></script>
 
     <script>
+        function confirmBeforeAddRB() {
+            if (isAnyRadioButtonSelected()) {
+                // Jika salah satu radio button sudah dipilih, jalankan fungsi getRadioValueAndShowSubmitButton()
+                getRadioValueAndShowSubmitButton();
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Peringatan!',
+                    text: 'Harap pilih salah satu project sebelum menambahkan RB.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        }
+
+        // Fungsi untuk memeriksa apakah ada salah satu radio button yang dipilih
+        function isAnyRadioButtonSelected() {
+            const radioButtons = document.querySelectorAll('input[name="project"]');
+            for (const radioButton of radioButtons) {
+                if (radioButton.checked) {
+                    return true; // Mengembalikan true jika ada radio button yang dipilih
+                }
+            }
+            return false; // Mengembalikan false jika tidak ada radio button yang dipilih
+        }
+
+        // Fungsi untuk menampilkan tombol "Submit" ketika tombol "Tambah RB" ditekan
+        function getRadioValueAndShowSubmitButton() {
+            getRadioValue();
+            showSubmitButton();
+        }
+
+        // Fungsi untuk menampilkan tombol "Submit"
+        function showSubmitButton() {
+            const submitButton = document.getElementById('submitBtn');
+            submitButton.style.display = 'block';
+        }
+
+        function hideSubmitButton() {
+            const submitButton = document.getElementById('submitBtn');
+            submitButton.style.display = 'none';
+        }
+
+
         function getRadioValue() {
             var radio = document.getElementsByName('project');
             var selectedValue = '';
@@ -479,7 +537,7 @@
                                     <div class = 'row'>
                                         <div class = 'col-md-12'>
                                             <div class="form-group" style = 'margin-top: 20px'>
-                                                <button name="delete${i}" id="delete${i}" onclick="deleteRow(this)" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
+                                                <button name="delete${i}" id="delete${i}" onclick="deleteRow(this); hideSubmitButton();" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
                                             </div>
                                         </div>
                                     </div>
@@ -535,7 +593,7 @@
                                     <div class = 'row'>
                                         <div class='col-md-12'>
                                             <div class="form-group">
-                                                <button name="delete${i}" id="delete${i}" onclick="deleteRow(this)" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
+                                                <button name="delete${i}" id="delete${i}" onclick="deleteRow(this); hideSubmitButton();" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
                                             </div>
                                         </div>
                                     </div>
@@ -588,14 +646,14 @@
                                         <div class='col-md-4'>
                                             <div class="form-group">
                                                 <label for="exampleInputPassword1">Jam </label>
-                                                <input type="number" class="form-control" name='jam_st[]'>
+                                                <input type="number" class="form-control" name='jam_st[]' step="0.001">
                                             </div>
                                         </div>
                                     </div>
                                     <div class = 'row'>
                                         <div class='col-md-12'>
                                             <div class="form-group">
-                                                <button name="delete${i}" id="delete${i}" onclick="deleteRow(this)" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
+                                                <button name="delete${i}" id="delete${i}" onclick="deleteRow(this); hideSubmitButton();" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
                                             </div>
                                         </div>
                                     </div>
@@ -655,7 +713,7 @@
                                     <div class = 'row'>
                                         <div class='col-md-12'>
                                             <div class="form-group">
-                                                <button name="delete${i}" id="delete${i}" onclick="deleteRow(this)" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
+                                                <button name="delete${i}" id="delete${i}" onclick="deleteRow(this); hideSubmitButton();" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
                                             </div>
                                         </div>
                                     </div>
@@ -707,55 +765,8 @@
             xhr.send();
         }
     </script>
-    <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script>
 
-    <script>
-        const input = document.getElementById('file-input');
-        input.addEventListener('change', function() {
-            readXlsxFile(input.files[0]).then(function(data) {
-                console.log(data);
-
-                // Trace data bagian Deskripsi
-                const deskripsiData = [];
-                for (let i = 0; i < data.length; i++) {
-                    const deskripsi = data[4][1]; // Asumsikan Deskripsi berada di kolom kedua (indeks 1)
-                    deskripsiData.push(deskripsi);
-                }
-                // console.log(deskripsiData);
-
-                // // Trace data bagian No Bukti
-                const nobuData = data[4][5]; // Asumsikan No Bukti berada di kolom keempat (indeks 3)
-                // console.log(nobuData);
-
-
-                // Tampilkan data deskripsi dalam textarea
-                const textarea = document.querySelectorAll('textarea[name="deskripsi[]"]');
-                for (let i = 0; i < textarea.length; i++) {
-                    textarea[i].value = deskripsiData[4] ||
-                        ''; // Jika data tidak ada, beri nilai default string kosong
-                }
-
-
-                // // Tampilkan data No Bukti dalam input text
-                const nobuInputs = document.querySelectorAll('input[name="nobu[]"]');
-                for (let i = 0; i < nobuInputs.length; i++) {
-                    nobuInputs[i].value = nobuData ||
-                        ''; // Jika data tidak ada, beri nilai default string kosong
-                }
-
-                // Trace data bagian Nominal
-                const nominalData = data[4][7]; // Asumsikan Nominal berada di kolom keenam (indeks 5)
-                // console.log(nominalData);
-
-                // Tampilkan data Nominal dalam input number
-                const nominalInputs = document.querySelectorAll('input[name="nom_rb[]"]');
-                for (let i = 0; i < nominalInputs.length; i++) {
-                    nominalInputs[i].value = nominalData ||
-                        ''; // Jika data tidak ada, beri nilai default string kosong
-                }
-            });
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 </body>

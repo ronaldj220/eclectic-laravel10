@@ -39,19 +39,22 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
                 href="{{ route('admin.beranda') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
                 </div>
-                <div class="sidebar-brand-text mx-3">pt. eclectic</div>
+                <div class="sidebar-brand-text">
+                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
+                </div>
+
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.beranda') }}">
-                    <i class="fa-solid fa-home fa-beat-fade"></i>
+                    <i class="fa-solid fa-home"></i>
                     <span>Beranda</span></a>
             </li>
 
@@ -67,7 +70,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog fa-beat-fade"></i>
+                    <i class="fas fa-fw fa-cog"></i>
                     <span>Master</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -97,6 +100,7 @@
                     </div>
                 </div>
             </li>
+
             <!-- Divider -->
             <hr class="sidebar-divider">
 
@@ -109,7 +113,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                     aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder fa-beat-fade"></i>
+                    <i class="fas fa-fw fa-folder"></i>
                     <span>Transaksi</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
@@ -124,9 +128,16 @@
                 </div>
             </li>
 
-
             <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
+            <hr class="sidebar-divider">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="https://drive.google.com/file/d/1RJmZuL2LmXJKe3NlkAESjgsCJc9pcX8l/view?usp=sharing">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span>Help</span></a>
+            </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
@@ -147,11 +158,6 @@
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
-
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
@@ -167,7 +173,11 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-
+                                <a class="dropdown-item"
+                                    href="{{ route('admin.admin.edit_admin', Auth::user()->id) }}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile ({{ Auth::user()->nama }}) | {{ Auth::user()->jabatan }}
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal"
                                     data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -257,6 +267,86 @@
                                             * Sujiono (Keperluan Project) <br>
                                             * Yacob (Keperluan Office) <br>
                                             * Richard (Keperluan Marketing)
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="VAT"
+                                                        value="VAT" onchange="toggleTextbox('VATTextbox')">
+                                                    <label class="form-check-label" for="VAT">PPN</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="PPh"
+                                                        value="PPh" onchange="toggleTextbox('PPhTextbox')">
+                                                    <label class="form-check-label" for="PPh">PPh</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="PPh4"
+                                                        value="PPh_4" onchange="toggleTextbox('PPh4Textbox')">
+                                                    <label class="form-check-label" for="PPh_4">PPh 4 Ayat
+                                                        21</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="PPh21"
+                                                        value="PPh21" onchange="toggleTextbox('PPh21Textbox')">
+                                                    <label class="form-check-label" for="PPh_4">PPh 21</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="Diskon"
+                                                        value="Diskon" onchange="toggleTextbox('DiskonTextbox')">
+                                                    <label class="form-check-label" for="PPh_4">Diskon</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="Ctm"
+                                                        value="Ctm" onchange="toggleTextbox('CtmTextbox')">
+                                                    <label class="form-check-label" for="PPh_4">Lain-lain</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div id="VATTextbox" style="display: none;">
+                                                            <input type="text" id="VATInput" name="vat"
+                                                                class="form-control" placeholder="Enter PPN value">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div id="PPhTextbox" style="display: none;">
+                                                            <input type="text" id="PPhInput" name="pph"
+                                                                class="form-control" placeholder="Enter PPh value">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div id="PPh4Textbox" style="display: none;">
+                                                            <input type="text" id="PPh4Input" name="pph_4"
+                                                                class="form-control"
+                                                                placeholder="Enter PPh 4 Ayat 2 value">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div id="PPh21Textbox" style="display: none;">
+                                                            <input type="text" id="PPh21Input" name="pph_21"
+                                                                class="form-control" placeholder="Enter PPh 21 value">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div id="DiskonTextbox" style="display: none;">
+                                                            <input type="text" id="PPh4Input" name="diskon"
+                                                                class="form-control" placeholder="Enter diskon value">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div id="CtmTextbox" style="display: none;">
+                                                            <input type="text" id="CtmInput" name="lain-lain"
+                                                                class="form-control" placeholder="Lain-lain"> &nbsp;
+                                                            <input type="number" id="CtmInput" name="lain-lain_nom"
+                                                                class="form-control" placeholder="Enter Other Values">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="form-group mt-3">
                                             <div id="detail"></div>
@@ -351,7 +441,7 @@
                               <div class="form-group">
                                   <div class="form-row">
                                       <div class="col">
-                                          <input type="number" class="form-control" placeholder="Jumlah" name="jum[]" id="jum${i}" >
+                                          <input type="number" class="form-control" placeholder="Jumlah" name="jum[]" id="jum${i}" step="0.001">
                                       </div>
                                       <div class="col">
                                           <input type="text" class="form-control" placeholder="Qty" name="qty[]" id="qty${i}" >
@@ -387,71 +477,6 @@
                                       </div>
                                   </div>
                               </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="VAT" value="VAT" onchange="toggleTextbox('VATTextbox')">
-                                        <label class="form-check-label" for="VAT">PPN</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="PPh" value="PPh" onchange="toggleTextbox('PPhTextbox')">
-                                        <label class="form-check-label" for="PPh">PPh</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="PPh4" value="PPh_4" onchange="toggleTextbox('PPh4Textbox')">
-                                        <label class="form-check-label" for="PPh_4">PPh 4 Ayat 21</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="PPh21" value="PPh21" onchange="toggleTextbox('PPh21Textbox')">
-                                        <label class="form-check-label" for="PPh_4">PPh 21</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="Diskon" value="Diskon" onchange="toggleTextbox('DiskonTextbox')">
-                                        <label class="form-check-label" for="PPh_4">Diskon</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="Ctm" value="Ctm" onchange="toggleTextbox('CtmTextbox')">
-                                        <label class="form-check-label" for="PPh_4">Lain-lain</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col">
-                                            <div id="VATTextbox" style="display: none;">
-                                                <input type="text" id="VATInput" name="vat[]" class="form-control" placeholder="Enter PPN value">
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div id="PPhTextbox" style="display: none;">
-                                                <input type="text" id="PPhInput" name="pph[]" class="form-control" placeholder="Enter PPh value">
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div id="PPh4Textbox" style="display: none;">
-                                                <input type="text" id="PPh4Input" name="pph_4[]" class="form-control" placeholder="Enter PPh 4 Ayat 2 value">
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div id="PPh21Textbox" style="display: none;">
-                                                <input type="text" id="PPh21Input" name="pph_21[]" class="form-control" placeholder="Enter PPh 21 value">
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div id="DiskonTextbox" style="display: none;">
-                                                <input type="text" id="PPh4Input" name="diskon[]" class="form-control" placeholder="Enter diskon value">
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div id="CtmTextbox" style="display: none;">
-                                                <input type="text" id="CtmInput" name="lain-lain[]" class="form-control" placeholder="Lain-lain"> &nbsp;
-                                                <input type="number" id="CtmInput" name="lain-lain_nom[]" class="form-control" placeholder="Enter Other Values">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class = 'row'>
@@ -493,13 +518,19 @@
                     var keteranganInputs = document.getElementsByName('ket[]');
                     var jumlahInputs = document.getElementsByName('jum[]');
                     var qtyInputs = document.getElementsByName('qty[]');
+                    var tgl_1Inputs = document.getElementsByName('tgl_1[]');
+                    var tgl_2Inputs = document.getElementsByName('tgl_2[]');
                     for (var i = 0; i < keteranganInputs.length; i++) {
                         var keterangan = response.keterangan[i];
                         var jumlah = response.jumlah[i];
                         var qty = response.qty[i];
+                        var tgl_1 = response.tgl_1[i];
+                        var tgl_2 = response.tgl_2[i];
                         keteranganInputs[i].value = keterangan;
                         jumlahInputs[i].value = jumlah;
                         qtyInputs[i].value = qty;
+                        tgl_1Inputs[i].value = tgl_1;
+                        tgl_2Inputs[i].value = tgl_2;
                     }
                 } else if (xhr.readyState === 4) {
                     console.error('Request failed with status: ' + xhr.status);
@@ -544,7 +575,6 @@
     </script>
 
 </body>
-@include('sweetalert::alert')
 
 
 </html>

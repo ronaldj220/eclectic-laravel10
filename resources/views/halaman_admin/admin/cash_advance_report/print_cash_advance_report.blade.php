@@ -111,12 +111,10 @@
                 </tr>
             @endif
         </table>
-        <div class="container  text-center">
+        <div class="container text-center">
             <div class="row gx-5">
                 <div class="col">
-                    <div class="p-3">
 
-                    </div>
                 </div>
                 <div class="col" style="margin-right: -28px; margin-top: -30px;">
                     <div class="p-3">
@@ -153,8 +151,7 @@
                             <table class="table table-borderless table-sm"
                                 style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 220px; margin-right: -10px;">
                                 <tr class="text-center">
-                                    <td>Approved on
-                                        {{ date('d/m/Y', strtotime($cash_advance_report->tgl_persetujuan)) }}
+                                    <td>
                                     </td>
                                 </tr>
                             </table>
@@ -173,7 +170,18 @@
                     @else
                         <div class="col">
                             <table class="table table-borderless table-sm"
-                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 220px; margin-right: -10px;">
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 200px;">
+                                <tr class="text-center">
+                                    <td>Paid on
+                                        {{ date('d/m/Y', strtotime($cash_advance_report->tgl_bayar)) }} <br>
+                                        ({{ $cash_advance_report->no_referensi }})
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 100px;">
                                 <tr class="text-center">
                                     <td>Approved on
                                         {{ date('d/m/Y', strtotime($cash_advance_report->tgl_persetujuan)) }}

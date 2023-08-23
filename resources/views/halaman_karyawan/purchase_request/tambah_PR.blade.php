@@ -170,8 +170,7 @@
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <form action="{{ route('admin.purchase_request.simpan_purchase_request') }}"
-                                        method="POST">
+                                    <form action="{{ route('karyawan.purchase_request.simpan_PR') }}" method="POST">
                                         @csrf
                                         <div class="form-group">
                                             <label for="exampleInputEmail1">No Dokumen</label>
@@ -319,7 +318,17 @@
                                             <input type="number" class="form-control" placeholder="Jumlah" name='jum[]'>
                                         </div>
                                         <div class="col">
-                                            <input type="text" class="form-control" placeholder="Qty" name='qty[]'>
+                                            <select class="form-control" id="exampleFormControlSelect1"
+                                                name="qty[]">
+                                                <option value="PC">PC</option>
+                                                <option value="UNIT">UNIT</option>
+                                                <option value="HOUR">HOUR</option>
+                                                <option value="M-DAYS">M-DAYS</option>
+                                                <option value="DAYS">DAYS</option>
+                                                <option value="NIGHTS">NIGHTS</option>
+                                                <option value="USR">USR</option>
+                                                <option value="PACK">PACK</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>

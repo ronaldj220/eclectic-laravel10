@@ -36,19 +36,21 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
                 href="{{ route('kasir.beranda') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
                 </div>
-                <div class="sidebar-brand-text mx-3">pt. eclectic</div>
+                <div class="sidebar-brand-text">
+                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
+                </div>
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.beranda') }}">
-                    <i class="fa-solid fa-home fa-beat-fade"></i>
+                    <i class="fa-solid fa-home"></i>
                     <span>Beranda</span></a>
             </li>
 
@@ -58,7 +60,7 @@
             <!-- Nav Item - Charts -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.reimbursement') }}">
-                    <i class="fa-solid fa-money-bill-transfer fa-beat-fade"></i>
+                    <i class="fa-solid fa-hand-holding-heart"></i>
                     <span>Reimbursement</span></a>
             </li>
             <!-- Divider -->
@@ -68,7 +70,7 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.cash_advance') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-sack-dollar"></i>
                     <span>Cash Advance</span></a>
             </li>
 
@@ -78,7 +80,7 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.cash_advance_report') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
                     <span>Cash Advance Report</span></a>
             </li>
 
@@ -88,7 +90,7 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.purchase_request') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-chart-bar"></i>
                     <span>Purchase Request</span></a>
             </li>
 
@@ -98,8 +100,19 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kasir.purchase_order') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-cart-arrow-down"></i>
                     <span>Purchase Order</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="https://drive.google.com/file/d/1uCNOVvTxZFA5X6Qeyqae2CbhJ5hq903y/view?usp=sharing">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span>Help</span></a>
             </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
@@ -127,30 +140,6 @@
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
@@ -158,15 +147,20 @@
                                 <span
                                     class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::guard('kasir')->user()->nama }}
                                     <br>
-                                    <small>Kasir</small></span>
+                                    <small>Finance</small></span>
                                 <img class="img-profile rounded-circle"
-                                    src="{{ asset('assets') }}/img/undraw_profile_2.svg">
+                                    src="{{ asset('assets') }}/img/undraw_profile_3.svg">
                             </a>
                             <!-- Dropdown - User Information -->
+
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#" data-toggle="modal"
-                                    data-target="#logoutModal">
+
+                                <a class="dropdown-item" href="{{ route('kasir.beranda.profile') }}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile ({{ Auth::guard('kasir')->user()->nama }}) | Finance
+                                </a>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -186,31 +180,63 @@
                             </h6>
                         </div>
                         <div class="card-body">
-                            <a href="{{ route('kasir.reimbursement.tambah_RB') }}" class="btn btn-success"
-                                style="margin-bottom: 20px">
-                                <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Ajukan RB
-                            </a>
-                            @if (Session::has('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ Session::get('success') }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            @endif
-                            @if (Session::has('error'))
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {{ Session::get('error') }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{{ route('kasir.reimbursement.tambah_RB') }}" class="btn btn-success">
+                                    <i class="fa-solid fa-plus fa-flip"></i>&nbsp;Ajukan RB
+                                </a>
+
+                                <form id="formBulan" action="{{ route('kasir.reimbursement') }}" method="GET"
+                                    class="ml-auto">
+                                    {{ csrf_field() }}
+                                    <div class="form-group">
+                                        <label for="bulan">Bulan</label>
+                                        <input type="month" class="form-control" id="bulan" name="bulan"
+                                            value="{{ request('bulan') }}">
+                                    </div>
+                                </form>
+                                <form action="{{ route('kasir.reimbursement') }}" method="GET"
+                                    style="margin-top: 30px">
+                                    {{ csrf_field() }}
+                                    <div class="form-group">
+                                        <input type="search" class="form-control" id="exampleFormControlInput1"
+                                            name="search" placeholder="Search...">
+                                    </div>
+                                </form>
+                            </div>
+
+
+                            @if (session('success'))
+                                <script>
+                                    window.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            title: 'Berhasil!',
+                                            text: '{{ session('success') }}',
+                                            icon: 'success',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                    });
+                                </script>
+                            @elseif (session('error'))
+                                <script>
+                                    window.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            title: 'Gagal!',
+                                            text: '{{ session('error') }}',
+                                            icon: 'error',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                    });
+                                </script>
                             @endif
                             <div class="table-responsive">
                                 <table class="table table-bordered" width="100%" cellspacing="0">
                                     <thead class="text-center">
                                         <tr>
                                             <th style="width: 2%">No Dokumen</th>
+                                            <th style="width: 2%">Keterangan</th>
+                                            <th style="width: 2%">Pemohon</th>
 
                                             @if ($reimbursement && count($reimbursement) > 0)
                                                 @php
@@ -219,10 +245,19 @@
                                                 @if ($item->status_approved == 'rejected' && $item->status_paid == 'rejected')
                                                     <th style="width: 3%">Status</th>
                                                     <th style="width: 3%">Aksi</th>
+                                                @elseif ($item->status_approved == 'rejected' && $item->status_paid == 'pending')
+                                                    <th style="width: 3%">Status</th>
+                                                    <th style="width: 3%">Aksi</th>
+                                                @elseif ($item->status_approved == 'hold' && $item->status_paid == 'hold')
+                                                    <th style="width: 3%">Status</th>
+                                                    <th style="width: 3%">Aksi</th>
                                                 @elseif ($item->status_approved == 'pending' && $item->status_paid == 'pending')
                                                     <th style="width: 3%">Status</th>
                                                     <th style="width: 3%">Aksi</th>
                                                 @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')
+                                                    <th style="width: 3%">Status</th>
+                                                    <th style="width: 3%">Aksi</th>
+                                                @elseif ($item->status_approved == 'approved' && $item->status_paid == 'paid')
                                                     <th style="width: 3%">Status</th>
                                                     <th style="width: 3%">Aksi</th>
                                                 @endif
@@ -235,10 +270,18 @@
                                         @if ($reimbursement)
                                             @foreach ($reimbursement as $item)
                                                 <tr>
-                                                    <td><a
-                                                            href="{{ route('kasir.reimbursement.view_reimbursement', $item->id) }}">{{ $item->no_doku }}</a>
-                                                    </td>
+                                                    @if ($item->status_approved == 'hold' && $item->status_paid == 'hold')
+                                                        <td><a
+                                                                href="{{ route('kasir.reimbursement.view_reimbursement', $item->id) }}">{{ $item->no_doku_draft }}</a>
+                                                        </td>
+                                                    @else
+                                                        <td><a
+                                                                href="{{ route('kasir.reimbursement.view_reimbursement', $item->id) }}">{{ $item->no_doku_real }}</a>
+                                                        </td>
+                                                    @endif
                                                     @if ($item->status_approved == 'rejected' && $item->status_paid == 'rejected')
+                                                        <td>{{ $item->judul_doku }}</td>
+                                                        <td>{{ $item->pemohon }}</td>
                                                         <td style="text-align: center; color: #FF3131">
                                                             <label style="font-weight: bold">Submitted</label>
                                                         </td>
@@ -266,7 +309,31 @@
                                                                 </a>
                                                             </div>
                                                         </td>
+                                                    @elseif ($item->status_approved == 'hold' && $item->status_paid == 'hold')
+                                                        <td>{{ $item->judul_doku }}</td>
+                                                        <td>{{ $item->pemohon }}</td>
+                                                        <td style="text-align: center; color: #0097B2">
+                                                            <label style="font-weight: bold">Draft</label>
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <div style="display: flex; justify-content: center;">
+
+                                                                <a href="{{ route('kasir.reimbursement.edit_RB', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Edit RB">
+                                                                    <i class="fa-solid fa-pen-to-square"
+                                                                        style="color: #900C3F"></i>
+                                                                </a>
+                                                                &nbsp; &nbsp; &nbsp;
+                                                                <a href="{{ route('kasir.reimbursement.delete_RB', $item->id) }}"
+                                                                    data-toggle="tooltip" data-placement="bottom"
+                                                                    title="Hapus"><i class="fa-solid fa-trash"
+                                                                        style="color: #900C3F"></i></a>
+                                                            </div>
+                                                        </td>
                                                     @elseif ($item->status_approved == 'rejected' && $item->status_paid == 'pending')
+                                                        <td>{{ $item->judul_doku }}</td>
+                                                        <td>{{ $item->pemohon }}</td>
                                                         <td style="text-align: center; color: #FF3131">
                                                             <label style="font-weight: bold">Rejected</label>
                                                         </td>
@@ -295,8 +362,10 @@
                                                             </div>
                                                         </td>
                                                     @elseif ($item->status_approved == 'pending' && $item->status_paid == 'pending')
+                                                        <td>{{ $item->judul_doku }}</td>
+                                                        <td>{{ $item->pemohon }}</td>
                                                         <td
-                                                            style="text-align: center; color: #6D6F28; text-transform: uppercase;">
+                                                            style="text-align: center; color: #6D6F28; text-transform: capitalize;">
                                                             <b><label>Waiting for Approval</label></b>
                                                         </td>
                                                         <td style="text-align: center;">
@@ -324,10 +393,13 @@
                                                             </div>
                                                         </td>
                                                     @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')
+                                                        <td>{{ $item->judul_doku }}</td>
+                                                        <td>{{ $item->pemohon }}</td>
                                                         <td style="text-align: center; color: #FF914D">
                                                             <label style="font-weight: bold;">Waiting For
                                                                 Payment</label>
                                                         </td>
+
                                                         <td style="text-align: center;">
                                                             <div style="display: flex; justify-content: center;">
                                                                 <a href="{{ route('kasir.reimbursement.print_reimbursement', $item->id) }}"
@@ -351,15 +423,17 @@
                                                                         style="color: #900C3F"></i>
                                                                 </a>
                                                                 &nbsp; &nbsp; &nbsp;
-                                                                <a href="{{ route('kasir.reimbursement.bayar_reimbursement', $item->id) }}"
+                                                                <a href="{{ route('kasir.reimbursement.view_reimbursement', $item->id) }}"
                                                                     data-toggle="tooltip" data-placement="bottom"
                                                                     title="Bayar">
-                                                                    <i class="fa fa-credit-card"
-                                                                        style="color:#900C3F"></i>
+                                                                    <i class="fa-solid fa-credit-card"
+                                                                        style="color: #900C3F"></i>
                                                                 </a>
                                                             </div>
                                                         </td>
                                                     @elseif ($item->status_approved == 'approved' && $item->status_paid == 'paid')
+                                                        <td>{{ $item->judul_doku }}</td>
+                                                        <td>{{ $item->pemohon }}</td>
                                                         <td style="text-align: center; color: #0097B2">
                                                             <label style="font-weight: bold">Paid</label>
                                                         </td>
@@ -384,13 +458,6 @@
                                                                     title="Download Excel">
                                                                     <i class="fa-solid fa-file-excel"
                                                                         style="color: #900C3F"></i>
-                                                                </a>
-                                                                &nbsp; &nbsp; &nbsp;
-                                                                <a href="{{ route('kasir.reimbursement.bayar_reimbursement', $item->id) }}"
-                                                                    data-toggle="tooltip" data-placement="bottom"
-                                                                    title="Bayar">
-                                                                    <i class="fa fa-credit-card"
-                                                                        style="color:#900C3F"></i>
                                                                 </a>
                                                             </div>
                                                         </td>
@@ -464,6 +531,22 @@
 
     <script src="{{ asset('assets/js/tooltip.js') }}"></script>
 
+    <script>
+        $(document).ready(function() {
+            $('#cari').change(function() {
+                $('#formCari').submit(); // Mengirimkan form saat bulan berubah
+            });
+
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#bulan').change(function() {
+                $('#formBulan').submit(); // Mengirimkan form saat bulan berubah
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
 

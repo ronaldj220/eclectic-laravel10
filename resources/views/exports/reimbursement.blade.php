@@ -11,7 +11,7 @@
                     $halaman_reimbursement->halaman == 'ST' ||
                     $halaman_reimbursement->halaman == 'SL')
                 <th colspan="2" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px">
-                    {{ $halaman_reimbursement->no_doku }}</th>
+                    {{ $halaman_reimbursement->no_doku_real }}</th>
             @endif
 
         </tr>

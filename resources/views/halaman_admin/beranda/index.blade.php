@@ -36,19 +36,22 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
                 href="{{ route('admin.beranda') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
                 </div>
-                <div class="sidebar-brand-text mx-3">pt. eclectic</div>
+                <div class="sidebar-brand-text">
+                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
+                </div>
+
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.beranda') }}">
-                    <i class="fa-solid fa-home fa-beat-fade"></i>
+                    <i class="fa-solid fa-home "></i>
                     <span>Beranda</span></a>
             </li>
 
@@ -64,7 +67,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog fa-beat-fade"></i>
+                    <i class="fas fa-fw fa-cog "></i>
                     <span>Master</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -107,7 +110,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                     aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder fa-beat-fade"></i>
+                    <i class="fas fa-fw fa-folder "></i>
                     <span>Transaksi</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
@@ -123,8 +126,15 @@
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
+            <hr class="sidebar-divider">
 
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="https://drive.google.com/file/d/1RJmZuL2LmXJKe3NlkAESjgsCJc9pcX8l/view?usp=sharing">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span>Help</span></a>
+            </li>
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -161,6 +171,11 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item"
+                                    href="{{ route('admin.admin.edit_admin', Auth::user()->id) }}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Profile ({{ Auth::user()->nama }}) | {{ Auth::user()->jabatan }}
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal"
                                     data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -175,127 +190,97 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container">
+                <div class="container-fluid" style="margin-right: 60px">
+                    <!-- Di dalam berkas admin.beranda.blade.php atau halaman beranda Anda -->
+                    @if (session('success'))
+                        <script>
+                            window.addEventListener('DOMContentLoaded', function() {
+                                Swal.fire({
+                                    title: 'Berhasil!',
+                                    text: '{{ session('success') }}',
+                                    icon: 'success',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            });
+                        </script>
+                    @endif
 
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-start mb-4">
-                        <a href="https://drive.google.com/file/d/1RJmZuL2LmXJKe3NlkAESjgsCJc9pcX8l/view?usp=sharing"><i
-                                class="fa-solid fa-cloud-arrow-down"></i> Download</a>
+                    <table class="table table-borderless table-lg"
+                        style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 16px; margin-right: 150px">
+                        <tr>
+                            <th class="text-center"><a href="{{ route('admin.reimbursement.tambah_reimbursement') }}"
+                                    data-toggle="tooltip" data-placement="bottom" title="Buat Reimbursement"><img
+                                        src="{{ asset('cashback.png') }}" width="80"></a>
+                                <br>
+                                <p style="text-align: center">RB</p>
+                            </th>
+                            <br>
+                            <th class="text-center"><a href="{{ route('admin.cash_advance.tambah_cash_advance') }}"
+                                    data-toggle="tooltip" data-placement="bottom" title="Buat Cash Advance"><img
+                                        src="{{ asset('cash.png') }}" width="80"></a>
+                                <br>
+                                <label class="text-center">CA</label>
+                            </th>
+
+                            <th><a href="{{ route('admin.cash_advance_report.tambah_cash_advance_report') }}"
+                                    data-toggle="tooltip" data-placement="bottom"
+                                    title="Buat Cash Advance Report"><img src="{{ asset('4318314.png') }}"
+                                        width="80"></a>
+                                <br>
+                                <p style="text-align: center">CA Report</p>
+                            </th>
+                            <th>
+                                <!-- Nav Item - Tables -->
+                                <a href="{{ route('admin.purchase_request.tambah_purchase_request') }}"
+                                    data-toggle="tooltip" data-placement="bottom" title="Buat Purchase Request"><img
+                                        src="{{ asset('123.png') }}" width="80"></a>
+                                <br>
+                                <p style="text-align: center">PR</p>
+                            </th>
+                            <th>
+                                <!-- Nav Item - Tables -->
+                                <a href="{{ route('admin.purchase_order.tambah_PO') }}" data-toggle="tooltip"
+                                    data-placement="bottom" title="Buat Purchase Order"><img
+                                        src="{{ asset('images.png') }}" width="65"></a>
+                                <br>
+                                <p style="text-align: center">PO</p>
+                            </th>
+
+                        </tr>
+
+                    </table>
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary text-center">Incoming New Documents</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                    <thead class="text-center">
+                                        <tr>
+                                            <th style="width: 2%">No Dokumen</th>
+                                            <th style="width: 2%">Pemohon</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($combinedData as $item)
+                                            <tr>
+                                                <td>
+                                                    <a
+                                                        href="{{ $item->source == 'reimbursement' ? route('admin.reimbursement.lihat_reimbursement', $item->id) : ($item->source == 'cash_advance' ? route('admin.cash_advance.view_cash_advance', $item->id) : ($item->source == 'cash_advance_report' ? route('admin.cash_advance_report.view_cash_advance_report', $item->id) : ($item->source == 'purchase_request' ? route('admin.purchase_request.view_PR', $item->id) : route('admin.purchase_order.view_PO', $item->id)))) }}">{{ $item->no_doku_real }}</a>
+                                                </td>
+                                                <td>{{ $item->pemohon }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                <!-- /.container-fluid -->
+                                {{ $combinedData->links('pagination::bootstrap-5') }}
+                            </div>
+                        </div>
                     </div>
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-center mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard (Administrator)</h1>
-                    </div>
-
-                    <div class="row" style="justify-content: center">
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-5 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                RB (Submitted)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $RB }}
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Earnings (Annual) Card Example -->
-                        <div class="col-xl-3 col-md-5 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                CA (Submitted)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $CA }}
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Tasks Card Example -->
-                        <div class="col-xl-3 col-md-5 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">CAR
-                                                (Submitted)
-                                            </div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                                                        {{ $CAR }}</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" style=" justify-content: center">
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-5 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                PR (Submitted)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $PR }}
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Earnings (Annual) Card Example -->
-                        <div class="col-xl-3 col-md-5 mb-4">
-                            <div class="card border-left-danger shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                                PO (Submitted)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $PO }}
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                    </div>
-
-
-
                 </div>
                 <!-- /.container-fluid -->
 
@@ -352,10 +337,9 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('assets') }}/js/sb-admin-2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 </body>
-
-@include('sweetalert::alert')
 
 </html>

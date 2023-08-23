@@ -119,6 +119,9 @@ class PurchaseOrderController extends Controller
             $data = [
                 'pemohon' => $pemohonMenyetujuiData->PIC,
                 'menyetujui' => $pemohonMenyetujuiData->menyetujui,
+                'pemilik_bank' => $pemohonMenyetujuiData->pemilik_bank,
+                'bank' => $pemohonMenyetujuiData->bank,
+                'no_rekening' => $pemohonMenyetujuiData->no_rekening,
             ];
 
             // Mengirim data pemohon dan menyetujui ke tampilan sebagai respons JSON
@@ -174,9 +177,20 @@ class PurchaseOrderController extends Controller
         $PO->tipe_pr = $request->tipe_pr;
         $PO->supplier = $request->supplier;
         $PO->pemohon = $request->pemohon;
+        $PO->pemilik_bank = $request->pemilik_bank;
+        $PO->nama_bank = $request->bank;
+        $PO->no_rekening = $request->no_rek;
         $PO->accounting = $request->accounting;
         $PO->kasir = $request->kasir;
         $PO->menyetujui = $request->menyetujui;
+        $PO->PPN = isset($request->vat) ? ($request->vat) : null;
+        $PO->PPH = isset($request->pph) ? ($request->pph) : null;
+        $PO->PPH_4 = isset($request->pph_4) ? ($request->pph_4) : null;
+        $PO->PPH_21 = isset($request->pph_21) ? ($request->pph_21) : null;
+        $PO->diskon = isset($request->diskon) ? ($request->diskon) : null;
+        $PO->ctm_1 = isset($request->lain_lain) ? ($request->lain_lain) : null;
+        $PO->ctm_2 = isset($request->lain_lain_nom) ? ($request->lain_lain_nom) : null;
+
         $PO->save();
 
         foreach ($request->ket as $keterangan => $value) {
@@ -186,13 +200,6 @@ class PurchaseOrderController extends Controller
             $PO_detail->satuan = $request->qty[$keterangan];
             $PO_detail->curr = $request->kurs[$keterangan];
             $PO_detail->nominal = $request->nom[$keterangan];
-            $PO_detail->PPN = isset($request->vat[$keterangan]) ? ($request->vat[$keterangan]) : null;
-            $PO_detail->PPH = isset($request->pph[$keterangan]) ? ($request->pph[$keterangan]) : null;
-            $PO_detail->PPH_4 = isset($request->pph_4[$keterangan]) ? ($request->pph_4[$keterangan]) : null;
-            $PO_detail->PPH_21 = isset($request->pph_21[$keterangan]) ? ($request->pph_21[$keterangan]) : null;
-            $PO_detail->diskon = isset($request->diskon[$keterangan]) ? ($request->diskon[$keterangan]) : null;
-            $PO_detail->ctm_1 = isset($request->lain_lain[$keterangan]) ? ($request->lain_lain[$keterangan]) : null;
-            $PO_detail->ctm_2 = isset($request->lain_lain_nom[$keterangan]) ? ($request->lain_lain_nom[$keterangan]) : null;
             $PO_detail->fk_po = $PO->id;
 
             $PO_detail->save();

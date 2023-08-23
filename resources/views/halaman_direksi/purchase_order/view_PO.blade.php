@@ -32,12 +32,12 @@
             <thead>
                 <tr>
                     <th class="text-center" style="width: 3%">No.</th>
-                    <th class="text-center" style="width: 50%">Keterangan</th>
+                    <th class="text-center" style="width: 30%">Keterangan</th>
                     <th class="text-center" style="width: 5%;" colspan="2">Qty</th>
                     <th class="text-center" style="width: 5%">Curr</th>
                     <th class="text-center td_PPN" style="width: 12%" hidden>VAT(11%)</th>
                     <th class="text-center td_PPN" style="width: 12%" hidden>PPh23(2%)</th>
-                    <th class="text-center" style="width: 12%">Total Harga</th>
+                    <th class="text-center" style="width: 10%">Total Harga</th>
                 </tr>
             </thead>
             <!-- Details -->
@@ -45,8 +45,21 @@
             @foreach ($PO_detail as $item)
                 <tr>
                     <td class="text-center" style="max-width: 5%;">{{ $no++ . '.' }}</td>
-                    <td style="text-transform: capitalize;">{{ $item->judul }}</td>
-                    <td style="text-transform: capitalize; text-align: center">{{ $item->jumlah }}</td>
+                    <td style="text-transform: capitalize;">{{ $item->judul }}
+                        @if ($item->tgl_1 && $item->tgl_2)
+                            {{ date('d/m/y', strtotime($item->tgl_1)) }} -
+                            {{ date('d/m/y', strtotime($item->tgl_2)) }}
+                        @elseif ($item->tgl_1)
+                            {{ date('d/m/y', strtotime($item->tgl_1)) }}
+                        @endif
+                    </td>
+                    <td style="text-transform: capitalize; text-align: center">
+                        @if (floor($item->jumlah) == $item->jumlah)
+                            {{ number_format($item->jumlah, 0, ',', '.') }}
+                        @else
+                            {{ number_format($item->jumlah, 1, ',', '.') }}
+                        @endif
+                    </td>
                     <td style="text-transform: capitalize; text-align: center">{{ $item->satuan }}</td>
                     <td style="text-transform: capitalize; text-align: center">
                         @if ($item->curr == 'IDR')
@@ -62,10 +75,10 @@
                     <td style="text-transform: capitalize; text-align: right" class="item_PPN" hidden>
                         {{ number_format($PPN, 0, ',', '.') }}</td>
                     <td style="text-transform: capitalize; text-align: right" class="item_PPN" hidden>
-                        {{ $item->PPH }}</td>
+                        {{ $PPH }}</td>
                     <td style="text-transform: capitalize; text-align: right">
                         @if ($item->curr == 'IDR')
-                            {{ number_format($item->nominal, 0, ',', '.') }}
+                            {{ number_format($item->nominal, 2, ',', '.') }}
                         @elseif ($item->curr == 'USD')
                             {{ number_format($item->nominal, 2, ',', '.') }}
                         @elseif ($item->curr == 'SGD')
@@ -91,7 +104,7 @@
                 </td>
                 <td class="text-end">
                     @if ($item->curr == 'IDR')
-                        {{ number_format($nominal, 0, ',', '.') }}
+                        {{ number_format($nominal, 2, ',', '.') }}
                     @elseif ($item->curr == 'USD')
                         {{ number_format($nominal, 2, ',', '.') }}
                     @elseif ($item->curr == 'SGD')
@@ -116,7 +129,7 @@
                 </td>
                 <td class="text-end">
                     @if ($item->curr == 'IDR')
-                        {{ number_format($PPN, 0, ',', '.') }}
+                        {{ number_format($PPN, 2, ',', '.') }}
                     @elseif ($item->curr == 'USD')
                         {{ number_format($PPN, 2, ',', '.') }}
                     @elseif ($item->curr == 'SGD')
@@ -141,7 +154,7 @@
                 </td>
                 <td class="text-end "@if ($PPH != 0) style="color: red" @endif>
                     @if ($item->curr == 'IDR')
-                        {{ number_format($PPH, 0, ',', '.') }}
+                        {{ number_format($PPH, 2, ',', '.') }}
                     @elseif ($item->curr == 'USD')
                         {{ number_format($PPH, 2, ',', '.') }}
                     @elseif ($item->curr == 'SGD')
@@ -166,13 +179,38 @@
                 </td>
                 <td class="text-end "@if ($PPH_4 != 0) style="color: red" @endif>
                     @if ($item->curr == 'IDR')
-                        {{ number_format($PPH_4, 0, ',', '.') }}
+                        {{ number_format($PPH_4, 2, ',', '.') }}
                     @elseif ($item->curr == 'USD')
                         {{ number_format($PPH_4, 2, ',', '.') }}
                     @elseif ($item->curr == 'SGD')
                         {{ number_format($PPH_4, 2, ',', '.') }}
                     @elseif ($item->curr == 'EUR')
                         {{ number_format($PPH_4, 2, ',', '.') }}
+                    @endif
+                </td>
+            </tr>
+            <tr style="font-weight: bold" class="print_jumlah">
+                <td colspan="4" class="text-end">{{ $PO->ctm_1 }}</td>
+                <td class="text-center">
+                    @if ($item->curr == 'IDR')
+                        {{ $item->curr }}
+                    @elseif ($item->curr == 'USD')
+                        {{ $item->curr }}
+                    @elseif ($item->curr == 'SGD')
+                        {{ $item->curr }}
+                    @elseif ($item->curr == 'EUR')
+                        {{ $item->curr }}
+                    @endif
+                </td>
+                <td class="text-end "@if ($ctm_2 != 0) style="color: red" @endif>
+                    @if ($item->curr == 'IDR')
+                        {{ number_format($ctm_2, 2, ',', '.') }}
+                    @elseif ($item->curr == 'USD')
+                        {{ number_format($ctm_2, 2, ',', '.') }}
+                    @elseif ($item->curr == 'SGD')
+                        {{ number_format($ctm_2, 2, ',', '.') }}
+                    @elseif ($item->curr == 'EUR')
+                        {{ number_format($ctm_2, 2, ',', '.') }}
                     @endif
                 </td>
             </tr>
@@ -191,7 +229,7 @@
                 </td>
                 <td class="text-end">
                     @if ($item->curr == 'IDR')
-                        {{ number_format($grand_total, 0, ',', '.') }}
+                        {{ number_format($grand_total, 2, ',', '.') }}
                     @elseif ($item->curr == 'USD')
                         {{ number_format($grand_total, 2, ',', '.') }}
                     @elseif ($item->curr == 'SGD')

@@ -48,7 +48,12 @@
                         @endif
                     </td>
                     <td class="text-center" style="max-width: 12%; word-break: break-all;">
-                        {{ $item->jumlah }}</td>
+                        @if (floor($item->jumlah) == $item->jumlah)
+                            {{ number_format($item->jumlah, 0, ',', '.') }}
+                        @else
+                            {{ number_format($item->jumlah, 1, ',', '.') }}
+                        @endif
+                    </td>
                     <td class="text-center" style="max-width: 12%; word-break: break-all;">
                         {{ $item->satuan }}</td>
                     <td class="text-center" style="max-width: 12%; word-break: break-all;">
@@ -58,7 +63,7 @@
                 </tr>
             @endforeach
         </table>
-        <div class="container  text-center" style="margin-top: 20px">
+        <div class="container  text-center">
             <div class="row gx-5">
                 <div class="col">
                     <div class="p-3">

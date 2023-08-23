@@ -15,7 +15,7 @@ class BerandaController extends Controller
         $authId = Auth::guard('karyawan')->user()->nama;
         $dataReimbursement = DB::table('admin_reimbursement')
             ->where('pemohon', $authId)
-            ->orderBy('no_doku', 'asc')
+            ->orderBy('no_doku_real', 'asc')
             ->whereIn('status_approved', ['pending'])
             ->whereIn('status_paid', ['pending'])
             ->paginate(10);

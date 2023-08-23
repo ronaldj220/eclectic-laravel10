@@ -6,6 +6,7 @@ use App\Exports\Kasir\PurchaseRequestExports;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Purchase_Request;
 use App\Models\Admin\Purchase_Request_Detail;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,48 +15,144 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class PurchaseRequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Purchase Request';
         $kasir = Auth::guard('kasir')->user()->nama;
-        $dataPR = DB::table('admin_purchase_request')
-            ->where(function ($query) use ($kasir) {
-                $query->where('pemohon', $kasir)
-                    ->where('status_approved', 'approved')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($kasir) {
-                $query->where('pemohon', $kasir)
-                    ->where(function ($query) {
-                        $query->where('status_approved', 'rejected')
-                            ->orWhere('status_paid', 'rejected');
-                    });
-            })
-            ->orWhere(function ($query) use ($kasir) {
-                $query->where('pemohon', $kasir)
-                    ->where('status_approved', 'pending')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($kasir) {
-                $query->where('pemohon', '<>', $kasir)
-                    ->where('status_approved', 'approved')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($kasir) {
-                $query->where('pemohon', '<>', $kasir)
-                    ->where('status_approved', 'pending')
-                    ->where('status_paid', 'pending');
-            })
-            ->where(function ($query) use ($kasir) {
-                $query->where('pemohon', $kasir);
-            })
-            ->orWhere(function ($query) {
-                $query->where('status_approved', 'approved')
-                    ->where('status_paid', 'pending');
-            })
-            ->orderBy('no_doku', 'desc')
-            ->orderByRaw("CASE WHEN status_approved = 'approved' AND status_paid = 'pending' THEN 0 WHEN status_approved = 'pending' OR status_paid = 'pending' THEN 1 ELSE 2 END, CASE WHEN pemohon = 'Suzy. A' THEN 1 ELSE 2 END")
-            ->paginate(10);
+        if ($request->has('search')) {
+            $dataPR = DB::table('admin_purchase_request as a')
+                ->select(
+                    'a.id',
+                    'a.no_doku',
+                    'a.tgl_diajukan',
+                    'b.id as id_pr',
+                    'b.no_doku as tipe_pr',
+                    'a.pemohon',
+                    'a.status_approved',
+                    'a.status_paid'
+                )
+                ->selectSub(function ($query) {
+                    $query->select('judul')
+                        ->from('admin_purchase_request_detail as d')
+                        ->whereColumn('a.id', 'd.fk_pr')
+                        ->limit(1);
+                }, 'judul')
+                ->leftJoin('admin_purchase_order as b', 'a.no_doku', '=', 'b.tipe_pr')
+                ->where('a.pemohon', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('b.supplier', 'LIKE', '%' . $request->search . '%')
+                ->where(function ($query) {
+                    $query->where(function ($query) {
+                        $query->where('a.pemohon', 'Suzy. A')
+                            ->where('a.status_approved', 'approved')
+                            ->where('a.status_paid', 'pending');
+                    })
+                        ->orWhere(function ($query) {
+                            $query->where('a.pemohon', 'Suzy. A')
+                                ->where(function ($query) {
+                                    $query->where('a.status_approved', 'rejected')
+                                        ->orWhere('a.status_paid', 'rejected');
+                                });
+                        })
+                        ->orWhere(function ($query) {
+                            $query->where('a.pemohon', 'Suzy. A')
+                                ->where('a.status_approved', 'pending')
+                                ->where('a.status_paid', 'pending');
+                        })
+                        ->orWhere(function ($query) {
+                            $query->where('a.pemohon', '<>', 'Suzy. A')
+                                ->where('a.status_approved', 'approved')
+                                ->where('a.status_paid', 'pending');
+                        })
+                        ->orWhere(function ($query) {
+                            $query->where('a.pemohon', '<>', 'Suzy. A')
+                                ->where('a.status_approved', 'approved')
+                                ->where('a.status_paid', 'paid');
+                        })
+                        ->orWhere(function ($query) {
+                            $query->where('a.pemohon', '<>', 'Suzy. A')
+                                ->where('a.status_approved', 'pending')
+                                ->where('a.status_paid', 'pending');
+                        })
+                        ->orWhere('a.pemohon', 'Suzy. A')
+                        ->orWhere(function ($query) {
+                            $query->where('a.status_approved', 'approved')
+                                ->where('a.status_paid', 'pending');
+                        });
+                })
+                ->orderByRaw("CASE WHEN a.status_approved = 'approved' AND a.status_paid = 'pending' THEN 0 WHEN a.status_approved = 'pending' OR a.status_paid = 'pending' THEN 1 ELSE 2 END, CASE WHEN a.pemohon = 'Suzy. A' THEN 1 ELSE 2 END")
+                ->orderBy('a.no_doku', 'desc')
+                ->paginate(100);
+        } elseif ($request->has('bulan')) {
+            $bulan = $request->input('bulan'); // Ambil nilai bulan dari input form
+            // Pisahkan nilai bulan dan tahun dari input bulan
+            list($tahun, $bulan) = explode('-', $bulan);
+
+            $dataPR = DB::table('admin_purchase_request as a')
+                ->select('a.id', 'a.no_doku', 'a.tgl_diajukan', 'b.id as id_pr', 'b.no_doku as tipe_pr', 'a.pemohon', 'a.status_approved', 'a.status_paid')
+                ->selectSub(function ($query) {
+                    $query->select('judul')
+                        ->from('admin_purchase_request_detail as d')
+                        ->whereColumn('a.id', 'd.fk_pr')
+                        ->limit(1);
+                }, 'judul')
+                ->leftJoin('admin_purchase_order as b', 'a.no_doku', '=', 'b.tipe_pr')
+                ->whereMonth('tgl_diajukan', $bulan)
+                ->whereYear('tgl_diajukan', $tahun)
+                ->orderBy('a.no_doku', 'desc')
+                ->paginate(100);
+        } else {
+            $dataPR = DB::table('admin_purchase_request as a')
+                ->where(function ($query) use ($kasir) {
+                    $query->where('a.pemohon', $kasir)
+                        ->where('a.status_approved', 'approved')
+                        ->where('a.status_paid', 'pending');
+                })
+                ->orWhere(function ($query) use ($kasir) {
+                    $query->where('a.pemohon', $kasir)
+                        ->where(function ($query) {
+                            $query->where('a.status_approved', 'rejected')
+                                ->orWhere('a.status_paid', 'rejected');
+                        });
+                })
+                ->orWhere(function ($query) use ($kasir) {
+                    $query->where('a.pemohon', $kasir)
+                        ->where('a.status_approved', 'pending')
+                        ->where('a.status_paid', 'pending');
+                })
+                ->orWhere(function ($query) use ($kasir) {
+                    $query->where('a.pemohon', '<>', $kasir)
+                        ->where('a.status_approved', 'approved')
+                        ->where('a.status_paid', 'pending');
+                })
+                ->orWhere(function ($query) use ($kasir) {
+                    $query->where('a.pemohon', '<>', $kasir)
+                        ->where('a.status_approved', 'approved')
+                        ->where('a.status_paid', 'paid');
+                })
+                ->orWhere(function ($query) use ($kasir) {
+                    $query->where('a.pemohon', '<>', $kasir)
+                        ->where('a.status_approved', 'pending')
+                        ->where('a.status_paid', 'pending');
+                })
+                ->where(function ($query) use ($kasir) {
+                    $query->where('a.pemohon', $kasir);
+                })
+                ->orWhere(function ($query) {
+                    $query->where('a.status_approved', 'approved')
+                        ->where('a.status_paid', 'pending');
+                })
+                ->select('a.id', 'a.no_doku', 'a.tgl_diajukan', 'b.id as id_pr', 'b.no_doku as tipe_pr', 'a.pemohon', 'a.status_approved', 'a.status_paid')
+                ->selectSub(function ($query) {
+                    $query->select('judul')
+                        ->from('admin_purchase_request_detail as d')
+                        ->whereColumn('a.id', 'd.fk_pr')
+                        ->limit(1);
+                }, 'judul')
+                ->leftJoin('admin_purchase_order as b', 'a.no_doku', '=', 'b.tipe_pr')
+                ->orderBy('a.no_doku', 'desc')
+                ->orderByRaw("CASE WHEN a.status_approved = 'approved' AND a.status_paid = 'pending' THEN 0 WHEN a.status_approved = 'pending' OR a.status_paid = 'pending' THEN 1 ELSE 2 END, CASE WHEN a.pemohon = 'Suzy. A' THEN 1 ELSE 2 END")
+                ->paginate(20);
+        }
         return view('halaman_finance.purchase_request.index', [
             'title' => $title,
             'PR' => $dataPR
@@ -71,6 +168,41 @@ class PurchaseRequestController extends Controller
             'title' => $title,
             'PR' => $PR,
             'PR_detail' => $PR_detail
+        ]);
+    }
+    public function view_PO($id)
+    {
+        $title = 'Lihat PO';
+        $PO = DB::table('admin_purchase_order')->find($id);
+        $PO_Nominal = DB::table('admin_purchase_order')->where('id', $id)->get();
+        $PO_detail = DB::table('admin_purchase_order_detail')->where('fk_po', $id)->get();
+        $nominal_PO = DB::table('admin_purchase_order_detail')->where('fk_po', $id)->sum('nominal');
+        $results = [];
+        foreach ($PO_Nominal as $item) {
+            $result = ($item->PPN / 100) * $nominal_PO;
+            $PPH = ($item->PPH / 100) * $nominal_PO;
+            $PPH_4 = ($item->PPH_4 / 100) * $nominal_PO;
+            $ctm_2 = ($item->ctm_2 / 100) * $nominal_PO;
+            $results[] = $result; // Tambahkan hasil ke array
+        }
+        $grand_total = $nominal_PO + $result - $PPH - $PPH_4 - $ctm_2;
+
+
+        $carbonDate = Carbon::createFromFormat('Y-m-d', $PO->tgl_purchasing)->locale('id');
+        $formattedDate = $carbonDate->isoFormat('DD MMMM YYYY');
+
+        return view('halaman_finance.purchase_request.view_PO', [
+            'title' => $title,
+            'PO' => $PO,
+            'PO_detail' => $PO_detail,
+            'nominal' => $nominal_PO,
+            'PPN' => $result,
+            'PPH' => $PPH,
+            'PPH_4' => $PPH_4,
+            'ctm_2' => $ctm_2,
+            'grand_total' => $grand_total,
+            'tgl_purchasing' => $formattedDate
+
         ]);
     }
     public function print_PR($id)

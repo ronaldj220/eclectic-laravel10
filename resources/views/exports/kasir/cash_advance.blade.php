@@ -24,14 +24,15 @@
             <th colspan="6"
                 style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;text-align: center; font-weight: bold; border: 10px solid black">
                 Keterangan</th>
-            <th style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black"
-                colspan="2">No
+            <th
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black">
+                No
                 Bukti</th>
-            <th style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black"
-                colspan="2">
+            <th
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black">
                 Curr</th>
-            <th style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black"
-                colspan="2">
+            <th
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black">
                 Nominal</th>
         </tr>
     </thead>
@@ -45,63 +46,63 @@
             <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: justify; border: 10px solid black"
                 colspan="6">
                 {{ $cash_advance->judul_doku }}</td>
-            <td colspan="2"
+            <td
                 style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: justify; border: 10px solid black">
             </td>
-            <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black"
-                colspan="2">
+            <td
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black">
                 {{ $cash_advance->curr }}
             </td>
-            <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black"
-                colspan="2">
+            <td
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black">
                 {{ $cash_advance->nominal }}
             </td>
         </tr>
         <tr>
-            <td colspan="9"
+            <td colspan="8"
                 style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; font-weight: bold; border: 10px solid black">
                 Jumlah</td>
-            <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black"
-                colspan="2">
+            <td
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black">
                 {{ $cash_advance->curr }}</td>
-            <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; font-weight: bold; border: 10px solid black"
-                colspan="2">
+            <td
+                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; font-weight: bold; border: 10px solid black">
                 {{ $nominal }}</td>
         </tr>
         <tr></tr>
         <tr>
             <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black"
-                colspan="4">
+                colspan="3">
                 Pemohon</td>
             <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black"
                 colspan="3">
                 Accounting</td>
             <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black"
-                colspan="3">
+                colspan="2">
                 Kasir</td>
             <td style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; font-weight: bold; border: 10px solid black"
-                colspan="3">
+                colspan="2">
                 Menyetujui</td>
         </tr>
         <tr>
-            <td colspan="4" rowspan="3" style="border: 10px solid black"></td>
             <td colspan="3" rowspan="3" style="border: 10px solid black"></td>
             <td colspan="3" rowspan="3" style="border: 10px solid black"></td>
-            <td colspan="3" rowspan="3" style="border: 10px solid black"></td>
+            <td colspan="2" rowspan="2" style="border: 10px solid black"></td>
+            <td colspan="2" rowspan="3" style="border: 10px solid black"></td>
         </tr>
         <tr></tr>
         <tr></tr>
         <tr>
-            <td colspan="4"
+            <td colspan="3"
                 style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black">
                 {{ $cash_advance->pemohon }}</td>
             <td colspan="3"
                 style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black">
                 {{ $cash_advance->accounting }}</td>
-            <td colspan="3"
+            <td colspan="2"
                 style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black">
                 {{ $cash_advance->kasir }}</td>
-            <td colspan="3"
+            <td colspan="2"
                 style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black">
                 {{ $cash_advance->menyetujui }}</td>
         </tr>

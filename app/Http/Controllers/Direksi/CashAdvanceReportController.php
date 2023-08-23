@@ -38,6 +38,11 @@ class CashAdvanceReportController extends Controller
                     ->where('status_paid', 'pending');
             })
             ->orWhere(function ($query) use ($menyetujui) {
+                $query->where('pemohon', $menyetujui)
+                    ->where('status_approved', 'approved')
+                    ->where('status_paid', 'paid');
+            })
+            ->orWhere(function ($query) use ($menyetujui) {
                 $query->where('pemohon', '<>', $menyetujui)
                     ->where('status_approved', 'rejected')
                     ->where('status_paid', 'pending');
@@ -108,7 +113,7 @@ class CashAdvanceReportController extends Controller
                 'tgl_persetujuan' => Carbon::now()
             ]);
             $no_doku = $data->no_doku;
-            return redirect()->route('direksi.cash_advance_report')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil disetujui. Tunggu Pembayaran ya!');
+            return redirect()->route('direksi.beranda')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil disetujui.');
         } catch (\Exception $e) {
             return redirect()->route('direksi.cash_advance_report')->with('gagal', $e->getMessage());
         }
@@ -123,7 +128,7 @@ class CashAdvanceReportController extends Controller
             ]);
             $no_doku = $data->no_doku;
             $alasan = $request->alasan;
-            return redirect()->route('direksi.cash_advance_report')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan CAR yang baru!');
+            return redirect()->route('direksi.beranda')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan CAR yang berbeda');
         } catch (\Exception $e) {
             return redirect()->route('direksi.cash_advance_report')->with('gagal', $e->getMessage());
         }
@@ -209,19 +214,12 @@ class CashAdvanceReportController extends Controller
 
             if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
                 $file = $request->file('foto')[$deskripsi];
-                // Menggunakan Intervention Image untuk memuat gambar
-                $image = Image::make($file);
 
-                // Mengatur ukuran maksimum yang diinginkan (misalnya 800 piksel lebar dan 600 piksel tinggi)
-                $image->resize(800, 600, function ($constraint) {
-                    $constraint->aspectRatio(); // Mempertahankan aspek rasio gambar
-                    $constraint->upsize(); // Memastikan gambar tidak diperbesar jika lebih kecil dari ukuran yang ditentukan
-                });
-
-                // Menyimpan gambar yang telah dikompresi
-                $filePath = public_path('bukti_CAR_karyawan/') . time() . '.' . $file->getClientOriginalExtension();
-                $image->save($filePath);
+                // Menyimpan gambar asli tanpa kompresi
+                $filePath = 'bukti_CAR_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('bukti_CAR_admin'), $filePath);
                 $fileName = basename($filePath);
+
                 $CA_detail->bukti_ca = $fileName;
             }
 

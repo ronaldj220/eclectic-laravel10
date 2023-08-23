@@ -12,6 +12,7 @@ use App\Models\Admin\Support_Ticket_Detail;
 use App\Models\Admin\Timesheet_Project_Detail;
 use Carbon\Carbon;
 use DateTime;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,32 +26,22 @@ class ReimbursementController extends Controller
     {
         $title = 'Reimbursement';
 
+        $sortColumn = 'tgl_diajukan'; // Kolom untuk pengurutan
+        $sortDirection = 'desc'; // Arah pengurutan (desc untuk descending, asc untuk ascending)
+        $sortColumn2 = 'no_doku_real';
+        $sortDirection2 = 'desc';
+
         if ($request->has('search')) {
             $dataReimbursement = DB::table('admin_reimbursement')
-                ->where('pemohon', 'LIKE', '%' . $request->search . '%')
-                ->orWhere('judul_doku', 'LIKE', '%' . $request->search . '%')
+                ->where('judul_doku', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('pemohon', 'LIKE', '%' . $request->search . '%')
                 ->orderBy('tgl_diajukan', 'desc')
-                ->orderBy('no_doku', 'desc')
-                ->paginate(20);
-        } else {
-            $dataReimbursement = DB::table('admin_reimbursement')
-                ->orderBy('tgl_diajukan', 'desc')
-                ->orderBy('no_doku', 'desc')
-                ->paginate(20);
-        }
-        // $dataRBMenyetujui = DB::table('admin_reimbursement')->first();
-        return view('halaman_admin.admin.reimbursement.index', [
-            'title' => $title,
-            'reimbursement' => $dataReimbursement,
-            // 'menyetujui' => $dataRBMenyetujui
-        ]);
-    }
-    public function search_by_date(Request $request)
-    {
-        $title = 'Reimbursement';
-        $query = DB::table('admin_reimbursement')
-            ->orderBy('no_doku', 'asc')
-            ->orderByRaw("
+                ->orderBy('no_doku_real', 'desc')
+                ->paginate(1000);
+        } elseif ($request->has('bulan')) {
+            $query = DB::table('admin_reimbursement')
+                ->orderBy('no_doku_real', 'asc')
+                ->orderByRaw("
             CASE
                 WHEN status_approved = 'approved' THEN 1
                 WHEN status_approved = 'pending' THEN 2
@@ -59,18 +50,402 @@ class ReimbursementController extends Controller
             END
         ");
 
-        // Memeriksa apakah parameter bulan dikirimkan dalam request POST
-        if ($request->has('bulan')) {
-            $bulan = $request->bulan;
-            $query->whereMonth('tgl_diajukan', date('m', strtotime($bulan)))
-                ->whereYear('tgl_diajukan', date('Y', strtotime($bulan)));
+            // Memeriksa apakah parameter bulan dikirimkan dalam request POST
+            if ($request->has('bulan')) {
+                $bulan = $request->bulan;
+                $query->whereMonth('tgl_diajukan', date('m', strtotime($bulan)))
+                    ->whereYear('tgl_diajukan', date('Y', strtotime($bulan)));
+            }
+
+            $dataReimbursement = $query->paginate(100);
+        } else {
+            $dataReimbursement = DB::table('admin_reimbursement')
+                ->orderBy($sortColumn, $sortDirection)
+                ->orderBy($sortColumn2, $sortDirection2)
+                ->paginate(20);
         }
-
-        $dataReimbursement = $query->paginate(20);
-
+        // $dataRBMenyetujui = DB::table('admin_reimbursement')->first();
         return view('halaman_admin.admin.reimbursement.index', [
             'title' => $title,
-            'reimbursement' => $dataReimbursement
+            'reimbursement' => $dataReimbursement,
+        ]);
+    }
+
+    // Generate new Numbering Document
+    public function new_no_doku()
+    {
+        $AWAL = 'RB';
+
+        $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
+        $noUrutAkhir = DB::table('admin_reimbursement')->whereMonth('tgl_diajukan', '=', date('m'))->count();
+        $no = 1;
+        $no_dokumen = null;
+        $currentMonth = date('n');
+
+        if (date('j') == 1) { // Cek jika tanggal saat ini adalah tanggal 1
+            if ($noUrutAkhir) {
+                $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            } else {
+                $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            }
+        } else {
+            if ($noUrutAkhir) {
+                $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            } else {
+                $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            }
+        }
+        return $no_dokumen;
+    }
+    public function new_no_doku_updated()
+    {
+        $AWAL = 'RB';
+
+        $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
+        $noUrutAkhir = DB::table('admin_reimbursement')->whereMonth('tgl_diajukan', '=', date('m'))->count();
+        $no = 1;
+        $no_dokumen = null;
+        $currentMonth = date('n');
+
+        if (date('j') == 1) { // Cek jika tanggal saat ini adalah tanggal 1
+            if ($noUrutAkhir) {
+                $no_dokumen = sprintf("%05s", abs($noUrutAkhir)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            } else {
+                $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            }
+        } else {
+            if ($noUrutAkhir) {
+                $no_dokumen = sprintf("%05s", abs($noUrutAkhir)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            } else {
+                $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            }
+        }
+        return $no_dokumen;
+    }
+    public function new_updated_no_doku()
+    {
+        $AWAL = 'RB';
+        $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
+        $currentMonth = date('n');
+        $latestSubmittedDoc = Reimbursement::where('status_approved', '!=', 'hold')
+            ->where('status_paid', '!=', 'hold')
+            ->whereMonth('tgl_diajukan', '=', now()->format('m'))
+            ->whereYear('tgl_diajukan', '=', now()->format('Y'))
+            ->orderBy('no_doku_real', 'desc')
+            ->first();
+
+        $newDocNumber = 1; // Nomor default jika belum ada dokumen yang disubmit
+
+        if ($latestSubmittedDoc) {
+            $newDocNumber = intval($latestSubmittedDoc->no_doku_real) + 1;
+        }
+
+        return str_pad($newDocNumber, 5, '0', STR_PAD_LEFT) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+    }
+
+    public function new_doc_RB()
+    {
+        $title = 'Tambah Reimbursement';
+        // $no_dokumen = $this->new_num_generated();
+        $accounting = DB::select('SELECT * FROM accounting');
+        $kasir = DB::select('SELECT * from kasir');
+        $menyetujui = DB::select('SELECT * from menyetujui ORDER by nama ASC');
+
+        $currency = DB::select('SELECT * FROM kurs');
+        $karyawan = DB::table('karyawan')
+            ->select('nama')
+            ->union(DB::table('menyetujui')->select('nama'))
+            ->union(DB::table('kasir')->select('nama'))
+            ->orderBy('nama')
+            ->get();
+        $nominal_awal = DB::select('SELECT * FROM fee_timesheet');
+        $nominal_project = DB::select('SELECT * FROM fee_project');
+        $aliases = DB::select('SELECT * FROM client');
+
+        return view('halaman_admin.admin.reimbursement.new_doc_RB', [
+            'title' => $title,
+            // 'no_dokumen' => $no_dokumen,
+            'accounting' => $accounting,
+            'kasir' => $kasir,
+            'menyetujui' => $menyetujui,
+            'kurs' => $currency,
+            'karyawan' => $karyawan,
+            'nominal_awal' => $nominal_awal,
+            'nominal_project' => $nominal_project,
+            'aliases' => $aliases
+        ]);
+    }
+    public function save_no_doku_RB(Request $request)
+    {
+        if ($request->input('draftAction') == 'true') {
+            // Tombol "Draft" ditekan
+            // Lakukan tindakan yang sesuai untuk pengajuan
+            $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+            $tgl_diajukan = $tanggal->format('Y-m-d');
+
+            $reimbursement = new Reimbursement();
+            $reimbursement->no_doku_real = null;
+            $reimbursement->no_doku_draft = $this->new_no_doku();
+            $reimbursement->tgl_diajukan = $tgl_diajukan;
+            $reimbursement->judul_doku = $request->judul_doku;
+            $reimbursement->pemohon = $request->pemohon;
+            $reimbursement->accounting = $request->accounting;
+            $reimbursement->kasir = $request->kasir;
+            $reimbursement->menyetujui = $request->nama_menyetujui;
+            $reimbursement->no_telp_direksi = $request->no_telp;
+            $reimbursement->halaman = 'RB';
+
+            // Menentukan status apabila save as draft
+            $reimbursement->status_approved = 'hold';
+            $reimbursement->status_paid = 'hold';
+            $reimbursement->save();
+
+            foreach ($request->deskripsi as $deskripsi => $value) {
+                $rb_detail = new Rb_Detail();
+                $rb_detail->deskripsi = $value;
+
+                if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
+                    $file = $request->file('foto')[$deskripsi];
+
+                    // Menyimpan gambar asli tanpa kompresi
+                    $filePath = 'bukti_RB_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('bukti_RB_admin'), $filePath);
+                    $fileName = basename($filePath);
+
+                    $rb_detail->bukti_rb = $fileName;
+                }
+
+                $rb_detail->no_bukti = $request->nobu[$deskripsi];
+                $rb_detail->curr = $request->kurs_rb[$deskripsi];
+                $rb_detail->nominal = $request->nom_rb[$deskripsi];
+                $rb_detail->tanggal_1 = $request->tgl1[$deskripsi];
+                $rb_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
+                $rb_detail->keperluan = $request->project[$deskripsi];
+                $rb_detail->fk_rb = $reimbursement->id;
+                $rb_detail->save();
+            }
+        } elseif ($request->input('submitAction') == 'true') {
+            // Tombol "Draft" ditekan
+            // Lakukan tindakan yang sesuai untuk penyimpanan draft
+            $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+            $tgl_diajukan = $tanggal->format('Y-m-d');
+
+            $reimbursement = new Reimbursement();
+            $reimbursement->no_doku_real = $this->new_no_doku();
+            $reimbursement->no_doku_draft = null;
+            $reimbursement->tgl_diajukan = $tgl_diajukan;
+            $reimbursement->judul_doku = $request->judul_doku;
+            $reimbursement->pemohon = $request->pemohon;
+            $reimbursement->accounting = $request->accounting;
+            $reimbursement->kasir = $request->kasir;
+            $reimbursement->menyetujui = $request->nama_menyetujui;
+            $reimbursement->no_telp_direksi = $request->no_telp;
+            $reimbursement->halaman = 'RB';
+
+            // Menentukan status apabila save as draft
+            $reimbursement->status_approved = 'rejected';
+            $reimbursement->status_paid = 'rejected';
+            $reimbursement->save();
+
+            foreach ($request->deskripsi as $deskripsi => $value) {
+                $rb_detail = new Rb_Detail();
+                $rb_detail->deskripsi = $value;
+
+                if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
+                    $file = $request->file('foto')[$deskripsi];
+
+                    // Menyimpan gambar asli tanpa kompresi
+                    $filePath = 'bukti_RB_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('bukti_RB_admin'), $filePath);
+                    $fileName = basename($filePath);
+
+                    $rb_detail->bukti_rb = $fileName;
+                }
+
+                $rb_detail->no_bukti = $request->nobu[$deskripsi];
+                $rb_detail->curr = $request->kurs_rb[$deskripsi];
+                $rb_detail->nominal = $request->nom_rb[$deskripsi];
+                $rb_detail->tanggal_1 = $request->tgl1[$deskripsi];
+                $rb_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
+                $rb_detail->keperluan = $request->project[$deskripsi];
+                $rb_detail->fk_rb = $reimbursement->id;
+                $rb_detail->save();
+            }
+        } else {
+            // Tidak ada tombol yang ditekan
+            return "No action detected.";
+        }
+        return redirect()->route('admin.reimbursement')->with('success', 'Data berhasil diajukan!');
+    }
+    public function edit_doc_RB($id)
+    {
+        $title = 'Edit Reimbursement';
+        $reimbursement = Reimbursement::find($id);
+        $currency = DB::select('SELECT * FROM kurs');
+        $karyawan = DB::table('karyawan')
+            ->select('nama')
+            ->union(DB::table('menyetujui')->select('nama'))
+            ->union(DB::table('kasir')->select('nama'))
+            ->orderBy('nama')
+            ->get();
+        $menyetujui = DB::select('SELECT * from menyetujui ORDER by nama ASC');
+        $rb_detail = DB::table('admin_rb_detail')->where('fk_rb', $id)->get();
+        $nominal = DB::table('admin_rb_detail')->where('fk_rb', $id)->sum('nominal');
+
+        return view('halaman_admin.admin.reimbursement.edit_doc_RB', [
+            'title' => $title,
+            'reimbursement' => $reimbursement,
+            'kurs' => $currency,
+            'karyawan' => $karyawan,
+            'menyetujui' => $menyetujui,
+            'rb_detail' => $rb_detail,
+            'nominal' => $nominal,
+        ]);
+    }
+    public function update_doc_RB(Request $request, $id)
+    {
+        if ($request->input('draftAction') == 'true') {
+            try {
+                $data = DB::table('admin_reimbursement')->where('id', $id)->first();
+                $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+                $tgl_diajukan = $tanggal->format('Y-m-d');
+
+                $reimbursement = [
+                    'no_doku_real' => null,
+                    'no_doku_draft' => $request->no_doku,
+                    'tgl_diajukan' => $tgl_diajukan,
+                    'judul_doku' => $request->judul_doku,
+                    'pemohon' => $request->pemohon,
+                    'accounting' => $request->accounting,
+                    'kasir' => $request->kasir,
+                    'menyetujui' => $request->nama_menyetujui,
+                    'no_telp_direksi' => $request->no_telp,
+                    'halaman' => 'RB',
+                    'status_approved' => 'hold',
+                    'status_paid' => 'hold'
+                ];
+
+                DB::table('admin_reimbursement')->where('id', $id)->update($reimbursement);
+
+                foreach ($request->deskripsi as $deskripsi => $value) {
+                    if ($request->flag[$deskripsi] == 'u') {
+                        $idItem = $request->id[$deskripsi];
+                        $rb_detail = Rb_Detail::find($idItem);
+                    } elseif ($request->flag[$deskripsi] == 'i') {
+                        $rb_detail = new Rb_Detail();
+                    }
+                    $rb_detail->deskripsi = $value;
+
+                    if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
+                        $file = $request->file('foto')[$deskripsi];
+
+                        // Menyimpan gambar asli tanpa kompresi
+                        $filePath = 'bukti_RB_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                        $file->move(public_path('bukti_RB_admin'), $filePath);
+                        $fileName = basename($filePath);
+
+                        $rb_detail->bukti_rb = $fileName;
+                    }
+
+                    $rb_detail->no_bukti = $request->nobu[$deskripsi];
+                    $rb_detail->curr = $request->kurs_rb[$deskripsi];
+                    $rb_detail->nominal = $request->nom_rb[$deskripsi];
+                    $rb_detail->tanggal_1 = $request->tgl1[$deskripsi];
+                    $rb_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
+                    $rb_detail->keperluan = $request->project[$deskripsi];
+                    $rb_detail->fk_rb = $id;
+
+                    // $rbDetails[] = $rb_detail;
+                    $rb_detail->save();
+                }
+                $no_doku = $data->no_doku_draft;
+                return redirect()->route('admin.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil diperbarui!');
+            } catch (Exception $e) {
+                return redirect()->route('admin.reimbursement')->with('gagal', $e->getMessage());
+            }
+        } elseif ($request->input('submitAction') == 'true') {
+            try {
+                $data = DB::table('admin_reimbursement')->where('id', $id)->first();
+                $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+                $tgl_diajukan = $tanggal->format('Y-m-d');
+
+                $reimbursement = [
+                    'no_doku_real' => $this->new_updated_no_doku(),
+                    'no_doku_draft' => null,
+                    'tgl_diajukan' => $tgl_diajukan,
+                    'judul_doku' => $request->judul_doku,
+                    'pemohon' => $request->pemohon,
+                    'accounting' => $request->accounting,
+                    'kasir' => $request->kasir,
+                    'menyetujui' => $request->nama_menyetujui,
+                    'no_telp_direksi' => $request->no_telp,
+                    'halaman' => 'RB',
+                    'status_approved' => 'rejected',
+                    'status_paid' => 'rejected'
+                ];
+
+                DB::table('admin_reimbursement')->where('id', $id)->update($reimbursement);
+
+                foreach ($request->deskripsi as $deskripsi => $value) {
+                    if ($request->flag[$deskripsi] == 'u') {
+                        $idItem = $request->id[$deskripsi];
+                        $rb_detail = Rb_Detail::find($idItem);
+                    } elseif ($request->flag[$deskripsi] == 'i') {
+                        $rb_detail = new Rb_Detail();
+                    }
+                    $rb_detail->deskripsi = $value;
+
+                    if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
+                        $file = $request->file('foto')[$deskripsi];
+
+                        // Menyimpan gambar asli tanpa kompresi
+                        $filePath = 'bukti_RB_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                        $file->move(public_path('bukti_RB_admin'), $filePath);
+                        $fileName = basename($filePath);
+
+                        $rb_detail->bukti_rb = $fileName;
+                    }
+
+                    $rb_detail->no_bukti = $request->nobu[$deskripsi];
+                    $rb_detail->curr = $request->kurs_rb[$deskripsi];
+                    $rb_detail->nominal = $request->nom_rb[$deskripsi];
+                    $rb_detail->tanggal_1 = $request->tgl1[$deskripsi];
+                    $rb_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
+                    $rb_detail->keperluan = $request->project[$deskripsi];
+                    $rb_detail->fk_rb = $id;
+
+                    // $rbDetails[] = $rb_detail;
+                    $rb_detail->save();
+                }
+                $no_doku = $data->no_doku_real;
+                return redirect()->route('admin.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil diperbarui!');
+            } catch (Exception $e) {
+                return redirect()->route('admin.reimbursement')->with('gagal', $e->getMessage());
+            }
+        }
+    }
+
+    public function edit_RB($id)
+    {
+        $title = 'Edit Reimbursement';
+        $reimbursement = Reimbursement::find($id);
+        $currency = DB::select('SELECT * FROM kurs');
+        $karyawan = DB::table('karyawan')
+            ->select('nama')
+            ->union(DB::table('menyetujui')->select('nama'))
+            ->union(DB::table('kasir')->select('nama'))
+            ->orderBy('nama')
+            ->get();
+        $menyetujui = DB::select('SELECT * from menyetujui ORDER by nama ASC');
+        $rb_detail = DB::table('admin_rb_detail')->where('fk_rb', $id)->get();
+
+        return view('halaman_admin.admin.reimbursement.edit_RB', [
+            'title' => $title,
+            'reimbursement' => $reimbursement,
+            'kurs' => $currency,
+            'karyawan' => $karyawan,
+            'menyetujui' => $menyetujui,
+            'rb_detail' => $rb_detail,
         ]);
     }
     public function getNomor(Request $request)
@@ -108,7 +483,11 @@ class ReimbursementController extends Controller
         $currentMonth = date('n');
 
         if (date('j') == 1) { // Cek jika tanggal saat ini adalah tanggal 1
-            $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            if ($noUrutAkhir) {
+                $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            } else {
+                $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            }
         } else {
             if ($noUrutAkhir) {
                 $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
@@ -118,10 +497,15 @@ class ReimbursementController extends Controller
         }
         $accounting = DB::select('SELECT * FROM accounting');
         $kasir = DB::select('SELECT * from kasir');
-        $menyetujui = DB::select('SELECT * from menyetujui');
+        $menyetujui = DB::select('SELECT * from menyetujui ORDER by nama ASC');
 
         $currency = DB::select('SELECT * FROM kurs');
-        $karyawan = DB::select('SELECT * FROM karyawan ORDER BY nama ASC');
+        $karyawan = DB::table('karyawan')
+            ->select('nama')
+            ->union(DB::table('menyetujui')->select('nama'))
+            ->union(DB::table('kasir')->select('nama'))
+            ->orderBy('nama')
+            ->get();
         $nominal_awal = DB::select('SELECT * FROM fee_timesheet');
         $nominal_project = DB::select('SELECT * FROM fee_project');
         $aliases = DB::select('SELECT * FROM client');
@@ -140,14 +524,13 @@ class ReimbursementController extends Controller
             'aliases' => $aliases
         ]);
     }
-
     public function simpan_reimbursement(Request $request)
     {
         $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
         $tgl_diajukan = $tanggal->format('Y-m-d');
 
         $reimbursement = new Reimbursement();
-        $reimbursement->no_doku = $request->no_doku;
+        $reimbursement->no_doku_real = $request->no_doku;
         $reimbursement->tgl_diajukan = $tgl_diajukan;
         $reimbursement->judul_doku = $request->judul_doku;
         $reimbursement->pemohon = $request->pemohon;
@@ -159,42 +542,10 @@ class ReimbursementController extends Controller
             $reimbursement->halaman = 'RB';
         } elseif ($request->project === 'TS (Timesheet Support)') {
             $reimbursement->halaman = 'TS';
-            if ($request->hasFile('bukti') && $request->file('bukti')->isValid()) {
-                $files = $request->file('bukti');
-
-                $fileExtension = $request->file('bukti')->getClientOriginalExtension();
-                // Proses Simpan File ke dalam Nama ST
-                $file = $request->file('bukti');
-                $fileName = time() . '.' . $fileExtension;
-                $file->move(public_path('bukti_TS_karyawan/'), $fileName);
-                $reimbursement->bukti_timesheet_project = $fileName;
-            }
         } elseif ($request->project === 'ST (Support Ticket)') {
             $reimbursement->halaman = 'ST';
-            if ($request->hasFile('bukti') && $request->file('bukti')->isValid()) {
-                $files = $request->file('bukti');
-
-                $fileExtension = $request->file('bukti')->getClientOriginalExtension();
-                // Proses Simpan File ke dalam Nama ST
-                $file = $request->file('bukti');
-                $fileName = time() . '.' . $fileExtension;
-                $file->move(public_path('bukti_ST_karyawan/'), $fileName);
-                $reimbursement->bukti_support_ticket = $fileName;
-            }
         } elseif ($request->project === 'SL (Support Lembur)') {
             $reimbursement->halaman = 'SL';
-            if ($request->hasFile('bukti') && $request->file('bukti')->isValid()) {
-                $files = $request->file('bukti');
-
-                $fileExtension = $request->file('bukti')->getClientOriginalExtension();
-                // Proses Simpan File ke dalam Nama ST
-                $file = $request->file('bukti');
-                $fileName = time() . '.' . $fileExtension;
-                $file->move(public_path('bukti_SL_karyawan/'), $fileName);
-                $reimbursement->bukti_support_lembur = $fileName;
-            }
-        } else {
-            $reimbursement->halaman = 'RB';
         }
         $reimbursement->save();
 
@@ -206,21 +557,13 @@ class ReimbursementController extends Controller
 
                 if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
                     $file = $request->file('foto')[$deskripsi];
-                    // Menggunakan Intervention Image untuk memuat gambar
-                    $image = Image::make($file);
 
-                    // Mengatur ukuran maksimum yang diinginkan (misalnya 800 piksel lebar dan 600 piksel tinggi)
-                    $image->resize(800, 600, function ($constraint) {
-                        $constraint->aspectRatio(); // Mempertahankan aspek rasio gambar
-                        $constraint->upsize(); // Memastikan gambar tidak diperbesar jika lebih kecil dari ukuran yang ditentukan
-                    });
-
-                    // Menyimpan gambar yang telah dikompresi
-                    $filePath = public_path('bukti_reim/') . time() . '.' . $file->getClientOriginalExtension();
-                    $image->save($filePath);
+                    // Menyimpan gambar asli tanpa kompresi
+                    $filePath = 'bukti_RB_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('bukti_RB_admin'), $filePath);
                     $fileName = basename($filePath);
 
-                    $rb_detail->bukti_reim = $fileName;
+                    $rb_detail->bukti_rb = $fileName;
                 }
 
                 $rb_detail->no_bukti = $request->nobu[$deskripsi];
@@ -240,9 +583,12 @@ class ReimbursementController extends Controller
                 $rb_detail->nominal_awal = $request->nom_ts[$index];
                 $rb_detail->hari_awal = $request->hari_ts1[$index];
                 $rb_detail->hari = $request->hari_ts2[$index];
-                $nominal = ($rb_detail->nominal_awal / $rb_detail->hari_awal) * $rb_detail->hari;
+                if ($rb_detail->hari >= 19) {
+                    $nominal = $rb_detail->nominal_awal;
+                } else {
+                    $nominal = ($rb_detail->nominal_awal / $rb_detail->hari_awal) * $rb_detail->hari;
+                }
                 $rb_detail->nominal = $nominal;
-                $rb_detail->project = $request->project_ts[$index];
                 $rb_detail->fk_timesheet_project = $reimbursement->id;
                 $rb_detail->save();
             }
@@ -307,9 +653,7 @@ class ReimbursementController extends Controller
                 }
                 $results_TS[] = round($result); // Tambahkan hasil ke array
             }
-            $total_TS = DB::table('admin_timesheet_project_detail')
-                ->where('fk_timesheet_project', $id)
-                ->sum('nominal');
+            $total_TS = array_sum($results_TS);
             return view('halaman_admin.admin.reimbursement.view_reimbursement', [
                 'title' => $title,
                 'reimbursement' => $reimbursement,
@@ -366,39 +710,44 @@ class ReimbursementController extends Controller
                 'status_paid' => 'pending'
             ]);
             $data = DB::table('admin_reimbursement')->where('id', $id)->first();
-            $no_doku = $data->no_doku;
+            $no_doku = $data->no_doku_real;
             return redirect()->route('admin.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil diajukan! Mohon Menunggu Persetujuan dari Direktur!');
         } catch (\Exception $e) {
             return redirect()->route('admin.reimbursement')->with('gagal', $e->getMessage());
         }
     }
-    public function tolak_reimbursement($id)
+    public function tolak_reimbursement($id, Request $request)
     {
         try {
             $data = DB::table('admin_reimbursement')->where('id', $id)->first();
             if ($data->halaman == 'RB') {
                 DB::table('admin_reimbursement')->where('id', $id)->update([
                     'status_approved' => 'rejected',
-                    'status_paid' => 'pending'
+                    'status_paid' => 'pending',
+                    'alasan' => $request->alasan
                 ]);
             } elseif ($data->halaman == 'TS') {
                 DB::table('admin_reimbursement')->where('id', $id)->update([
                     'status_approved' => 'rejected',
-                    'status_paid' => 'pending'
+                    'status_paid' => 'pending',
+                    'alasan' => $request->alasan
                 ]);
             } elseif ($data->halaman == 'ST') {
                 DB::table('admin_reimbursement')->where('id', $id)->update([
                     'status_approved' => 'rejected',
-                    'status_paid' => 'pending'
+                    'status_paid' => 'pending',
+                    'alasan' => $request->alasan
                 ]);
             } elseif ($data->halaman == 'SL') {
                 DB::table('admin_reimbursement')->where('id', $id)->update([
                     'status_approved' => 'rejected',
-                    'status_paid' => 'pending'
+                    'status_paid' => 'pending',
+                    'alasan' => $request->alasan
                 ]);
             }
             $no_doku = $data->no_doku;
-            return redirect()->route('admin.reimbursement')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui! Mohon Ajukan Reimbursement yang berbeda!');
+            $alasan = $request->alasan;
+            return redirect()->route('admin.beranda')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan Reimbursement yang berbeda!');
         } catch (\Exception $e) {
             return redirect()->route('admin.reimbursement')->with('gagal', $e->getMessage());
         }
@@ -436,16 +785,13 @@ class ReimbursementController extends Controller
                 }
                 $results_TS[] = round($result); // Tambahkan hasil ke array
             }
-            $total_TS = DB::table('admin_timesheet_project_detail')
-                ->where('fk_timesheet_project', $id)
-                ->sum('nominal');
+            $total_TS = array_sum($results_TS);
             return view('halaman_admin.admin.reimbursement.lihat_reimbursement', [
                 'title' => $title,
                 'reimbursement' => $reimbursement,
                 'timesheet_project_detail' => $timesheet_project_detail,
                 'results_TS' => $results_TS,
                 'total_TS' => $total_TS,
-
             ]);
         } elseif ($reimbursement->halaman == 'ST') {
             $title = 'Lihat Support Ticket';
@@ -518,9 +864,7 @@ class ReimbursementController extends Controller
                 }
                 $results_TS[] = round($result); // Tambahkan hasil ke array
             }
-            $total_TS = DB::table('admin_timesheet_project_detail')
-                ->where('fk_timesheet_project', $id)
-                ->sum('nominal');
+            $total_TS = array_sum($results_TS);
             return view('halaman_admin.admin.reimbursement.print_reimbursement', [
                 'title' => $title,
                 'reimbursement' => $reimbursement,
@@ -594,130 +938,6 @@ class ReimbursementController extends Controller
             ]);
         }
     }
-    public function edit_reimbursement($id)
-    {
-        $reimbursement = DB::table('admin_reimbursement')->where('id', $id)->first();
-        $title = 'Edit Reimbursement';
-        $menyetujui = DB::select('SELECT * from menyetujui');
-
-        $currency = DB::select('SELECT * FROM kurs');
-        $karyawan = DB::select('SELECT * FROM karyawan');
-        $nominal_awal = DB::select('SELECT * FROM fee_timesheet');
-        $nominal_project = DB::select('SELECT * FROM fee_project');
-        $aliases = DB::select('SELECT * FROM client');
-
-        return view('halaman_admin.admin.reimbursement.edit_reimbursement', [
-            'title' => $title,
-            'reimbursement' => $reimbursement,
-            'menyetujui' => $menyetujui,
-            'kurs' => $currency,
-            'karyawan' => $karyawan,
-            'nominal_awal' => $nominal_awal,
-            'nominal_project' => $nominal_project,
-            'aliases' => $aliases
-        ]);
-    }
-    public function update_reimbursement(Request $request, $id)
-    {
-        $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
-        $tgl_diajukan = $tanggal->format('Y-m-d');
-
-        DB::table('admin_reimbursement')
-            ->where('id', $id)
-            ->update([
-                'no_doku' => $request->no_doku,
-                'tgl_diajukan' => $tgl_diajukan,
-                'judul_doku' => $request->judul_doku,
-                'pemohon' => $request->pemohon,
-                'accounting' => $request->accounting,
-                'kasir' => $request->kasir,
-                'menyetujui' => $request->nama_menyetujui
-            ]);
-
-
-
-        if ($request->project === 'RB (Reimbursement)') {
-            foreach ($request->deskripsi as $deskripsi => $value) {
-                $rb_detail = [
-                    'deskripsi' => $value,
-                    'no_bukti' => $request->nobu[$deskripsi],
-                    'curr' => $request->kurs_rb[$deskripsi],
-                    'nominal' => $request->nom_rb[$deskripsi],
-                    'tanggal_1' => $request->tgl1[$deskripsi],
-                    'tanggal_2' => isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null,
-                    'keperluan' => $request->keperluan[$deskripsi],
-                    'fk_rb' => $id
-                ];
-
-                if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
-                    $files = $request->file('foto');
-
-                    $file = $files[$deskripsi];
-                    $fileExtension = $file->getClientOriginalExtension();
-                    $fileName = time() . '_' . $deskripsi . '.' . $fileExtension;
-                    $filePath = public_path('bukti_reim/') . $fileName;
-
-                    $file->move(public_path('bukti_reim/'), $filePath);
-
-                    $rb_detail['bukti_reim'] = $fileName;
-                }
-                DB::table('admin_rb_detail')
-                    ->where('fk_rb', $id)
-                    ->update($rb_detail);
-            }
-        } elseif ($request->project === 'TS (Timesheet Support)') {
-            foreach ($request->karyawan_ts as $index => $nama_karyawan) {
-                $nominal_awal = $request->nom_ts[$index];
-                $hari_awal = $request->hari_ts1[$index];
-                $hari = $request->hari_ts2[$index];
-
-                // Perhitungan pembagian
-                $nominal_per_hari = $nominal_awal / $hari_awal;
-                $nominal_per_hari_total = $nominal_per_hari * $hari;
-                $rb_detail = [
-                    'nama_karyawan' => $nama_karyawan,
-                    'curr' => $request->kurs_ts[$index],
-                    'nominal_awal' => $request->nom_ts[$index],
-                    'hari_awal' => $request->hari_ts1[$index],
-                    'hari' => $request->hari_ts2[$index],
-                    'nominal' => $nominal_per_hari_total,
-                    'fk_timesheet_project' => $id
-                ];
-                DB::table('admin_timesheet_project_detail')
-                    ->where('fk_timesheet_project', $id)
-                    ->update($rb_detail);
-            }
-        } elseif ($request->project === 'ST (Support Ticket)') {
-            foreach ($request->karyawan_st as $index => $karyawan_st) {
-                $rb_detail = [
-                    'nama_karyawan' => $karyawan_st,
-                    'aliases' => $request->project_st[$index],
-                    'curr' => $request->kurs_st[$index],
-                    'nominal_awal' => $request->nom_st[$index],
-                    'jam' => $request->jam_st[$index],
-                    'fk_support_ticket' => $id
-                ];
-                DB::table('admin_support_ticket_detail')
-                    ->where('fk_support_ticket', $id)
-                    ->update($rb_detail);
-            }
-        } elseif ($request->project === 'SL (Support Lembur)') {
-            foreach ($request->karyawan_st as $index => $karyawan_st) {
-                $rb_detail = [
-                    'nama_karyawan' => $karyawan_st,
-                    'aliases' => $request->project_sl[$index],
-                    'curr' => $request->kurs_sl[$index],
-                    'nominal' => $request->nom_sl[$index],
-                    'fk_support_lembur' => $id
-                ];
-                DB::table('admin_support_lembur_detail')
-                    ->where('fk_support_lembur', $id)
-                    ->update($rb_detail);
-            }
-        }
-
-        return redirect()->route('admin.reimbursement')->with('success', 'Data Reimbursement berhasil diperbarui.');
-    }
     public function kirim_WA($id)
     {
         $reimbursement = DB::table('admin_reimbursement')->find($id);
@@ -727,7 +947,7 @@ class ReimbursementController extends Controller
         ];
 
         // Membangun pesan yang diinginkan
-        $pesan = "[Ini Adalah Pesan Dari Sistem]\nAda Permohonan $reimbursement->halaman  No. " . $reimbursement->no_doku . " Dari " . $reimbursement->pemohon . " Menunggu Approval. \nKlik Disini untuk Melihat ";
+        $pesan = "[Ini Adalah Pesan Dari Sistem]\nAda Permohonan RB No. " . $reimbursement->no_doku_real . " Dari " . $reimbursement->pemohon . " Menunggu Approval. \nKlik Disini untuk Melihat \nhttps://office.eclectic.co.id/";
 
         $urlWhatsApp = 'https://api.whatsapp.com/send';
 
@@ -780,8 +1000,8 @@ class ReimbursementController extends Controller
                     'status_paid' => 'pending',
                 ]);
             }
-            $no_doku = $data->no_doku;
-            return redirect()->route('admin.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil disetujui. Tunggu Pembayaran ya!');
+            $no_doku = $data->no_doku_real;
+            return redirect()->route('admin.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil disetujui.');
         } catch (\Exception $e) {
             return redirect()->route('admin.reimbursement')->with('gagal', $e->getMessage());
         }
@@ -793,29 +1013,67 @@ class ReimbursementController extends Controller
             if ($data->halaman == 'RB') {
                 DB::table('admin_reimbursement')->where('id', $id)->update([
                     'status_approved' => 'rejected',
+                    'status_paid' => 'pending',
                     'alasan' => $request->alasan
                 ]);
             } elseif ($data->halaman == 'TS') {
                 DB::table('admin_reimbursement')->where('id', $id)->update([
                     'status_approved' => 'rejected',
+                    'status_paid' => 'pending',
                     'alasan' => $request->alasan
                 ]);
             } elseif ($data->halaman == 'ST') {
                 DB::table('admin_reimbursement')->where('id', $id)->update([
                     'status_approved' => 'rejected',
+                    'status_paid' => 'pending',
                     'alasan' => $request->alasan
                 ]);
             } elseif ($data->halaman == 'SL') {
                 DB::table('admin_reimbursement')->where('id', $id)->update([
                     'status_approved' => 'rejected',
+                    'status_paid' => 'pending',
                     'alasan' => $request->alasan
                 ]);
             }
-            $no_doku = $data->no_doku;
+            $no_doku = $data->no_doku_real;
             $alasan = $request->alasan;
-            return redirect()->route('admin.reimbursement')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan Reimbursement yang berbeda!');
+            return redirect()->route('admin.beranda')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan Reimbursement yang berbeda!');
         } catch (\Exception $e) {
             return redirect()->route('admin.reimbursement')->with('gagal', $e->getMessage());
+        }
+    }
+    public function delete_RB($id)
+    {
+        try {
+            $data = DB::table('admin_reimbursement')->where('id', $id)->first();
+            if ($data->halaman == 'RB') {
+                DB::table('admin_reimbursement')->where('id', $id)->delete();
+
+                // Hapus rekaman di tabel fk_support_lembur terkait dengan RB
+                DB::table('admin_rb_detail')->where('fk_rb', $id)->delete();
+            } elseif ($data->halaman == 'TS') {
+                DB::table('admin_reimbursement')->where('id', $id)->delete();
+
+                // Hapus rekaman di tabel fk_support_lembur terkait dengan RB
+                DB::table('admin_timesheet_project_detail')->where('fk_timesheet_project', $id)->delete();
+            } elseif ($data->halaman == 'ST') {
+                DB::table('admin_reimbursement')->where('id', $id)->delete();
+
+                // Hapus rekaman di tabel fk_support_lembur terkait dengan RB
+                DB::table('admin_support_ticket_detail')->where('fk_support_ticket', $id)->delete();
+            } elseif ($data->halaman == 'SL') {
+                DB::table('admin_reimbursement')->where('id', $id)->delete();
+
+                // Hapus rekaman di tabel fk_support_lembur terkait dengan RB
+                DB::table('admin_support_lembur_detail')->where('fk_support_lembur', $id)->delete();
+            }
+            $no_doku = $data->no_doku_real;
+            $halaman = $data->halaman;
+            return redirect()->route('admin.beranda')->with('error', 'Data ' . $halaman . ' dengan no dokumen ' . $no_doku . ' berhasil dihapus!');
+        } catch (\Throwable $th) {
+
+            // Tangani jika terjadi kesalahan
+            return redirect()->route('admin.reimbursement')->with('error', 'Gagal menghapus RB dan data terkait.');
         }
     }
 }

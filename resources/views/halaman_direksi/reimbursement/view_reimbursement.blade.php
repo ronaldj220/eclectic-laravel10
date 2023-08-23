@@ -32,8 +32,15 @@
             style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
             <tr>
                 <td>No<br>Tanggal</td>
-                <td>: {{ $reimbursement->no_doku }}<br>: {{ date('d.m.Y', strtotime($reimbursement->tgl_diajukan)) }}
-                </td>
+                @if ($reimbursement->status_approved == 'hold' && $reimbursement->status_paid == 'hold')
+                    <td>: {{ $reimbursement->no_doku_draft }}<br>:
+                        {{ date('d.m.Y', strtotime($reimbursement->tgl_diajukan)) }}
+                    </td>
+                @else
+                    <td>: {{ $reimbursement->no_doku_real }}<br>:
+                        {{ date('d.m.Y', strtotime($reimbursement->tgl_diajukan)) }}
+                    </td>
+                @endif
             </tr>
         </table>
 
@@ -50,7 +57,8 @@
                     </tr>
                     <tr>
                         <th class="text-center" style="width: 100%; text-transform:capitalize;" colspan="5">
-                            {{ $reimbursement->judul_doku }}</th>
+                            {{ $reimbursement->judul_doku }}
+                        </th>
                     </tr>
                 </thead>
                 <!-- Details -->
@@ -60,14 +68,27 @@
                         <td class="text-center" style="max-width: 5%;">{{ $no++ . '.' }}
                         </td>
                         <td style="text-transform:capitalize;">{{ $item->deskripsi }}
-                            {{ date('d/m/Y', strtotime($item->tanggal_1)) }}
+                            @if ($item->tanggal_1 && $item->tanggal_2)
+                                @php
+                                    $tanggal1 = \Carbon\Carbon::parse($item->tanggal_1);
+                                    $tanggal2 = \Carbon\Carbon::parse($item->tanggal_2);
+                                @endphp
+                                {{ date('d/m/y', strtotime($item->tanggal_1)) }} -
+                                {{ date('d/m/y', strtotime($item->tanggal_2)) }}
+                            @elseif ($item->tanggal_1)
+                                {{ date('d/m/y', strtotime($item->tanggal_1)) }}
+                            @endif
+                            @if ($item->keperluan)
+                                ({{ $item->keperluan }})
+                            @endif
                         </td>
                         <td class="text-center" style="max-width: 12%; word-break: break-all;">
-                            {{ $item->no_bukti }}</td>
+                            {{ $item->no_bukti }}
+                        </td>
                         <td class="text-center" style="max-width: 5%;">{{ $item->curr }}
                         </td>
                         <td class="text-end">
-                            {{ number_format($item->nominal, 0, ',', '.') }}
+                            {{ number_format($item->nominal, 2, ',', '.') }}
                         </td>
                     </tr>
                 @endforeach
@@ -75,7 +96,7 @@
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Jumlah</td>
                     <td class="text-center">{{ $item->curr }}</td>
-                    <td class="text-end">{{ number_format($nominal, 0, ',', '.') }}</td>
+                    <td class="text-end">{{ number_format($nominal, 2, ',', '.') }}</td>
                 </tr>
             </table>
             <!-- /.container-fluid -->
@@ -120,7 +141,8 @@
                     </tr>
                     <tr>
                         <th class="text-center" style="width: 100%; text-transform:capitalize;" colspan="5">
-                            {{ $reimbursement->judul_doku }}</th>
+                            {{ $reimbursement->judul_doku }}
+                        </th>
                     </tr>
                 </thead>
                 <!-- Details -->
@@ -129,18 +151,20 @@
                     <tr>
                         <td class="text-center" style="max-width: 5%;">{{ $no++ . '.' }}
                         </td>
-                        <td style="text-transform:capitalize;">{{ $item->nama_karyawan }}</td>
+                        <td style="text-transform:capitalize;">{{ $item->nama_karyawan }} {{ $item->hari }}
+                            hari</td>
                         <td></td>
                         <td class="text-center">{{ $item->curr }}</td>
                         <td class="text-end">
-                            {{ number_format($results_TS[$index], 0, ',', '.') }}</td>
+                            {{ number_format($results_TS[$index], 2, ',', '.') }}
+                        </td>
                     </tr>
                 @endforeach
                 <!-- Total Price -->
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Jumlah</td>
                     <td class="text-center">{{ $item->curr }}</td>
-                    <td class="text-end">{{ number_format($total_TS, 0, ',', '.') }}</td>
+                    <td class="text-end">{{ number_format($total_TS, 2, ',', '.') }}</td>
                 </tr>
             </table>
             <!-- /.container-fluid -->
@@ -185,7 +209,8 @@
                     </tr>
                     <tr>
                         <th class="text-center" style="width: 100%; text-transform:capitalize;" colspan="5">
-                            {{ $reimbursement->judul_doku }}</th>
+                            {{ $reimbursement->judul_doku }}
+                        </th>
                     </tr>
                 </thead>
                 <!-- Details -->
@@ -196,11 +221,17 @@
                         </td>
                         <td style="text-transform:capitalize;">{{ $item->nama_karyawan }}
                             ({{ $item->aliases }})
+                            @if (floor($item->jam) == $item->jam)
+                                {{ number_format($item->jam, 0, ',', '.') }} jam
+                            @else
+                                {{ number_format($item->jam, 1, ',', '.') }} jam
+                            @endif
                         </td>
                         <td></td>
                         <td class="text-center">{{ $item->curr }}</td>
                         <td class="text-end">
-                            {{ number_format($results[$index], 0, ',', '.') }}</td>
+                            {{ number_format($results[$index], 2, ',', '.') }}
+                        </td>
                     </tr>
                 @endforeach
 
@@ -208,7 +239,7 @@
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Jumlah</td>
                     <td class="text-center">{{ $item->curr }}</td>
-                    <td class="text-end">{{ number_format($total, 0, ',', '.') }}
+                    <td class="text-end">{{ number_format($total, 2, ',', '.') }}
                 </tr>
             </table>
             <!-- /.container-fluid -->
@@ -253,7 +284,8 @@
                     </tr>
                     <tr>
                         <th class="text-center" style="width: 100%; text-transform:capitalize;" colspan="5">
-                            {{ $reimbursement->judul_doku }}</th>
+                            {{ $reimbursement->judul_doku }}
+                        </th>
                     </tr>
                 </thead>
                 <!-- Details -->
@@ -264,18 +296,24 @@
                         </td>
                         <td style="text-transform:capitalize;">{{ $item->nama_karyawan }}
                             ({{ $item->aliases }})
+                            @if (floor($item->jam) == $item->jam)
+                                {{ number_format($item->jam, 0, ',', '.') }} jam
+                            @else
+                                {{ number_format($item->jam, 1, ',', '.') }} jam
+                            @endif
                         </td>
                         <td></td>
                         <td class="text-center">{{ $item->curr }}</td>
                         <td class="text-right">
-                            {{ number_format($results[$index], 0, ',', '.') }}</td>
+                            {{ number_format($results[$index], 2, ',', '.') }}
+                        </td>
                     </tr>
                 @endforeach
                 <!-- Total Price -->
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Jumlah</td>
                     <td class="text-center">{{ $item->curr }}</td>
-                    <td class="text-end">{{ number_format($total_ST, 0, ',', '.') }}
+                    <td class="text-end">{{ number_format($total_ST, 2, ',', '.') }}
                 </tr>
             </table>
             <!-- /.container-fluid -->

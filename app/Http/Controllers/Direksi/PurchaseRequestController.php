@@ -78,7 +78,7 @@ class PurchaseRequestController extends Controller
             ]);
             $data = DB::table('admin_purchase_request')->where('id', $id)->first();
             $no_doku = $data->no_doku;
-            return redirect()->route('direksi.purchase_request')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil diajukan! Tunggu Pembayaran ya!');
+            return redirect()->route('direksi.purchase_request')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil diajukan!');
         } catch (\Exception $e) {
             return redirect()->route('direksi.purchase_request')->with('gagal', $e->getMessage());
         }

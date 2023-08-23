@@ -113,22 +113,14 @@ class CashAdvanceReportController extends Controller
         foreach ($request->deskripsi as $deskripsi => $value) {
             $CA_detail =  new CashAdvanceReportDetail();
             $CA_detail->deskripsi = $value;
-
             if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
                 $file = $request->file('foto')[$deskripsi];
-                // Menggunakan Intervention Image untuk memuat gambar
-                $image = Image::make($file);
 
-                // Mengatur ukuran maksimum yang diinginkan (misalnya 800 piksel lebar dan 600 piksel tinggi)
-                $image->resize(800, 600, function ($constraint) {
-                    $constraint->aspectRatio(); // Mempertahankan aspek rasio gambar
-                    $constraint->upsize(); // Memastikan gambar tidak diperbesar jika lebih kecil dari ukuran yang ditentukan
-                });
-
-                // Menyimpan gambar yang telah dikompresi
-                $filePath = public_path('bukti_CAR_karyawan/') . time() . '.' . $file->getClientOriginalExtension();
-                $image->save($filePath);
+                // Menyimpan gambar asli tanpa kompresi
+                $filePath = 'bukti_CAR_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('bukti_CAR_admin'), $filePath);
                 $fileName = basename($filePath);
+
                 $CA_detail->bukti_ca = $fileName;
             }
 

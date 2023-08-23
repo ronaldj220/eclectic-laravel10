@@ -36,19 +36,21 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center"
                 href="{{ route('karyawan.beranda') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                <div class="sidebar-brand-icon">
+                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
                 </div>
-                <div class="sidebar-brand-text mx-3">pt. eclectic</div>
+                <div class="sidebar-brand-text">
+                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
+                </div>
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('karyawan.beranda') }}">
-                    <i class="fa-solid fa-home fa-beat-fade"></i>
+                    <i class="fa-solid fa-home"></i>
                     <span>Beranda</span></a>
             </li>
 
@@ -58,7 +60,7 @@
             <!-- Nav Item - Charts -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('karyawan.reimbursement') }}">
-                    <i class="fa-solid fa-money-bill-transfer fa-beat-fade"></i>
+                    <i class="fa-solid fa-hand-holding-heart"></i>
                     <span>Reimbursement</span></a>
             </li>
             <!-- Divider -->
@@ -68,7 +70,7 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('karyawan.cash_advance') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-sack-dollar"></i>
                     <span>Cash Advance</span></a>
             </li>
 
@@ -78,7 +80,7 @@
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('karyawan.cash_advance_report') }}">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
                     <span>Cash Advance Report</span></a>
             </li>
 
@@ -89,19 +91,54 @@
                 <!-- Nav Item - Tables -->
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('karyawan.purchase_request') }}">
-                        <i class="fas fa-fw fa-table"></i>
+                        <i class="fa-solid fa-chart-bar"></i>
                         <span>Purchase Request</span></a>
                 </li>
+
                 <!-- Divider -->
                 <hr class="sidebar-divider my-0">
 
                 <!-- Nav Item - Tables -->
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('karyawan.purchase_order') }}">
-                        <i class="fas fa-fw fa-table"></i>
+                        <i class="fa-solid fa-cart-arrow-down"></i>
                         <span>Purchase Order</span></a>
                 </li>
             @endif
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            @if (Auth::guard('karyawan')->user()->jabatan == 'Konsultan')
+                <li class="nav-item">
+                    <a class="nav-link"
+                        href="https://drive.google.com/file/d/1FYmGvS7aYSU4HFpk7zngHP5TPRfcQSVf/view?usp=sharing">
+                        <i class="fa-regular fa-circle-question"></i>
+                        <span>Help</span></a>
+                </li>
+            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Project Manager')
+                <li class="nav-item">
+                    <a class="nav-link"
+                        href="https://drive.google.com/file/d/1AFEoQgVbNCqmZuyB98W3pvWQflVISr-5/view?usp=sharing">
+                        <i class="fa-regular fa-circle-question"></i>
+                        <span>Help</span></a>
+                </li>
+            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Support Manager')
+                <li class="nav-item">
+                    <a class="nav-link"
+                        href="https://drive.google.com/file/d/1AFEoQgVbNCqmZuyB98W3pvWQflVISr-5/view?usp=sharing">
+                        <i class="fa-regular fa-circle-question"></i>
+                        <span>Help</span></a>
+                </li>
+            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Staff')
+                <li class="nav-item">
+                    <a class="nav-link"
+                        href="https://drive.google.com/file/d/1AFEoQgVbNCqmZuyB98W3pvWQflVISr-5/view?usp=sharing">
+                        <i class="fa-regular fa-circle-question"></i>
+                        <span>Help</span></a>
+                </li>
+            @endif
+
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -127,30 +164,6 @@
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
@@ -168,7 +181,8 @@
 
                                 <a class="dropdown-item" href="{{ route('karyawan.beranda.profile') }}">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
+                                    Profile ({{ Auth::guard('karyawan')->user()->nama }}) |
+                                    {{ Auth::guard('karyawan')->user()->jabatan }}
                                 </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal"
                                     data-target="#logoutModal">
@@ -193,40 +207,6 @@
                             </button>
                         </div>
                     @endif
-                    @if (Auth::guard('karyawan')->user()->jabatan == 'Konsultan')
-                        <!-- Page Heading -->
-                        <div class="d-sm-flex align-items-center justify-content-start mb-4">
-                            <a
-                                href="https://drive.google.com/file/d/1FYmGvS7aYSU4HFpk7zngHP5TPRfcQSVf/view?usp=sharing"><i
-                                    class="fa-solid fa-cloud-arrow-down"></i> Download</a>
-                        </div>
-                    @elseif (Auth::guard('karyawan')->user()->jabatan == 'Project Manager')
-                        <!-- Page Heading -->
-                        <div class="d-sm-flex align-items-center justify-content-start mb-4">
-                            <a
-                                href="https://drive.google.com/file/d/1AFEoQgVbNCqmZuyB98W3pvWQflVISr-5/view?usp=sharing"><i
-                                    class="fa-solid fa-cloud-arrow-down"></i> Download</a>
-                        </div>
-                    @elseif (Auth::guard('karyawan')->user()->jabatan == 'Support Manager')
-                        <!-- Page Heading -->
-                        <div class="d-sm-flex align-items-center justify-content-start mb-4">
-                            <a
-                                href="https://drive.google.com/file/d/12wT--gAnZQ_AlJP3K1Nt1ihK6VIDz9vl/view?usp=sharing"><i
-                                    class="fa-solid fa-cloud-arrow-down"></i> Download</a>
-                        </div>
-                    @elseif (Auth::guard('karyawan')->user()->jabatan == 'Staff')
-                        <!-- Page Heading -->
-                        <div class="d-sm-flex align-items-center justify-content-start mb-4">
-                            <a
-                                href="https://drive.google.com/file/d/17x55LBokLfndB4p8Yrw6SMmFDoRrFLn0/view?usp=sharing"><i
-                                    class="fa-solid fa-cloud-arrow-down"></i> Download</a>
-                        </div>
-                    @endif
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-center mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard (Karyawan)</h1>
-                    </div>
-
                     <table class="table table-borderless table-lg"
                         style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 16px; margin-right: 150px">
                         <tr>
@@ -303,6 +283,8 @@
                                                         <th style="width: 3%">Status</th>
                                                     @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')
                                                         <th style="width: 3%">Status</th>
+                                                    @elseif ($item->status_approved == 'approved' && $item->status_paid == 'paid')
+                                                        <th style="width: 3%">Status</th>
                                                     @endif
                                                 @endif
                                                 @if ($CA && count($CA) > 0)
@@ -316,6 +298,8 @@
                                                     @elseif ($item->status_approved == 'pending' && $item->status_paid == 'pending')
                                                         <th style="width: 3%">Status</th>
                                                     @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')
+                                                        <th style="width: 3%">Status</th>
+                                                    @elseif ($item->status_approved == 'approved' && $item->status_paid == 'paid')
                                                         <th style="width: 3%">Status</th>
                                                     @endif
                                                 @endif
@@ -331,6 +315,8 @@
                                                         <th style="width: 3%">Status</th>
                                                     @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')
                                                         <th style="width: 3%">Status</th>
+                                                    @elseif ($item->status_approved == 'approved' && $item->status_paid == 'paid')
+                                                        <th style="width: 3%">Status</th>
                                                     @endif
                                                 @endif
                                             </tr>
@@ -341,7 +327,7 @@
                                                 @foreach ($reimbursement as $item)
                                                     <tr>
                                                         <td><a
-                                                                href="{{ route('karyawan.reimbursement.view_reimbursement', $item->id) }}">{{ $item->no_doku }}</a>
+                                                                href="{{ route('karyawan.reimbursement.view_reimbursement', $item->id) }}">{{ $item->no_doku_real }}</a>
                                                         </td>
                                                         @if ($item->status_approved == 'rejected' && $item->status_paid == 'rejected')
                                                             <td style="text-align: center; color: #FF3131">
@@ -360,6 +346,11 @@
                                                             <td style="text-align: center;color: #00BF63;">
                                                                 <label
                                                                     style="font-weight: bold; text-transform: uppercase">Approved</label>
+                                                            </td>
+                                                        @elseif ($item->status_approved == 'approved' && $item->status_paid == 'paid')
+                                                            <td style="text-align: center;color: #00BF63;">
+                                                                <label
+                                                                    style="font-weight: bold; text-transform: uppercase">Paid</label>
                                                             </td>
                                                         @endif
                                                     </tr>
@@ -391,6 +382,11 @@
                                                                 <label
                                                                     style="font-weight: bold; text-transform: uppercase">Approved</label>
                                                             </td>
+                                                        @elseif ($item->status_approved == 'approved' && $item->status_paid == 'paid')
+                                                            <td style="text-align: center;color: #00BF63;">
+                                                                <label
+                                                                    style="font-weight: bold; text-transform: uppercase">Paid</label>
+                                                            </td>
                                                         @endif
                                                     </tr>
                                                 @endforeach
@@ -420,6 +416,11 @@
                                                             <td style="text-align: center;color: #00BF63;">
                                                                 <label
                                                                     style="font-weight: bold; text-transform: uppercase">Approved</label>
+                                                            </td>
+                                                        @elseif ($item->status_approved == 'approved' && $item->status_paid == 'paid')
+                                                            <td style="text-align: center;color: #00BF63;">
+                                                                <label
+                                                                    style="font-weight: bold; text-transform: uppercase">Paid</label>
                                                             </td>
                                                         @endif
                                                     </tr>

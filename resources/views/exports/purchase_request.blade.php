@@ -57,7 +57,12 @@
                 </td>
                 <td
                     style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: right; border: 10px solid black">
-                    {{ $item->jumlah }}</td>
+                    @if (floor($item->jumlah) == $item->jumlah)
+                        {{ number_format($item->jumlah, 0, ',', '.') }}
+                    @else
+                        {{ number_format($item->jumlah, 1, ',', '.') }}
+                    @endif
+                </td>
                 <td
                     style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; text-align: center; border: 10px solid black">
                     {{ $item->satuan }}</td>

@@ -27,7 +27,7 @@
                     <td class="text-center">
                         <p>{{ $no++ . '.' }}</p>
                         <div class="image-container">
-                            <img src="{{ asset('bukti_CAR_admin/' . $item->bukti_ca) }}" alt=""
+                            <img src="{{ asset('/main/public/bukti_CAR_admin/' . $item->bukti_ca) }}" alt=""
                                 style="max-width: 110%">
                         </div>
                         <div class="text-container">

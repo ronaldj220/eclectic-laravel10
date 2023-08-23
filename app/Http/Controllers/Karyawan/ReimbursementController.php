@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Karyawan;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Rb_Detail;
-use App\Models\Admin\Reimbursement as AdminReimbursement;
+use App\Models\Admin\Reimbursement;
 use App\Models\Admin\Support_Lembur_Detail;
 use App\Models\Admin\Support_Ticket_Detail;
 use App\Models\Admin\Timesheet_Project_Detail;
-use App\Models\Karyawan\Reimbursement;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,12 +28,12 @@ class ReimbursementController extends Controller
                 ->orWhere('judul_doku', 'LIKE', '%' . $request->search . '%')
                 ->whereIn('status_approved', ['rejected', 'pending', 'approved'])
                 ->whereIn('status_paid', ['rejected', 'pending'])
-                ->orderBy('no_doku', 'desc')
+                ->orderBy('no_doku_real', 'desc')
                 ->paginate(20);
         }
         $dataReimbursement = DB::table('admin_reimbursement')
             ->where('pemohon', $authId)
-            ->orderBy('no_doku', 'desc')
+            ->orderBy('no_doku_real', 'desc')
             ->whereIn('status_approved', ['rejected', 'pending', 'approved'])
             ->whereIn('status_paid', ['rejected', 'pending'])
             ->paginate(20);
@@ -43,6 +42,10 @@ class ReimbursementController extends Controller
             'title' => $title,
             'reimbursement' => $dataReimbursement,
         ]);
+    }
+    // Gunakan auto generate number 
+    public function getNoDokuGenerated()
+    {
     }
     public function tambah_reimbursement()
     {
@@ -56,7 +59,11 @@ class ReimbursementController extends Controller
         $currentMonth = date('n');
 
         if (date('j') == 1) { // Cek jika tanggal saat ini adalah tanggal 1
-            $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            if ($noUrutAkhir) {
+                $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            } else {
+                $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            }
         } else {
             if ($noUrutAkhir) {
                 $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
@@ -116,136 +123,10 @@ class ReimbursementController extends Controller
     }
     public function simpan_reimbursement(Request $request)
     {
-        $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
-        $tgl_diajukan = $tanggal->format('Y-m-d');
-
-        $reimbursement = new AdminReimbursement();
-        $reimbursement->no_doku = $request->no_doku;
-        $reimbursement->tgl_diajukan = $tgl_diajukan;
-        $reimbursement->judul_doku = $request->judul_doku;
-        $reimbursement->pemohon = $request->pemohon;
-        $reimbursement->accounting = $request->accounting;
-        $reimbursement->kasir = $request->kasir;
-        $reimbursement->menyetujui = $request->nama_menyetujui;
-        if ($request->project === 'RB (Reimbursement)') {
-            $reimbursement->halaman = 'RB';
-        } elseif ($request->project === 'TS (Timesheet Support)') {
-            $reimbursement->halaman = 'TS';
-            if ($request->hasFile('bukti') && $request->file('bukti')->isValid()) {
-                $files = $request->file('bukti');
-
-                $fileExtension = $request->file('bukti')->getClientOriginalExtension();
-                // Proses Simpan File ke dalam Nama ST
-                $file = $request->file('bukti');
-                $fileName = time() . '.' . $fileExtension;
-                $file->move(public_path('bukti_TS_karyawan/'), $fileName);
-                $reimbursement->bukti_timesheet_project = $fileName;
-            }
-        } elseif ($request->project === 'ST (Support Ticket)') {
-            $reimbursement->halaman = 'ST';
-            if ($request->hasFile('bukti') && $request->file('bukti')->isValid()) {
-                $files = $request->file('bukti');
-
-                $fileExtension = $request->file('bukti')->getClientOriginalExtension();
-                // Proses Simpan File ke dalam Nama ST
-                $file = $request->file('bukti');
-                $fileName = time() . '.' . $fileExtension;
-                $file->move(public_path('bukti_ST_karyawan/'), $fileName);
-                $reimbursement->bukti_support_ticket = $fileName;
-            }
-        } elseif ($request->project === 'SL (Support Lembur)') {
-            $reimbursement->halaman = 'SL';
-            if ($request->hasFile('bukti') && $request->file('bukti')->isValid()) {
-                $files = $request->file('bukti');
-
-                $fileExtension = $request->file('bukti')->getClientOriginalExtension();
-                // Proses Simpan File ke dalam Nama ST
-                $file = $request->file('bukti');
-                $fileName = time() . '.' . $fileExtension;
-                $file->move(public_path('bukti_SL_karyawan/'), $fileName);
-                $reimbursement->bukti_support_lembur = $fileName;
-            }
-        } else {
-            $reimbursement->halaman = 'RB';
-        }
-        $reimbursement->save();
-
-        if ($request->project === 'RB (Reimbursement)') {
-
-            foreach ($request->deskripsi as $deskripsi => $value) {
-                $rb_detail = new Rb_Detail();
-                $rb_detail->deskripsi = $value;
-
-                if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
-                    $file = $request->file('foto')[$deskripsi];
-                    // Menggunakan Intervention Image untuk memuat gambar
-                    $image = Image::make($file);
-
-                    // Mengatur ukuran maksimum yang diinginkan (misalnya 800 piksel lebar dan 600 piksel tinggi)
-                    $image->resize(800, 600, function ($constraint) {
-                        $constraint->aspectRatio(); // Mempertahankan aspek rasio gambar
-                        $constraint->upsize(); // Memastikan gambar tidak diperbesar jika lebih kecil dari ukuran yang ditentukan
-                    });
-
-                    // Menyimpan gambar yang telah dikompresi
-                    $filePath = public_path('bukti_reim/') . time() . '.' . $file->getClientOriginalExtension();
-                    $image->save($filePath);
-                    $fileName = basename($filePath);
-
-                    $rb_detail->bukti_reim = $fileName;
-                }
-
-                $rb_detail->no_bukti = $request->nobu[$deskripsi];
-                $rb_detail->curr = $request->kurs_rb[$deskripsi];
-                $rb_detail->nominal = $request->nom_rb[$deskripsi];
-                $rb_detail->tanggal_1 = $request->tgl1[$deskripsi];
-                $rb_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
-                $rb_detail->keperluan = $request->keperluan[$deskripsi];
-                $rb_detail->fk_rb = $reimbursement->id;
-                $rb_detail->save();
-            }
-        } elseif ($request->project === 'TS (Timesheet Support)') {
-            foreach ($request->karyawan_ts as $index => $nama_karyawan) {
-                $rb_detail = new Timesheet_Project_Detail();
-                $rb_detail->nama_karyawan = $nama_karyawan;
-                $rb_detail->curr = $request->kurs_ts[$index];
-                $rb_detail->nominal_awal = $request->nom_ts[$index];
-                $rb_detail->hari_awal = $request->hari_ts1[$index];
-                $rb_detail->hari = $request->hari_ts2[$index];
-                $nominal = ($rb_detail->nominal_awal / $rb_detail->hari_awal) * $rb_detail->hari;
-                $rb_detail->nominal = $nominal;
-                $rb_detail->project = $request->project_ts[$index];
-                $rb_detail->fk_timesheet_project = $reimbursement->id;
-                $rb_detail->save();
-            }
-        } elseif ($request->project === 'ST (Support Ticket)') {
-            foreach ($request->karyawan_st as $deskripsi => $nama_karyawan) {
-                $rb_detail = new Support_Ticket_Detail();
-                $rb_detail->nama_karyawan = $nama_karyawan;
-                $rb_detail->aliases = $request->project_st[$deskripsi];
-                $rb_detail->curr = $request->kurs_st[$deskripsi];
-                $rb_detail->nominal_awal = $request->nom_st[$deskripsi];
-                $rb_detail->jam = $request->jam_st[$deskripsi];
-                $rb_detail->fk_support_ticket = $reimbursement->id;
-                $rb_detail->save();
-            }
-        } elseif ($request->project === 'SL (Support Lembur)') {
-            foreach ($request->karyawan_st as $deskripsi => $nama_karyawan) {
-                $rb_detail = new Support_Lembur_Detail();
-                $rb_detail->nama_karyawan = $nama_karyawan;
-                $rb_detail->aliases = $request->project_st[$deskripsi];
-                $rb_detail->curr = $request->kurs_st[$deskripsi];
-                $rb_detail->nominal_awal = $request->nom_st[$deskripsi];
-                $rb_detail->jam = $request->jam_st[$deskripsi];
-                $rb_detail->fk_support_lembur = $reimbursement->id;
-                $rb_detail->save();
-            }
-        }
-        return redirect()->route('karyawan.reimbursement')->with('success', 'Data berhasil diajukan!');
     }
     public function print_reimbursement($id)
     {
-        $reimbursement = AdminReimbursement::find($id);
+        $reimbursement = Reimbursement::find($id);
         if ($reimbursement->halaman == 'RB') {
             $title = 'Cetak Reimbursement';
             $rb_detail = DB::table('admin_rb_detail')->where('fk_rb', $id)->get();
@@ -329,7 +210,7 @@ class ReimbursementController extends Controller
     }
     public function lihat_bukti_reimbursement($id)
     {
-        $reimbursement = AdminReimbursement::find($id);
+        $reimbursement = Reimbursement::find($id);
         if ($reimbursement->halaman == 'RB') {
             $title = 'Lihat Bukti Reimbursement';
             $rb_detail = DB::table('admin_rb_detail')->where('fk_rb', $id)->get();
@@ -356,7 +237,7 @@ class ReimbursementController extends Controller
     public function view_reimbursement($id)
     {
         // Data Reimbursement
-        $reimbursement = AdminReimbursement::find($id);
+        $reimbursement = Reimbursement::find($id);
         if ($reimbursement->halaman == 'RB') {
             $title = 'Lihat Reimbursement';
             $rb_detail = DB::table('admin_rb_detail')->where('fk_rb', $id)->get();

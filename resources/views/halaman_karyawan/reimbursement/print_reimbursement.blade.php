@@ -8,21 +8,19 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <link rel="icon" href="{{ asset('logo.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 
 </head>
 
 <body>
     <!-- Begin Page Content -->
     <div class="container" style="margin-right: 60px; ">
-        <figure class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+        <figure class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
             <b><a style="text-transform: uppercase;">reimbursement</a></b>
             <br>
             <b><a style="text-transform: uppercase;">PT. Eclectic Consulting</a></b>
         </figure>
         <table class="table table-borderless table-sm"
-            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 12px">
+            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: -5px;">
             <tr>
                 <td>No<br>Tanggal</td>
                 <td>: {{ $reimbursement->no_doku }}<br>: {{ date('d.m.Y', strtotime($reimbursement->tgl_diajukan)) }}
@@ -31,17 +29,18 @@
         </table>
         @if ($reimbursement->halaman == 'RB')
             <table class="table is-striped table-bordered border-dark table-sm"
-                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
                 <thead>
                     <tr>
-                        <th class="text-center" style="width: 3%">No.</th>
-                        <th class="text-center" style="width: 50%">Keterangan</th>
-                        <th class="text-center" style="width: 18%;">No. Bukti</th>
+                        <th class="text-center" style="width: 2%">No.</th>
+                        <th class="text-center" style="width: 50%; margin-right: -20px;">Keterangan</th>
+                        <th class="text-center" style="width: 20%;">No. Bukti</th>
                         <th class="text-center" style="width: 5%">Curr</th>
                         <th class="text-center" style="width: 12%">Nominal</th>
                     </tr>
+                    <!-- table title --->
                     <tr>
-                        <th class="text-center" style="width: 100%; text-transform:capitalize;" colspan="5">
+                        <th class="text-center " style="width: 100%; text-transform:capitalize;" colspan="5">
                             {{ $reimbursement->judul_doku }}</th>
                     </tr>
                 </thead>
@@ -52,14 +51,27 @@
                         <td class="text-center" style="max-width: 5%;">{{ $no++ . '.' }}
                         </td>
                         <td style="text-transform:capitalize;">{{ $item->deskripsi }}
-                            {{ date('d/m/Y', strtotime($item->tanggal_1)) }}
+                            @if ($item->tanggal_1 && $item->tanggal_2)
+                                @php
+                                    $tanggal1 = \Carbon\Carbon::parse($item->tanggal_1);
+                                    $tanggal2 = \Carbon\Carbon::parse($item->tanggal_2);
+                                @endphp
+                                {{ date('d/m/y', strtotime($item->tanggal_1)) }} -
+                                {{ date('d/m/y', strtotime($item->tanggal_2)) }}
+                            @elseif ($item->tanggal_1)
+                                {{ date('d/m/y', strtotime($item->tanggal_1)) }}
+                            @endif
+                            @if ($item->keperluan)
+                                ({{ $item->keperluan }})
+                            @endif
+
                         </td>
                         <td class="text-center" style="max-width: 12%; word-break: break-all;">
                             {{ $item->no_bukti }}</td>
                         <td class="text-center" style="max-width: 5%;">{{ $item->curr }}
                         </td>
-                        <td class="text-end">
-                            {{ number_format($item->nominal, 0, ',', '.') }}
+                        <td class="text-end" style="color: {{ $item->nominal < 0 ? 'red' : 'inherit' }}">
+                            {{ number_format($item->nominal, 2, ',', '.') }}
                         </td>
                     </tr>
                 @endforeach
@@ -67,46 +79,91 @@
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Jumlah</td>
                     <td class="text-center">{{ $item->curr }}</td>
-                    <td class="text-end">{{ number_format($nominal, 0, ',', '.') }}</td>
+                    <td class="text-end">{{ number_format($nominal, 2, ',', '.') }}</td>
                 </tr>
             </table>
+
             <!-- /.container-fluid -->
             <div>
                 <table class="table is-striped table-bordered border-dark text-center"
-                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                    <tr style="height:3cm;">
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
+                    <tr style="height:2cm;">
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Pemohon,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->pemohon }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Accounting,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->accounting }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Kasir,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->kasir }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Menyetujui,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->menyetujui }}</div>
                         </td>
                     </tr>
                 </table>
             </div>
-            <br>
+
+            @if ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'pending')
+                <div class="container" style="margin-top: -20px">
+                    <div class="row">
+                        <div class="col">
+                        </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 415px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on
+                                            {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'paid')
+                <div class="container" style="margin-top: -20px">
+                    <div class="row">
+                        <div class="col">
+                        </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
         @elseif ($reimbursement->halaman == 'TS')
             <table class="table is-striped table-bordered border-dark table-sm"
-                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
                 <thead>
                     <tr>
                         <th class="text-center" style="width: 3%">No.</th>
                         <th class="text-center" style="width: 50%">Keterangan</th>
-                        <th class="text-center" style="width: 12%;">No. Bukti</th>
+                        <th class="text-center" style="width: 15%;">No. Bukti</th>
                         <th class="text-center" style="width: 5%">Curr</th>
                         <th class="text-center" style="width: 12%">Nominal</th>
                     </tr>
@@ -121,57 +178,100 @@
                     <tr>
                         <td class="text-center" style="max-width: 5%;">{{ $no++ . '.' }}
                         </td>
-                        <td style="text-transform:capitalize;">{{ $item->nama_karyawan }}</td>
+                        <td style="text-transform:capitalize;">{{ $item->nama_karyawan }} {{ $item->hari }} hari
+                        </td>
                         <td></td>
                         <td class="text-center">{{ $item->curr }}</td>
                         <td class="text-end">
-                            {{ number_format($results_TS[$index], 0, ',', '.') }}</td>
+                            {{ number_format($item->nominal, 2, ',', '.') }}</td>
                     </tr>
                 @endforeach
                 <!-- Total Price -->
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Jumlah</td>
                     <td class="text-center">{{ $item->curr }}</td>
-                    <td class="text-end">{{ number_format($total_TS, 0, ',', '.') }}</td>
+                    <td class="text-end">{{ number_format($total_TS, 2, ',', '.') }}</td>
                 </tr>
             </table>
             <!-- /.container-fluid -->
             <div>
                 <table class="table is-striped table-bordered border-dark text-center"
-                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                    <tr style="height:3cm;">
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
+                    <tr style="height:2cm;">
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Pemohon,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->pemohon }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Accounting,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->accounting }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Kasir,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->kasir }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Menyetujui,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->menyetujui }}</div>
                         </td>
                     </tr>
                 </table>
             </div>
-            <br>
+            @if ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'pending')
+                <div class="container" style="margin-top: -20px">
+                    <div class="row">
+                        <div class="col">
+                        </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'paid')
+                <div class="container" style="margin-top: -20px">
+                    <div class="row">
+                        <div class="col">
+                        </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
         @elseif ($reimbursement->halaman == 'ST')
             <table class="table is-striped table-bordered border-dark table-sm"
-                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
                 <thead>
                     <tr>
                         <th class="text-center" style="width: 3%">No.</th>
                         <th class="text-center" style="width: 50%">Keterangan</th>
-                        <th class="text-center" style="width: 12%;">No. Bukti</th>
+                        <th class="text-center" style="width: 15%;">No. Bukti</th>
                         <th class="text-center" style="width: 5%">Curr</th>
                         <th class="text-center" style="width: 12%">Nominal</th>
                     </tr>
@@ -188,11 +288,12 @@
                         </td>
                         <td style="text-transform:capitalize;">{{ $item->nama_karyawan }}
                             ({{ $item->aliases }})
+                            {{ $item->jam }} jam
                         </td>
                         <td></td>
                         <td class="text-center">{{ $item->curr }}</td>
                         <td class="text-end">
-                            {{ number_format($results[$index], 0, ',', '.') }}</td>
+                            {{ number_format($results[$index], 2, ',', '.') }}</td>
                     </tr>
                 @endforeach
 
@@ -200,46 +301,88 @@
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Jumlah</td>
                     <td class="text-center">{{ $item->curr }}</td>
-                    <td class="text-end">{{ number_format($total, 0, ',', '.') }}
+                    <td class="text-end">{{ number_format($total, 2, ',', '.') }}
                 </tr>
             </table>
             <!-- /.container-fluid -->
             <div>
                 <table class="table is-striped table-bordered border-dark text-center"
-                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                    <tr style="height:3cm;">
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
+                    <tr style="height:2cm;">
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Pemohon,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->pemohon }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Accounting,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->accounting }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Kasir,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->kasir }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Menyetujui,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->menyetujui }}</div>
                         </td>
                     </tr>
                 </table>
             </div>
-            <br>
+            @if ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'pending')
+                <div class="container" style="margin-top: -20px">
+                    <div class="row">
+                        <div class="col">
+                        </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'paid')
+                <div class="container" style="margin-top: -20px">
+                    <div class="row">
+                        <div class="col">
+                        </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
         @elseif ($reimbursement->halaman == 'SL')
             <table class="table is-striped table-bordered border-dark table-sm"
-                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
                 <thead>
                     <tr>
                         <th class="text-center" style="width: 3%">No.</th>
                         <th class="text-center" style="width: 50%">Keterangan</th>
-                        <th class="text-center" style="width: 12%;">No. Bukti</th>
+                        <th class="text-center" style="width: 15%;">No. Bukti</th>
                         <th class="text-center" style="width: 5%">Curr</th>
                         <th class="text-center" style="width: 12%">Nominal</th>
                     </tr>
@@ -256,56 +399,95 @@
                         </td>
                         <td style="text-transform:capitalize;">{{ $item->nama_karyawan }}
                             ({{ $item->aliases }})
+                            {{ $item->jam }} jam
                         </td>
                         <td></td>
                         <td class="text-center">{{ $item->curr }}</td>
-                        <td class="text-right">
-                            {{ number_format($results[$index], 0, ',', '.') }}</td>
+                        <td class="text-end">
+                            {{ number_format($results[$index], 2, ',', '.') }}</td>
                     </tr>
                 @endforeach
                 <!-- Total Price -->
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Jumlah</td>
                     <td class="text-center">{{ $item->curr }}</td>
-                    <td class="text-end">{{ number_format($total_ST, 0, ',', '.') }}
+                    <td class="text-end">{{ number_format($total_ST, 2, ',', '.') }}
                 </tr>
             </table>
             <!-- /.container-fluid -->
             <div>
                 <table class="table is-striped table-bordered border-dark text-center"
-                    style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
-                    <tr style="height:3cm;">
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
+                    <tr style="height:2cm;">
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Pemohon,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->pemohon }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Accounting,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->accounting }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Kasir,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->kasir }}</div>
                         </td>
                         <td style="width:25%">
                             <div class="center" style="font-weight: bold">Menyetujui,</div>
-                            <br><br><br><br>
+                            <div style="margin-top: 40px"></div>
                             <div class="center">{{ $reimbursement->menyetujui }}</div>
                         </td>
                     </tr>
                 </table>
             </div>
-            <br>
+            @if ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'pending')
+                <div class="container" style="margin-top: -20px">
+                    <div class="row">
+                        <div class="col">
+                        </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'paid')
+                <div class="container" style="margin-top: -20px">
+                    <div class="row">
+                        <div class="col">
+                        </div>
+                        @if ($reimbursement->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
         @endif
         <br>
-        <div class="container d-flex justify-content-center">
 
-            <a href="{{ route('karyawan.reimbursement') }}" class="btn btn-danger"><i
-                    class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
-        </div>
     </div>
 
     <!-- /.container-fluid -->

@@ -23,7 +23,8 @@
             style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: -5px;">
             <tr>
                 <td>No<br>Tanggal</td>
-                <td>: {{ $reimbursement->no_doku }}<br>: {{ date('d.m.Y', strtotime($reimbursement->tgl_diajukan)) }}
+                <td>: {{ $reimbursement->no_doku_real }}<br>:
+                    {{ date('d.m.Y', strtotime($reimbursement->tgl_diajukan)) }}
                 </td>
             </tr>
         </table>
@@ -70,8 +71,8 @@
                             {{ $item->no_bukti }}</td>
                         <td class="text-center" style="max-width: 5%;">{{ $item->curr }}
                         </td>
-                        <td class="text-end">
-                            {{ number_format($item->nominal, 0, ',', '.') }}
+                        <td class="text-end" style="color: {{ $item->nominal < 0 ? 'red' : 'inherit' }}">
+                            {{ number_format($item->nominal, 2, ',', '.') }}
                         </td>
                     </tr>
                 @endforeach
@@ -79,7 +80,7 @@
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Jumlah</td>
                     <td class="text-center">{{ $item->curr }}</td>
-                    <td class="text-end">{{ number_format($nominal, 0, ',', '.') }}</td>
+                    <td class="text-end">{{ number_format($nominal, 2, ',', '.') }}</td>
                 </tr>
             </table>
 
@@ -144,7 +145,18 @@
                         @else
                             <div class="col">
                                 <table class="table table-borderless table-sm"
-                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 150px;">
+                                    <tr class="text-center">
+                                        <td>Paid on
+                                            {{ date('d/m/Y', strtotime($reimbursement->tgl_bayar)) }} <br>
+                                            ({{ $reimbursement->no_referensi }})
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 80px; margin-right: -10px;">
                                     <tr class="text-center">
                                         <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
                                         </td>
@@ -182,14 +194,14 @@
                         <td></td>
                         <td class="text-center">{{ $item->curr }}</td>
                         <td class="text-end">
-                            {{ number_format($item->nominal, 0, ',', '.') }}</td>
+                            {{ number_format($results_TS[$index], 2, ',', '.') }}</td>
                     </tr>
                 @endforeach
                 <!-- Total Price -->
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Jumlah</td>
                     <td class="text-center">{{ $item->curr }}</td>
-                    <td class="text-end">{{ number_format($total_TS, 0, ',', '.') }}</td>
+                    <td class="text-end">{{ number_format($total_TS, 2, ',', '.') }}</td>
                 </tr>
             </table>
             <!-- /.container-fluid -->
@@ -252,7 +264,18 @@
                         @else
                             <div class="col">
                                 <table class="table table-borderless table-sm"
-                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 150px;">
+                                    <tr class="text-center">
+                                        <td>Paid on
+                                            {{ date('d/m/Y', strtotime($reimbursement->tgl_bayar)) }} <br>
+                                            ({{ $reimbursement->no_referensi }})
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 80px; margin-right: -10px;">
                                     <tr class="text-center">
                                         <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
                                         </td>
@@ -287,12 +310,16 @@
                         </td>
                         <td style="text-transform:capitalize;">{{ $item->nama_karyawan }}
                             ({{ $item->aliases }})
-                            {{ $item->jam }} jam
+                            @if (floor($item->jam) == $item->jam)
+                                {{ number_format($item->jam, 0, ',', '.') }} jam
+                            @else
+                                {{ number_format($item->jam, 1, ',', '.') }} jam
+                            @endif
                         </td>
                         <td></td>
                         <td class="text-center">{{ $item->curr }}</td>
                         <td class="text-end">
-                            {{ number_format($results[$index], 0, ',', '.') }}</td>
+                            {{ number_format($results[$index], 2, ',', '.') }}</td>
                     </tr>
                 @endforeach
 
@@ -300,7 +327,7 @@
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Jumlah</td>
                     <td class="text-center">{{ $item->curr }}</td>
-                    <td class="text-end">{{ number_format($total, 0, ',', '.') }}
+                    <td class="text-end">{{ number_format($total, 2, ',', '.') }}
                 </tr>
             </table>
             <!-- /.container-fluid -->
@@ -363,7 +390,18 @@
                         @else
                             <div class="col">
                                 <table class="table table-borderless table-sm"
-                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 150px;">
+                                    <tr class="text-center">
+                                        <td>Paid on
+                                            {{ date('d/m/Y', strtotime($reimbursement->tgl_bayar)) }} <br>
+                                            ({{ $reimbursement->no_referensi }})
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 80px; margin-right: -10px;">
                                     <tr class="text-center">
                                         <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
                                         </td>
@@ -403,14 +441,14 @@
                         <td></td>
                         <td class="text-center">{{ $item->curr }}</td>
                         <td class="text-end">
-                            {{ number_format($results[$index], 0, ',', '.') }}</td>
+                            {{ number_format($results[$index], 2, ',', '.') }}</td>
                     </tr>
                 @endforeach
                 <!-- Total Price -->
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Jumlah</td>
                     <td class="text-center">{{ $item->curr }}</td>
-                    <td class="text-end">{{ number_format($total_ST, 0, ',', '.') }}
+                    <td class="text-end">{{ number_format($total_ST, 2, ',', '.') }}
                 </tr>
             </table>
             <!-- /.container-fluid -->
@@ -473,7 +511,18 @@
                         @else
                             <div class="col">
                                 <table class="table table-borderless table-sm"
-                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 150px;">
+                                    <tr class="text-center">
+                                        <td>Paid on
+                                            {{ date('d/m/Y', strtotime($reimbursement->tgl_bayar)) }} <br>
+                                            ({{ $reimbursement->no_referensi }})
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 80px; margin-right: -10px;">
                                     <tr class="text-center">
                                         <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
                                         </td>

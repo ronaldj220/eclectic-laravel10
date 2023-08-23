@@ -35,6 +35,11 @@ class CashAdvanceController extends Controller
                     ->where('status_paid', 'pending');
             })
             ->orWhere(function ($query) use ($menyetujui) {
+                $query->where('pemohon', $menyetujui)
+                    ->where('status_approved', 'approved')
+                    ->where('status_paid', 'paid');
+            })
+            ->orWhere(function ($query) use ($menyetujui) {
                 $query->where('pemohon', '<>', $menyetujui)
                     ->where('status_approved', 'rejected')
                     ->where('status_paid', 'pending');
@@ -60,20 +65,18 @@ class CashAdvanceController extends Controller
         $title = 'Lihat Cash Advance';
         $cashadvance = DB::table('admin_cash_advance')->find($id);
         $nominal_CA = DB::table('admin_cash_advance')->where('id', $id)->sum('nominal');
-        $namaKaryawan = Auth::user()->nama;
-        $dataKaryawan = DB::table('karyawan')->where('nama', $namaKaryawan)->select('nama', 'bank', 'no_rekening', 'signature')->first();
-        $namaMenyetujui = Auth::guard('direksi')->user()->nama;
-        $direksi = DB::table('menyetujui AS m')
-            ->join('admin_cash_advance AS a', 'm.nama', '=', 'a.menyetujui')
-            ->select('m.nama', 'm.signature')
-            ->where('m.nama', $namaMenyetujui)
-            ->get();
+        // $namaKaryawan = Auth::user()->nama;
+        // $dataKaryawan = DB::table('karyawan')->where('nama', $namaKaryawan)->select('nama', 'bank', 'no_rekening', 'signature')->first();
+        // $namaMenyetujui = Auth::guard('direksi')->user()->nama;
+        // $direksi = DB::table('menyetujui AS m')
+        //     ->join('admin_cash_advance AS a', 'm.nama', '=', 'a.menyetujui')
+        //     ->select('m.nama', 'm.signature')
+        //     ->where('m.nama', $namaMenyetujui)
+        //     ->get();
         return view('halaman_direksi.cash_advance.view_cash_advance', [
             'title' => $title,
             'cash_advance' => $cashadvance,
             'nominal' => $nominal_CA,
-            'karyawan' => $dataKaryawan,
-            'direksi' => $direksi
         ]);
     }
     public function setujui_cash_advance($id)
@@ -86,9 +89,9 @@ class CashAdvanceController extends Controller
                 'tgl_approval' => Carbon::now()
             ]);
             $no_doku = $data->no_doku;
-            return redirect()->route('direksi.cash_advance')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil disetujui. Tunggu Pembayaran ya!');
+            return redirect()->route('direksi.beranda')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil disetujui. ');
         } catch (\Exception $e) {
-            return redirect()->route('direksi.cash_advance')->with('gagal', $e->getMessage());
+            return redirect()->route('direksi.beranda')->with('gagal', $e->getMessage());
         }
     }
     public function print_cash_advance($id)
@@ -108,13 +111,14 @@ class CashAdvanceController extends Controller
             $data = DB::table('admin_cash_advance')->where('id', $id)->first();
             DB::table('admin_cash_advance')->where('id', $id)->update([
                 'status_approved' => 'rejected',
+                'status_paid' => 'pending',
                 'alasan' => $request->alasan
             ]);
             $no_doku = $data->no_doku;
             $alasan = $request->alasan;
-            return redirect()->route('direksi.cash_advance')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan CA yang baru!');
+            return redirect()->route('direksi.beranda')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan CA yang baru!');
         } catch (\Exception $e) {
-            return redirect()->route('direksi.cash_advance')->with('gagal', $e->getMessage());
+            return redirect()->route('direksi.beranda')->with('gagal', $e->getMessage());
         }
     }
     public function tambah_CA()
