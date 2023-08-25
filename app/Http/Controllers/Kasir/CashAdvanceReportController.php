@@ -6,6 +6,7 @@ use App\Exports\Kasir\CashAdvanceReportExport;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\CashAdvanceReport;
 use App\Models\Admin\CashAdvanceReportDetail;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -136,11 +137,24 @@ class CashAdvanceReportController extends Controller
         DB::table('admin_cash_advance_report')->where('id', $id)->update([
             'status_approved' => 'approved',
             'status_paid' => 'paid',
-            'no_referensi' => $request->no_ref
+            'no_referensi' => $request->no_ref,
+            'tgl_bayar' => Carbon::now()
         ]);
         $no_doku = $data->no_doku;
         return redirect()->route('kasir.cash_advance_report')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dibayar!');
     }
+    // Fungsi untuk Bayar CAR dengan nilai 0
+    public function done_CAR($id)
+    {
+        $data = DB::table('admin_cash_advance_report')->find($id);
+        DB::table('admin_cash_advance_report')->where('id', $id)->update([
+            'status_approved' => 'approved',
+            'status_paid' => 'paid',
+        ]);
+        $no_doku = $data->no_doku;
+        return redirect()->route('kasir.cash_advance_report')->with('success', 'Data dengan no dokumen ' . $no_doku . ' telah lunas!');
+    }
+
     public function tambah_CAR()
     {
         $title = 'Cash Advance Report';

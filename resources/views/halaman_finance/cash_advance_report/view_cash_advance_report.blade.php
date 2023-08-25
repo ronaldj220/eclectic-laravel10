@@ -209,16 +209,54 @@
                             </div>
                         </div>
                     </div>
+                @elseif ($nominal < $cash_advance_report->nominal_ca)
+                    @if ($cash_advance_report->pemohon == Auth::guard('kasir')->user()->nama)
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal"> <i class="fa-solid fa-cash-register fa-beat"></i>
+                            Bayar
+                        </button>
+                        &nbsp; &nbsp;
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Masukkan Nomor Referensi
+                                        </h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form
+                                            action="{{ route('kasir.cash_advance_report.paid_CAR', $cash_advance_report->id) }}"
+                                            method="POST">
+                                            @csrf
+                                            <input type="text" name="no_ref" class="form-control"
+                                                placeholder="Masukkan Nomor Referensi">
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Kembali</button>
+                                                <button type="submit" class="btn btn-danger">Bayar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @elseif ($nominal = $cash_advance_report->nominal_ca)
+                    @if ($cash_advance_report->pemohon == 'Supriyonggo')
+                        <a href="{{ route('kasir.CAR.done_CAR', $cash_advance_report->id) }}"
+                            class="btn btn-primary"><i class="fa-solid fa-check fa-beat"></i>&nbsp;Done</a>
+                    @else
+                        <a href="{{ route('kasir.CAR.done_CAR', $cash_advance_report->id) }}"
+                            class="btn btn-primary"><i class="fa-solid fa-check fa-beat"></i>&nbsp;Done</a>
+                    @endif
                 @endif
-                &nbsp; &nbsp;
-                <a href="{{ route('kasir.beranda') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
-            @elseif ($cash_advance_report->status_approved == 'approved' && $cash_advance_report->status_paid == 'paid')
-                <a href="{{ route('kasir.beranda') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
-            @elseif ($cash_advance_report->status_approved == 'pending' && $cash_advance_report->status_paid == 'pending')
-                <a href="{{ route('kasir.beranda') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-backward fa-beat"></i>&nbsp;Kembali</a>
             @endif
 
         </div>

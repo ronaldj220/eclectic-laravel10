@@ -69,7 +69,7 @@
             </tr>
         </table>
 
-        <div>
+        <div style="margin-top: -20px;">
             <table class="table is-striped table-bordered border-dark text-center"
                 style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                 <tr style="height:2cm;">
@@ -129,7 +129,17 @@
                     @else
                         <div class="col">
                             <table class="table table-borderless table-sm"
-                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 150px; margin-right: -100px;">
+                                <tr class="text-center">
+                                    <td>Paid on {{ date('d/m/Y', strtotime($cash_advance->tgl_bayar)) }} <br>
+                                        ({{ $cash_advance->no_referensi }})
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 80px; ">
                                 <tr class="text-center">
                                     <td>Approved on {{ date('d/m/Y', strtotime($cash_advance->tgl_approval)) }}
                                     </td>

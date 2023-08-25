@@ -52,8 +52,8 @@ class ReimbursementController extends Controller
             $dataReimbursement = DB::table('admin_reimbursement')
                 ->orderBy('tgl_diajukan', 'desc')
                 ->orderBy('no_doku_real', 'desc')
-                ->whereIn('status_approved', ['approved'])
-                ->whereIn('status_paid', ['pending'])
+                ->whereIn('status_approved', ['approved', 'rejected'])
+                ->whereIn('status_paid', ['pending', 'rejected'])
                 ->where('kasir', $kasir)
                 ->orWhere('pemohon', $kasir)
                 ->paginate(20);
@@ -468,7 +468,7 @@ class ReimbursementController extends Controller
                     $file->move(public_path('bukti_RB_admin'), $filePath);
                     $fileName = basename($filePath);
 
-                    $rb_detail->bukti_rb = $fileName;
+                    $rb_detail->bukti_reim = $fileName;
                 }
 
                 $rb_detail->no_bukti = $request->nobu[$deskripsi];
@@ -515,7 +515,7 @@ class ReimbursementController extends Controller
                     $file->move(public_path('bukti_RB_admin'), $filePath);
                     $fileName = basename($filePath);
 
-                    $rb_detail->bukti_rb = $fileName;
+                    $rb_detail->bukti_reim = $fileName;
                 }
 
                 $rb_detail->no_bukti = $request->nobu[$deskripsi];
@@ -588,32 +588,55 @@ class ReimbursementController extends Controller
                     if ($request->flag[$deskripsi] == 'u') {
                         $idItem = $request->id[$deskripsi];
                         $rb_detail = Rb_Detail::find($idItem);
+                        $rb_detail->deskripsi = $value;
+
+                        if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
+                            $file = $request->file('foto')[$deskripsi];
+
+                            // Menyimpan gambar asli tanpa kompresi
+                            $filePath = 'bukti_RB_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                            $file->move(public_path('bukti_RB_admin'), $filePath);
+                            $fileName = basename($filePath);
+
+                            $rb_detail->bukti_reim = $fileName;
+                        }
+
+                        $rb_detail->no_bukti = $request->nobu[$deskripsi];
+                        $rb_detail->curr = $request->kurs_rb[$deskripsi];
+                        $rb_detail->nominal = $request->nom_rb[$deskripsi];
+                        $rb_detail->tanggal_1 = $request->tgl1[$deskripsi];
+                        $rb_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
+                        $rb_detail->keperluan = $request->project[$deskripsi];
+                        $rb_detail->fk_rb = $id;
+
+                        // $rbDetails[] = $rb_detail;
+                        $rb_detail->save();
                     } elseif ($request->flag[$deskripsi] == 'i') {
                         $rb_detail = new Rb_Detail();
+                        $rb_detail->deskripsi = $value;
+
+                        if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
+                            $file = $request->file('foto')[$deskripsi];
+
+                            // Menyimpan gambar asli tanpa kompresi
+                            $filePath = 'bukti_RB_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                            $file->move(public_path('bukti_RB_admin'), $filePath);
+                            $fileName = basename($filePath);
+
+                            $rb_detail->bukti_reim = $fileName;
+                        }
+
+                        $rb_detail->no_bukti = $request->nobu[$deskripsi];
+                        $rb_detail->curr = $request->kurs_rb[$deskripsi];
+                        $rb_detail->nominal = $request->nom_rb[$deskripsi];
+                        $rb_detail->tanggal_1 = $request->tgl1[$deskripsi];
+                        $rb_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
+                        $rb_detail->keperluan = $request->project[$deskripsi];
+                        $rb_detail->fk_rb = $id;
+
+                        // $rbDetails[] = $rb_detail;
+                        $rb_detail->save();
                     }
-                    $rb_detail->deskripsi = $value;
-
-                    if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
-                        $file = $request->file('foto')[$deskripsi];
-
-                        // Menyimpan gambar asli tanpa kompresi
-                        $filePath = 'bukti_RB_admin/' . time() . '.' . $file->getClientOriginalExtension();
-                        $file->move(public_path('bukti_RB_admin'), $filePath);
-                        $fileName = basename($filePath);
-
-                        $rb_detail->bukti_rb = $fileName;
-                    }
-
-                    $rb_detail->no_bukti = $request->nobu[$deskripsi];
-                    $rb_detail->curr = $request->kurs_rb[$deskripsi];
-                    $rb_detail->nominal = $request->nom_rb[$deskripsi];
-                    $rb_detail->tanggal_1 = $request->tgl1[$deskripsi];
-                    $rb_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
-                    $rb_detail->keperluan = $request->project[$deskripsi];
-                    $rb_detail->fk_rb = $id;
-
-                    // $rbDetails[] = $rb_detail;
-                    $rb_detail->save();
                 }
                 $no_doku = $data->no_doku_draft;
                 return redirect()->route('kasir.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil diperbarui!');
@@ -660,7 +683,7 @@ class ReimbursementController extends Controller
                         $file->move(public_path('bukti_RB_admin'), $filePath);
                         $fileName = basename($filePath);
 
-                        $rb_detail->bukti_rb = $fileName;
+                        $rb_detail->bukti_reim = $fileName;
                     }
 
                     $rb_detail->no_bukti = $request->nobu[$deskripsi];
@@ -692,7 +715,6 @@ class ReimbursementController extends Controller
             $RB_detail = DB::table('admin_rb_detail')->where('fk_rb', $id);
             $RB_detail->delete();
 
-            $no_doku = $data->no_doku_real;
             $halaman = $data->halaman;
             // dd($no_doku);
             return redirect()->route('kasir.reimbursement')->with('success', 'Data ' . $halaman . ' berhasil dihapus!');

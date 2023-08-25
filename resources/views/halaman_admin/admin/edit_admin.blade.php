@@ -51,24 +51,63 @@
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.beranda') }}">
-                    <i class="fa-solid fa-home"></i>
+                    <i class="fa-solid fa-home "></i>
                     <span>Beranda</span></a>
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider">
+            <hr class="sidebar-divider my-0">
+            <!-- Nav Item - Charts -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.reimbursement') }}">
+                    <i class="fa-solid fa-hand-holding-heart"></i>
+                    <span>Reimbursement</span></a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
 
-            <!-- Heading -->
-            <div class="sidebar-heading text-center">
-                Halaman Master
-            </div>
+            <!-- Nav Item - Charts -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.cash_advance') }}">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                    <span>Cash Advance</span></a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Charts -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.cash_advance_report') }}">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                    <span>Cash Advance Report</span></a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Charts -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.purchase_request') }}">
+                    <i class="fa-solid fa-chart-bar"></i>
+                    <span>Purchase Request</span></a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Charts -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.purchase_order') }}">
+                    <i class="fa-solid fa-cart-arrow-down"></i>
+                    <span>Purchase Order</span></a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>Master</span>
+                    <i class="fas fa-fw fa-cog "></i>
+                    <span>Setting</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
@@ -98,35 +137,31 @@
                 </div>
             </li>
 
+
             <!-- Divider -->
-            <hr class="sidebar-divider">
+            <hr class="sidebar-divider my-0">
 
-            <!-- Heading -->
-            <div class="sidebar-heading text-center">
-                Halaman Admin
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
+            <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Transaksi</span>
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                    aria-expanded="true" aria-controls="collapseUtilities">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Report</span>
                 </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{ route('admin.reimbursement') }}">Reimbursement</a>
-                        <a class="collapse-item" href="{{ route('admin.cash_advance') }}">Cash Advance</a>
-                        <a class="collapse-item" href="{{ route('admin.cash_advance_report') }}">Cash Advance
-                            Report</a>
-                        <a class="collapse-item" href="{{ route('admin.purchase_request') }}">Purchase Request</a>
-                        <a class="collapse-item" href="{{ route('admin.purchase_order') }}">Purchase Order</a>
+                        <a class="collapse-item"
+                            href="{{ route('admin.reimbursement.report_RB') }}">Reimbursement</a>
+                        <a class="collapse-item" href="#">Cash Advance</a>
+                        <a class="collapse-item" href="#">Cash Advance Report</a>
+                        <a class="collapse-item" href="#">Purchase Request</a>
+                        <a class="collapse-item" href="#">Purchase Order</a>
                     </div>
                 </div>
             </li>
-
             <!-- Divider -->
-            <hr class="sidebar-divider">
+            <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
@@ -140,8 +175,6 @@
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
-
-
 
         </ul>
         <!-- End of Sidebar -->

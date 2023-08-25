@@ -151,11 +151,12 @@
                 <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="#">RB</a>
-                        <a class="collapse-item" href="#">CA</a>
-                        <a class="collapse-item" href="#">CAR</a>
-                        <a class="collapse-item" href="#">PR</a>
-                        <a class="collapse-item" href="#">PO</a>
+                        <a class="collapse-item"
+                            href="{{ route('admin.reimbursement.report_RB') }}">Reimbursement</a>
+                        <a class="collapse-item" href="#">Cash Advance</a>
+                        <a class="collapse-item" href="#">Cash Advance Report</a>
+                        <a class="collapse-item" href="#">Purchase Request</a>
+                        <a class="collapse-item" href="#">Purchase Order</a>
                     </div>
                 </div>
             </li>
@@ -188,13 +189,12 @@
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
                     <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-5">
                         <i class="fa fa-bars"></i>
                     </button>
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
@@ -225,64 +225,46 @@
                 </nav>
                 <!-- End of Topbar -->
 
-                <!-- Begin Page Content -->
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <!-- DataTales Example -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary text-center">Daftar Karyawan</h6>
+                <div class="container-fluid">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary text-center">Cari Tanggal Dokumen RB</h6>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ route('admin.reimbursement.search_date_RB') }}" method="POST">
+                                @csrf
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="">Tanggal Awal</label>
+                                        <input type="date"
+                                            class="form-control @error('tgl_1') is-invalid @enderror" placeholder=""
+                                            name="tgl_1">
+                                        @error('tgl_1')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                    <div class="col">
+                                        <label for="">Tanggal Akhir</label>
+                                        <input type="date"
+                                            class="form-control @error('tgl_2') is-invalid @enderror" placeholder=""
+                                            name="tgl_2">
+                                        @error('tgl_2')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <form action="{{ route('admin.menyetujui.update_menyetujui', $menyetujui->id) }}"
-                                        method="POST">
-                                        @csrf
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1">Alamat Email</label>
-                                            <input type="email" class="form-control" id="exampleInputEmail1"
-                                                aria-describedby="emailHelp" name="email"
-                                                value="{{ $menyetujui->email }}" readonly>
-                                            <small id="emailHelp" class="form-text text-muted">Digunakan untuk login
-                                                di halaman direktur</small>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Nama</label>
-                                            <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="nama" value="{{ $menyetujui->nama }}">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Nomor Telepon</label>
-                                            <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="no_telp" value="{{ $menyetujui->no_telp }}">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="exampleFormControlSelect1">Jabatan</label>
-                                            <select class="form-control" id="exampleFormControlSelect1"
-                                                name="jabatan">
-                                                <option value="Direktur">Direktur</option>
-                                                <option value="Project Manager">Project Manager</option>
-                                                <option value="Head of Business Development">Head of Business
-                                                    Development</option>
-                                                <option value="Support Manager">Support Manager</option>
-                                                <option value="Admin">Admin</option>
-                                            </select>
-                                        </div>
-                                        <div class="d-flex justify-content-center">
-                                            <button type="submit" class="btn btn-primary"><i
-                                                    class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Submit</button>
-                                            &nbsp;&nbsp;
-                                            <a href="{{ route('admin.menyetujui') }}" class="btn btn-danger"><i
-                                                    class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
-                                        </div>
-                                    </form>
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-primary" style="margin-top: 20px;"><i
+                                            class="fa-solid fa-magnifying-glass"></i> Find</button>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-
-                <!-- /.container-fluid -->
 
             </div>
             <!-- End of Main Content -->
@@ -337,8 +319,9 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('assets') }}/js/sb-admin-2.min.js"></script>
-</body>
-@include('sweetalert::alert')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
+</body>
 
 </html>

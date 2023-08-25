@@ -212,7 +212,7 @@ class ReimbursementController extends Controller
                     $file->move(public_path('bukti_RB_admin'), $filePath);
                     $fileName = basename($filePath);
 
-                    $rb_detail->bukti_rb = $fileName;
+                    $rb_detail->bukti_reim = $fileName;
                 }
 
                 $rb_detail->no_bukti = $request->nobu[$deskripsi];
@@ -1046,34 +1046,17 @@ class ReimbursementController extends Controller
     {
         try {
             $data = DB::table('admin_reimbursement')->where('id', $id)->first();
-            if ($data->halaman == 'RB') {
-                DB::table('admin_reimbursement')->where('id', $id)->delete();
+            $RB = DB::table('admin_reimbursement')->where('id', $id);
+            $RB->delete();
 
-                // Hapus rekaman di tabel fk_support_lembur terkait dengan RB
-                DB::table('admin_rb_detail')->where('fk_rb', $id)->delete();
-            } elseif ($data->halaman == 'TS') {
-                DB::table('admin_reimbursement')->where('id', $id)->delete();
+            $RB_detail = DB::table('admin_rb_detail')->where('fk_rb', $id);
+            $RB_detail->delete();
 
-                // Hapus rekaman di tabel fk_support_lembur terkait dengan RB
-                DB::table('admin_timesheet_project_detail')->where('fk_timesheet_project', $id)->delete();
-            } elseif ($data->halaman == 'ST') {
-                DB::table('admin_reimbursement')->where('id', $id)->delete();
-
-                // Hapus rekaman di tabel fk_support_lembur terkait dengan RB
-                DB::table('admin_support_ticket_detail')->where('fk_support_ticket', $id)->delete();
-            } elseif ($data->halaman == 'SL') {
-                DB::table('admin_reimbursement')->where('id', $id)->delete();
-
-                // Hapus rekaman di tabel fk_support_lembur terkait dengan RB
-                DB::table('admin_support_lembur_detail')->where('fk_support_lembur', $id)->delete();
-            }
-            $no_doku = $data->no_doku_real;
             $halaman = $data->halaman;
-            return redirect()->route('admin.beranda')->with('error', 'Data ' . $halaman . ' dengan no dokumen ' . $no_doku . ' berhasil dihapus!');
-        } catch (\Throwable $th) {
-
-            // Tangani jika terjadi kesalahan
-            return redirect()->route('admin.reimbursement')->with('error', 'Gagal menghapus RB dan data terkait.');
+            // dd($no_doku);
+            return redirect()->route('admin.reimbursement')->with('success', 'Data ' . $halaman . ' berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.reimbursement')->with('error', $e->getMessage());
         }
     }
 }

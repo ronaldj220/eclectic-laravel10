@@ -390,6 +390,17 @@ class CashAdvanceReportController extends Controller
         $no_doku = $data->no_doku;
         return redirect()->route('admin.cash_advance_report')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dibayar!');
     }
+    // FUngsi untuk nilai CAR 0
+    public function done_CAR($id)
+    {
+        $data = DB::table('admin_cash_advance_report')->find($id);
+        DB::table('admin_cash_advance_report')->where('id', $id)->update([
+            'status_approved' => 'approved',
+            'status_paid' => 'paid',
+        ]);
+        $no_doku = $data->no_doku;
+        return redirect()->route('admin.cash_advance_report')->with('success', 'Data dengan no dokumen ' . $no_doku . ' telah lunas!');
+    }
     public function kirim_WA($id)
     {
         $cash_advance = DB::table('admin_cash_advance_report')->find($id);

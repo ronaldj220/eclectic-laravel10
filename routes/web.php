@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\MenyetujuiController;
 use App\Http\Controllers\Admin\PurchaseOrderController;
 use App\Http\Controllers\Admin\PurchaseRequestController;
 use App\Http\Controllers\Admin\ReimbursementController;
+use App\Http\Controllers\Admin\Report\ReportRBController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Direksi\BerandaController as DireksiBerandaController;
@@ -39,15 +40,13 @@ use App\Http\Controllers\Kasir\ReimbursementController as KasirReimbursementCont
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/', function () {
-    return view('auth.login');
-})->middleware('auth');
+Route::get('/', [LoginController::class, 'home']);
 
-Route::get('login', [LoginController::class, 'index'])->name('login');
+Route::get('login', [LoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('login', [LoginController::class, 'aksilogin'])->name('aksilogin');
 Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::prefix('admin')->middleware(['auth:web'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'auth:web', 'admin'])->group(function () {
     Route::get('/beranda', [BerandaController::class, 'index'])->name('admin.beranda');
 
     // Route Admin
@@ -171,6 +170,10 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function () {
     Route::post('/reimbursement/tolak_RB/{id}', [ReimbursementController::class, 'tolak_RB'])->name('admin.reimbursement.tolak_RB');
 
     Route::get('/reimbursement/hapus_RB/{id}', [ReimbursementController::class, 'delete_RB'])->name('admin.reimbursement.delete_RB');
+
+    // Cari Berdasarkan Tanggal
+    Route::get('/report/RB', [ReportRBController::class, 'index'])->name('admin.reimbursement.report_RB');
+    Route::post('/report/RB/search_date', [ReportRBController::class, 'search_date'])->name('admin.reimbursement.search_date_RB');
     // Route Cash Advance 
     Route::get('/cash_advance', [Cash_AdvanceController::class, 'index'])->name('admin.cash_advance');
     Route::get('/cash_advance/tambah_cash_advance', [Cash_AdvanceController::class, 'tambah_CA'])->name('admin.cash_advance.tambah_cash_advance');
@@ -202,7 +205,7 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function () {
     Route::get('/cash_advance_report/excel_cash_advance_report/{id}', [CashAdvanceReportController::class, 'excel_cash_advance_report'])->name('admin.cash_advance_report.excel_cash_advance_report');
     Route::get('/cash_advance_report/view_cash_advance_report/{id}', [CashAdvanceReportController::class, 'view_cash_advance_report'])->name('admin.cash_advance_report.view_cash_advance_report');
     Route::get('/cash_advance_report/view_CA/{id}', [CashAdvanceReportController::class, 'view_CA'])->name('admin.cash_advance_report.view_CA');
-    Route::post('/cash_advance_report/setujui_cash_advance_report/{id}', [CashAdvanceReportController::class, 'setujui_cash_advance_report'])->name('admin.cash_advance_report.setujui_cash_advance_report');
+    Route::get('/cash_advance_report/setujui_cash_advance_report/{id}', [CashAdvanceReportController::class, 'setujui_cash_advance_report'])->name('admin.cash_advance_report.setujui_cash_advance_report');
     Route::get('/cash_advance_report/tolak_cash_advance_report/{id}', [CashAdvanceReportController::class, 'reject_cash_advance_report'])->name('admin.cash_advance_report.tolak_CAR');
     Route::get('/cash_advance_report/print_cash_advance_report/{id}', [CashAdvanceReportController::class, 'print_cash_advance_report'])->name('admin.cash_advance_report.print_cash_advance_report');
     Route::get('/cash_advance_report/print_bukti_cash_advance_report/{id}', [CashAdvanceReportController::class, 'print_bukti_cash_advance_report'])->name('admin.cash_advance_report.print_bukti_cash_advance_report');
@@ -214,8 +217,11 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function () {
     // Route untuk Menyetujui Pak Aris
     Route::get('/cash_advance_report/setujui_CAR/{id}', [CashAdvanceReportController::class, 'setujui_CAR'])->name('admin.cash_advance_report.setujui_CAR');
     Route::post('/cash_advance_report/tolak_CAR/{id}', [CashAdvanceReportController::class, 'tolak_CAR'])->name('admin.cash_advance_report.tolak_cash_advance_report');
-    // Route untuk admin yang ingin bayar CAR
+
+    // Route untuk admin yang ingin bayar CAR dan nilainya lebih dari nominal CAR
     Route::post('/cash_advance_report/paid_CAR/{id}', [CashAdvanceReportController::class, 'paid_CAR'])->name('admin.cash_advance_report.paid_CAR');
+    // Route untuk admin yang ingin membayar CAR dan nilainya sama dengan nominal CAR (nilainya 0)
+    Route::get('/CAR/paid_CAR/{id}', [CashAdvanceReportController::class, 'done_CAR'])->name('admin.CAR.done_CAR');
 
     // Route untuk mendapatkan nominal CA
     Route::get('cash_advance_report/get-nominal', [CashAdvanceReportController::class, 'getNominal'])->name('admin.CAR.getNominal');
@@ -270,7 +276,7 @@ Route::prefix('admin')->middleware(['auth:web'])->group(function () {
     // Route Laporan PR, PO untuk Admin 
 });
 
-Route::prefix('karyawan')->middleware(['auth:karyawan'])->group(function () {
+Route::prefix('karyawan')->middleware(['auth:karyawan', 'karyawan'])->group(function () {
     Route::get('/beranda', [KaryawanBerandaController::class, 'index'])->name('karyawan.beranda');
     Route::get('/beranda/profile', [KaryawanBerandaController::class, 'profile'])->name('karyawan.beranda.profile');
     Route::get('/beranda/profile/update_profile', [KaryawanBerandaController::class, 'update_profile'])->name('karyawan.beranda.profile.update_profile');
@@ -280,7 +286,7 @@ Route::prefix('karyawan')->middleware(['auth:karyawan'])->group(function () {
     Route::get('/reimbursement', [KaryawanReimbursementController::class, 'index'])->name('karyawan.reimbursement');
     Route::get('/reimbursement/tambah_reimbursement', [KaryawanReimbursementController::class, 'tambah_reimbursement'])->name('karyawan.reimbursement.tambah_reimbursement');
     Route::post('/reimbursement/simpan_reimbursement', [KaryawanReimbursementController::class, 'simpan_reimbursement'])->name('karyawan.reimbursement.simpan_reimbursement');
-    Route::get('/reimbursement/view_reimbursement/{id}', [KaryawanReimbursementController::class, 'view_reimbursement'])->name('karyawan.reimbursement.view_reimbursement');
+    Route::get('/reimbursement/view_RB/{id}', [KaryawanReimbursementController::class, 'view_reimbursement'])->name('karyawan.reimbursement.view_reimbursement');
     Route::get('/reimbursement/print_reimbursement/{id}', [KaryawanReimbursementController::class, 'print_reimbursement'])->name('karyawan.reimbursement.print_reimbursement');
     Route::get('/reimbursement/print_bukti_reimbursement/{id}', [KaryawanReimbursementController::class, 'lihat_bukti_reimbursement'])->name('karyawan.reimbursement.lihat_bukti_reimbursement');
 
@@ -290,7 +296,7 @@ Route::prefix('karyawan')->middleware(['auth:karyawan'])->group(function () {
     Route::get('/cash_advance', [KaryawanCashAdvanceController::class, 'index'])->name('karyawan.cash_advance');
     Route::get('/cash_advance/tambah_cash_advance', [KaryawanCashAdvanceController::class, 'tambah_cash_advance'])->name('karyawan.cash_advance.tambah_cash_advance');
     Route::post('/cash_advance/simpan_cash_advance', [KaryawanCashAdvanceController::class, 'simpan_cash_advance'])->name('karyawan.cash_advance.simpan_cash_advance');
-    Route::get('/cash_advance/view_cash_advance/{id}', [KaryawanCashAdvanceController::class, 'view_cash_advance'])->name('karyawan.cash_advance.view_cash_advance');
+    Route::get('/cash_advance/view_CA/{id}', [KaryawanCashAdvanceController::class, 'view_cash_advance'])->name('karyawan.cash_advance.view_cash_advance');
 
     Route::get('/cash_advance/getNomor', [KaryawanCashAdvanceController::class, 'getNomor'])->name('karyawan.cash_advance.getNomor');
 
@@ -298,10 +304,11 @@ Route::prefix('karyawan')->middleware(['auth:karyawan'])->group(function () {
     Route::get('/cash_advance_report', [KaryawanCashAdvanceReportController::class, 'index'])->name('karyawan.cash_advance_report');
     Route::get('/cash_advance_report/tambah_CAR', [KaryawanCashAdvanceReportController::class, 'tambah_CAR'])->name('karyawan.cash_advance_report.tambah_CAR');
     Route::post('/cash_advance_report/simpan_CAR', [KaryawanCashAdvanceReportController::class, 'simpan_CAR'])->name('karyawan.cash_advance_report.simpan_CAR');
-    Route::get('/cash_advance_report/view_cash_advance_report/{id}', [KaryawanCashAdvanceReportController::class, 'view_CAR'])->name('karyawan.cash_advance_report.view_CAR');
+    Route::get('/cash_advance_report/view_CAR/{id}', [KaryawanCashAdvanceReportController::class, 'view_CAR'])->name('karyawan.cash_advance_report.view_CAR');
 
     Route::get('cash_advance_report/get-nominal', [KaryawanCashAdvanceReportController::class, 'getNominal'])->name('karyawan.CAR.get-nominal');
-
+    // Route untuk karyawan yang ingin membayar kelebihan CAR
+    Route::post('/CAR/paid_CAR/{id}', [KaryawanCashAdvanceReportController::class, 'paid_CAR'])->name('karyawan.CAR.paid_CAR');
     // Route untuk karyawan yang ingin mengajukan Purchase Request
     Route::get('/purchase_request', [KaryawanPurchaseRequestController::class, 'index'])->name('karyawan.purchase_request');
     Route::get('/purchase_request/tambah_PR', [KaryawanPurchaseRequestController::class, 'tambah_PR'])->name('karyawan.purchase_request.tambah_PR');
@@ -441,6 +448,8 @@ Route::prefix('kasir')->middleware(['auth:kasir'])->group(function () {
     Route::get('/cash_advance_report/bayar_cash_advance_report/{id}', [KasirCashAdvanceReportController::class, 'bayar_cash_advance_report'])->name('kasir.cash_advance_report.bayar_cash_advance_report');
     Route::post('/cash_advance_report/paid_CAR/{id}', [KasirCashAdvanceReportController::class, 'paid_CAR'])->name('kasir.cash_advance_report.paid_CAR');
 
+    // Route untuk Finance yang mau bayar dengan total kurang 0
+    Route::get('/CAR/paid_CAR/{id}', [KasirCashAdvanceReportController::class, 'done_CAR'])->name('kasir.CAR.done_CAR');
     // Route untuk tambah CAR bagian Finance
     Route::get('/cash_advance_report/tambah_CAR', [KasirCashAdvanceReportController::class, 'tambah_CAR'])->name('kasir.cash_advance_report.tambah_CAR');
     Route::post('/cash_advance_report/simpan_CAR', [KasirCashAdvanceReportController::class, 'simpan_CAR'])->name('kasir.cash_advance_report.simpan_CAR');

@@ -8,6 +8,8 @@
     <title>Eclectic (Karyawan) | {{ $title }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="icon" href="{{ asset('logo.png') }}">
+
 </head>
 
 <body>
@@ -115,7 +117,17 @@
                     @else
                         <div class="col">
                             <table class="table table-borderless table-sm"
-                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 415px; margin-right: -10px;">
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 320px; margin-right: -70px;">
+                                <tr class="text-center">
+                                    <td>Paid on {{ date('d/m/Y', strtotime($CA->tgl_bayar)) }} <br>
+                                        ({{ $CA->no_referensi }})
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
                                 <tr class="text-center">
                                     <td>Approved on {{ date('d/m/Y', strtotime($CA->tgl_approval)) }}
                                     </td>

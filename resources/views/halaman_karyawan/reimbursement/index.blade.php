@@ -274,11 +274,10 @@
                                                             <label style="font-weight: bold">Submitted</label>
                                                         </td>
                                                         <td style="text-align: center">
-                                                            <a href="{{ route('karyawan.reimbursement.print_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('karyawan.reimbursement.view_reimbursement', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
-                                                                title="Print Dokumen">
-                                                                <i class="fa-solid fa-print"
-                                                                    style="color: #900C3F"></i>
+                                                                title="View ">
+                                                                <i class="fa-solid fa-eye" style="color: #900C3F"></i>
                                                             </a>
                                                             &nbsp;
                                                             <a href="{{ route('karyawan.reimbursement.lihat_bukti_reimbursement', $item->id) }}"
@@ -296,11 +295,10 @@
                                                             <label style="font-weight: bold">Rejected</label>
                                                         </td>
                                                         <td style="text-align: center;">
-                                                            <a href="{{ route('karyawan.reimbursement.print_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('karyawan.reimbursement.view_reimbursement', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
-                                                                title="Print Dokumen">
-                                                                <i class="fa-solid fa-print"
-                                                                    style="color: #900C3F"></i>
+                                                                title="View ">
+                                                                <i class="fa-solid fa-eye" style="color: #900C3F"></i>
                                                             </a>
                                                             &nbsp;
                                                             <a href="{{ route('karyawan.reimbursement.lihat_bukti_reimbursement', $item->id) }}"
@@ -317,11 +315,10 @@
                                                                 Approval</label>
                                                         </td>
                                                         <td style="text-align: center;">
-                                                            <a href="{{ route('karyawan.reimbursement.print_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('karyawan.reimbursement.view_reimbursement', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
-                                                                title="Print Dokumen">
-                                                                <i class="fa-solid fa-print"
-                                                                    style="color: #900C3F"></i>
+                                                                title="View ">
+                                                                <i class="fa-solid fa-eye" style="color: #900C3F"></i>
                                                             </a>
                                                             &nbsp;
                                                             <a href="{{ route('karyawan.reimbursement.lihat_bukti_reimbursement', $item->id) }}"
@@ -330,12 +327,6 @@
                                                                 <i class="fa-solid fa-image"
                                                                     style="color: #900C3F"></i>
                                                             </a>
-                                                            &nbsp;
-                                                            <a href="{{ route('karyawan.reimbursement.print_reimbursement', $item->id) }}"
-                                                                data-toggle="tooltip" data-placement="bottom"
-                                                                title="View ">
-                                                                <i class="fa-solid fa-eye" style="color: #900C3F"></i>
-                                                            </a>
                                                         </td>
                                                     @elseif ($item->status_approved == 'approved' && $item->status_paid == 'pending')
                                                         <td style="text-align: center;color: #00BF63;">
@@ -343,7 +334,7 @@
                                                                 style="font-weight: bold; text-transform: uppercase">Approved</label>
                                                         </td>
                                                         <td style="text-align: center;">
-                                                            <a href="{{ route('karyawan.reimbursement.print_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('karyawan.reimbursement.view_reimbursement', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Print Dokumen">
                                                                 <i class="fa-solid fa-print"
@@ -364,7 +355,7 @@
                                                                 style="font-weight: bold; text-transform: uppercase">paid</label>
                                                         </td>
                                                         <td style="text-align: center;">
-                                                            <a href="{{ route('karyawan.reimbursement.print_reimbursement', $item->id) }}"
+                                                            <a href="{{ route('karyawan.reimbursement.view_reimbursement', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Print Dokumen">
                                                                 <i class="fa-solid fa-print"

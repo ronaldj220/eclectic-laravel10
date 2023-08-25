@@ -8,6 +8,29 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
+    public function home()
+    {
+        // Pemilahan kalau dia sudah login atau belum
+        if (Auth::check()) {
+            // return route('login');
+
+            if (Auth::guard('web')) {
+                return redirect()->route('admin.beranda');
+            }
+
+            if (Auth::guard('karyawan')) {
+                return redirect()->route('karyawan.beranda');
+            }
+            if (Auth::guard('direksi')) {
+                return redirect()->route('direksi.beranda');
+            }
+            if (Auth::guard('kasir')) {
+                return redirect()->route('kasir.beranda');
+            }
+        } else {
+            return redirect(route('login'));
+        }
+    }
     public function index()
     {
         $title = 'Login';
@@ -35,18 +58,20 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             return redirect()->route('karyawan.beranda');
+            // dd('login berhasil');
         }
         if (Auth::guard('direksi')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
             return redirect()->route('direksi.beranda');
+            // dd('login berhasil');
         }
         if (Auth::guard('kasir')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
             return redirect()->route('kasir.beranda');
+            // dd('login berhasil');
         }
-
         return back()->withErrors([
             'email' => 'Email atau Password salah! Silahkan Lakukan Login Kembali.',
         ]);

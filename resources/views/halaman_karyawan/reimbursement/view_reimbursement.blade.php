@@ -152,9 +152,21 @@
                         @else
                             <div class="col">
                                 <table class="table table-borderless table-sm"
-                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 200px; margin-right: -10px;">
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 320px;">
                                     <tr class="text-center">
-                                        <td>Approved on {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
+                                        <td>Paid on
+                                            {{ date('d/m/Y', strtotime($reimbursement->tgl_bayar)) }} <br>
+                                            ({{ $reimbursement->no_referensi }})
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 200px;">
+                                    <tr class="text-center">
+                                        <td>Approved on
+                                            {{ date('d/m/Y', strtotime($reimbursement->tgl_persetujuan)) }}
                                         </td>
                                     </tr>
                                 </table>

@@ -282,11 +282,10 @@
                                 style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; margin-top: -20px;">
                                 <tr>
                                     <td style="width:25%">
-                                        <div class="text-center" style="font-weight: bold">Pemohon, &nbsp;<select
-                                                name="pemohon" style="text-align: center">
-                                                <option value={{ $reimbursement->pemohon }}>
-                                                    {{ $reimbursement->pemohon }} </option>
-                                                {{-- @foreach ($karyawan as $item)
+                                        <div class="text-center" style="font-weight: bold">Pemohon, &nbsp;<input
+                                                type="text" name="pemohon"
+                                                value="{{ Auth::guard('kasir')->user()->nama }}" readonly>
+                                            {{-- @foreach ($karyawan as $item)
                                                     <option value="{{ $item->nama }}"
                                                         {{ $item->nama == '' ? 'selected' : '' }}>
                                                         {{ $item->nama }}</option>
@@ -315,7 +314,7 @@
                                     <td style="width:25%">
                                         <div class="text-center" style="font-weight: bold">Menyetujui, &nbsp;<select
                                                 id="menyetujui" name="nama_menyetujui" onchange="updateFields2()"
-                                                data-url="{{ route('admin.reimbursement.getNomor') }}"
+                                                data-url="{{ route('kasir.reimbursement.getNomor') }}"
                                                 style="text-align: center">
                                                 <option value={{ $reimbursement->menyetujui }}>
                                                     {{ $reimbursement->menyetujui }}</option>

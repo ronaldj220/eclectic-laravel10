@@ -27,7 +27,7 @@ class ReimbursementController extends Controller
                 ->where('pemohon', 'LIKE', '%' . $request->search . '%')
                 ->orWhere('judul_doku', 'LIKE', '%' . $request->search . '%')
                 ->whereIn('status_approved', ['rejected', 'pending', 'approved'])
-                ->whereIn('status_paid', ['rejected', 'pending'])
+                ->whereIn('status_paid', ['rejected', 'pending', 'paid'])
                 ->orderBy('no_doku_real', 'desc')
                 ->paginate(20);
         }
@@ -35,7 +35,7 @@ class ReimbursementController extends Controller
             ->where('pemohon', $authId)
             ->orderBy('no_doku_real', 'desc')
             ->whereIn('status_approved', ['rejected', 'pending', 'approved'])
-            ->whereIn('status_paid', ['rejected', 'pending'])
+            ->whereIn('status_paid', ['rejected', 'pending', 'paid'])
             ->paginate(20);
 
         return view('halaman_karyawan.reimbursement.index', [
