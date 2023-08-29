@@ -17,28 +17,19 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected $table = 'user';
     protected $fillable = [
         'email',
         'nama',
         'password',
+        'jabatan',
+        'no_rekening',
+        'bank',
+        'ttd',
+        'no_telp'
     ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function role_has_user()
+    {
+        return $this->hasMany(Role_Has_User::class, 'fk_user', 'id');
+    }
 }

@@ -313,7 +313,17 @@
                     @else
                         <div class="col">
                             <table class="table table-borderless table-sm"
-                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 225px; margin-right: -10px;">
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 150px; margin-right: -50px;">
+                                <tr class="text-center">
+                                    <td>Paid on {{ date('d/m/Y', strtotime($PO->tgl_bayar)) }} <br>
+                                        ({{ $PO->no_referensi }})
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 80px; margin-right: -30px;">
                                 <tr class="text-center">
                                     <td>Approved on {{ date('d/m/Y', strtotime($PO->tgl_approval)) }}
                                     </td>

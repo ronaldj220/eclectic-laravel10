@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class KaryawanMiddleware
+class DireksiMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,10 +16,9 @@ class KaryawanMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::guard('karyawan')->check()) {
+        if (Auth::guard('direksi')->check()) {
             return $next($request);
-        } else {
-            abort(403, 'Karyawan tidak bisa diakses halaman lain');
         }
+        abort(403, 'Direksi tidak bisa akses halaman lain');
     }
 }

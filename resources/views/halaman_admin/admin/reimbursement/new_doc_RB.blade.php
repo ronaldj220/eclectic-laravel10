@@ -161,7 +161,7 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item"
                             href="{{ route('admin.reimbursement.report_RB') }}">Reimbursement</a>
-                        <a class="collapse-item" href="#">Cash Advance</a>
+                        <a class="collapse-item" href="{{ route('admin.CA.report_CA') }}">Cash Advance</a>
                         <a class="collapse-item" href="#">Cash Advance Report</a>
                         <a class="collapse-item" href="#">Purchase Request</a>
                         <a class="collapse-item" href="#">Purchase Order</a>

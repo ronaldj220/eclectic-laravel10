@@ -100,7 +100,7 @@
                 </tr>
             </table>
             <!-- /.container-fluid -->
-            <div>
+            <div style="margin-top: -15px">
                 <table class="table is-striped table-bordered border-dark text-center"
                     style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                     <tr style="height:3cm;">
@@ -156,7 +156,7 @@
                         <td></td>
                         <td class="text-center">{{ $item->curr }}</td>
                         <td class="text-end">
-                            {{ number_format($results_TS[$index], 2, ',', '.') }}
+                        <td class="text-end">{{ number_format($total_TS, 2, ',', '.') }}</td>
                         </td>
                     </tr>
                 @endforeach
@@ -168,8 +168,9 @@
                 </tr>
             </table>
             <!-- /.container-fluid -->
-            <div>
-                <table class="table is-striped table-bordered border-dark text-center"
+            <div style="margin-top: -15px">
+                <table class="table is-striped table-bordered border-dark
+                text-center"
                     style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                     <tr style="height:3cm;">
                         <td style="width:25%">
@@ -243,8 +244,9 @@
                 </tr>
             </table>
             <!-- /.container-fluid -->
-            <div>
-                <table class="table is-striped table-bordered border-dark text-center"
+            <div style="margin-top: -15px">
+                <table class="table is-striped table-bordered border-dark
+                text-center"
                     style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                     <tr style="height:3cm;">
                         <td style="width:25%">
@@ -317,7 +319,7 @@
                 </tr>
             </table>
             <!-- /.container-fluid -->
-            <div>
+            <div style="margin-top: -15px">
                 <table class="table is-striped table-bordered border-dark text-center"
                     style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                     <tr style="height:3cm;">
@@ -351,8 +353,6 @@
 
             @if ($reimbursement->status_approved == 'pending' && $reimbursement->status_paid == 'pending')
                 @if ($reimbursement->pemohon == Auth::guard('direksi')->user()->nama)
-                    <a href="{{ route('direksi.reimbursement') }}" class="btn btn-danger"><i
-                            class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
                 @elseif ($reimbursement->menyetujui == Auth::guard('direksi')->user()->nama)
                     <a href="{{ route('direksi.reimbursement.setujui_reimbursement', $reimbursement->id) }}"
                         class="btn btn-primary"><i class="fa-solid fa-square-check fa-beat"></i>&nbsp;Setujui</a>
@@ -363,18 +363,12 @@
                         Tolak
                     </button>
                     &nbsp; &nbsp;
-                    <a href="{{ route('direksi.reimbursement') }}" class="btn btn-danger"><i
-                            class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
                 @endif
             @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'pending')
-                <a href="{{ route('direksi.reimbursement') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
+
             @elseif ($reimbursement->status_approved == 'rejected' && $reimbursement->status_paid == 'rejected')
-                <a href="{{ route('direksi.reimbursement') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
+
             @elseif ($reimbursement->status_approved == 'rejected' && $reimbursement->status_paid == 'pending')
-                <a href="{{ route('direksi.reimbursement') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
             @endif
         </div>
 
@@ -404,6 +398,10 @@
                 </div>
             </div>
         </div>
+
+        @if ($reimbursement->status_approved == 'approved' && )
+            
+        @endif
 
     </div>
     <!-- /.container-fluid -->

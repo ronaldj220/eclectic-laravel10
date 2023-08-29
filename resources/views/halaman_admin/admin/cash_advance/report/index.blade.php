@@ -22,6 +22,8 @@
 
     <link rel="icon" href="{{ asset('logo.png') }}">
 
+
+
 </head>
 
 <body id="page-top">
@@ -195,7 +197,6 @@
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
@@ -226,69 +227,46 @@
                 </nav>
                 <!-- End of Topbar -->
 
-                <!-- Begin Page Content -->
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <!-- DataTales Example -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary text-center">Daftar Admin</h6>
-                                </div>
-                                <div class="card-body">
-                                    <form action="{{ route('admin.admin.simpan_admin') }}" method="POST">
-                                        @csrf
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1">Alamat Email</label>
-                                            <input type="email" class="form-control" id="exampleInputEmail1"
-                                                aria-describedby="emailHelp" name="email">
-                                            <small id="emailHelp" class="form-text text-muted">Digunakan untuk login
-                                                sebagai admin</small>
-                                        </div>
-                                        @error('email')
-                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div class="container-fluid">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary text-center">Cari Tanggal Dokumen CA</h6>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ route('admin.CA.search_date_CA') }}" method="POST">
+                                @csrf
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="">Tanggal Awal</label>
+                                        <input type="date"
+                                            class="form-control @error('tgl_1') is-invalid @enderror" placeholder=""
+                                            name="tgl_1">
+                                        @error('tgl_1')
+                                            <div class="invalid-feedback">
                                                 {{ $message }}
-                                                <button type="button" class="close" data-dismiss="alert"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
                                             </div>
                                         @enderror
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Password</label>
-                                            <input type="password" class="form-control" id="exampleInputPassword1"
-                                                name="password">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Nama</label>
-                                            <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="nama">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">No Rekening</label>
-                                            <input type="number" class="form-control" id="exampleInputPassword1"
-                                                name="no_rekening">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Bank</label>
-                                            <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="bank">
-                                        </div>
-                                        <div class="d-flex justify-content-center">
-                                            <button type="submit" class="btn btn-primary"><i
-                                                    class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Submit</button>
-                                            &nbsp;&nbsp;
-                                            <a href="{{ route('admin.admin') }}" class="btn btn-danger"><i
-                                                    class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
-                                        </div>
-                                    </form>
+                                    </div>
+                                    <div class="col">
+                                        <label for="">Tanggal Akhir</label>
+                                        <input type="date"
+                                            class="form-control @error('tgl_2') is-invalid @enderror" placeholder=""
+                                            name="tgl_2">
+                                        @error('tgl_2')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-primary" style="margin-top: 20px;"><i
+                                            class="fa-solid fa-magnifying-glass"></i> Find</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-
-                <!-- /.container-fluid -->
 
             </div>
             <!-- End of Main Content -->
@@ -343,8 +321,9 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('assets') }}/js/sb-admin-2.min.js"></script>
-</body>
-@include('sweetalert::alert')
 
+
+
+</body>
 
 </html>

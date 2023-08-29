@@ -144,7 +144,7 @@
                 </tr>
             </table>
             <!-- /.container-fluid -->
-            <div>
+            <div style="margin-top: 30px">
                 <table class="table is-striped table-bordered border-dark text-center"
                     style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                     <tr style="height:3cm;">
@@ -212,7 +212,7 @@
                 </tr>
             </table>
             <!-- /.container-fluid -->
-            <div>
+            <div style="margin-top: 30px">
                 <table class="table is-striped table-bordered border-dark text-center"
                     style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                     <tr style="height:3cm;">
@@ -279,7 +279,7 @@
                 </tr>
             </table>
             <!-- /.container-fluid -->
-            <div>
+            <div style="margin-top: 30px">
                 <table class="table is-striped table-bordered border-dark text-center"
                     style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                     <tr style="height:3cm;">

@@ -232,68 +232,23 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if ($reimbursement)
-                                            @foreach ($reimbursement as $item)
-                                                <tr>
-                                                    <td><a
-                                                            href="{{ route('direksi.reimbursement.view_reimbursement', $item->id) }}">{{ $item->no_doku_real }}</a>
-                                                    </td>
-                                                    <td>{{ $item->pemohon }}</td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
+                                        @foreach ($combinedData as $item)
+                                            <tr>
+                                                <td>
+                                                    <a
+                                                        href="{{ $item->source == 'reimbursement' ? route('direksi.reimbursement.view_reimbursement', $item->id) : ($item->source == 'cash_advance' ? route('direksi.cash_advance.view_cash_advance', $item->id) : ($item->source == 'cash_advance_report' ? route('direksi.cash_advance_report.view_cash_advance_report', $item->id) : ($item->source == 'purchase_request' ? route('direksi.purchase_request.view_PR', $item->id) : route('direksi.purchase_order.view_PO', $item->id)))) }}">{{ $item->no_doku_real }}</a>
+                                                </td>
+                                                <td style="text-align: center; color: #FF914D">
+                                                    <label style="font-weight: bold">Waiting For
+                                                        Payment</label>
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
-                                    <tbody>
-                                        @if ($dataCA)
-                                            @foreach ($dataCA as $item)
-                                                <tr>
-                                                    <td><a
-                                                            href="{{ route('direksi.cash_advance.view_cash_advance', $item->id) }}">{{ $item->no_doku }}</a>
-                                                    </td>
-                                                    <td>{{ $item->pemohon }}</td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
-                                    </tbody>
-                                    <tbody>
-                                        @if ($dataCAR)
-                                            @foreach ($dataCAR as $item)
-                                                <tr>
-                                                    <td><a
-                                                            href="{{ route('direksi.cash_advance_report.view_cash_advance_report', $item->id) }}">{{ $item->no_doku }}</a>
-                                                    </td>
-                                                    <td>{{ $item->pemohon }}</td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
-                                    </tbody>
-                                    <tbody>
-                                        @if ($dataPR)
-                                            @foreach ($dataPR as $item)
-                                                <tr>
-                                                    <td><a
-                                                            href="{{ route('direksi.purchase_request.view_PR', $item->id) }}">{{ $item->no_doku }}</a>
-                                                    </td>
-                                                    <td>{{ $item->pemohon }}</td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
-                                    </tbody>
-                                    <tbody>
-                                        @if ($dataPO)
-                                            @foreach ($dataPO as $item)
-                                                <tr>
-                                                    <td><a
-                                                            href="{{ route('direksi.purchase_order.view_PO', $item->id) }}">{{ $item->no_doku }}</a>
-                                                    </td>
-                                                    <td>{{ $item->pemohon }}</td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
-                                    </tbody>
+
                                 </table>
                                 <!-- /.container-fluid -->
-                                {{ $reimbursement->links('pagination::bootstrap-5') }}
+                                {{ $combinedData->links('pagination::bootstrap-5') }}
                             </div>
                         </div>
                     </div>
@@ -363,6 +318,5 @@
 
 </body>
 
-@include('sweetalert::alert')
 
 </html>

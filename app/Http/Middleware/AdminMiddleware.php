@@ -18,7 +18,9 @@ class AdminMiddleware
     {
         if (Auth::guard('web')->check()) {
             return $next($request);
+        } else {
+
+            abort(403, 'Tidak bisa diakses');
         }
-        abort(403, 'Tidak bisa diakses');
     }
 }

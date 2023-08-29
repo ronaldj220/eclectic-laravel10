@@ -16,6 +16,10 @@ use App\Http\Controllers\Admin\MenyetujuiController;
 use App\Http\Controllers\Admin\PurchaseOrderController;
 use App\Http\Controllers\Admin\PurchaseRequestController;
 use App\Http\Controllers\Admin\ReimbursementController;
+use App\Http\Controllers\Admin\Report\ReportCAController;
+use App\Http\Controllers\Admin\Report\ReportCARController;
+use App\Http\Controllers\Admin\Report\ReportPOController;
+use App\Http\Controllers\Admin\Report\ReportPRController;
 use App\Http\Controllers\Admin\Report\ReportRBController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Auth\LoginController;
@@ -40,13 +44,13 @@ use App\Http\Controllers\Kasir\ReimbursementController as KasirReimbursementCont
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/', [LoginController::class, 'home']);
+Route::get('/', [LoginController::class, 'home'])->name('home');
 
 Route::get('login', [LoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('login', [LoginController::class, 'aksilogin'])->name('aksilogin');
 Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::prefix('admin')->middleware(['auth', 'auth:web', 'admin'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/beranda', [BerandaController::class, 'index'])->name('admin.beranda');
 
     // Route Admin
@@ -171,9 +175,6 @@ Route::prefix('admin')->middleware(['auth', 'auth:web', 'admin'])->group(functio
 
     Route::get('/reimbursement/hapus_RB/{id}', [ReimbursementController::class, 'delete_RB'])->name('admin.reimbursement.delete_RB');
 
-    // Cari Berdasarkan Tanggal
-    Route::get('/report/RB', [ReportRBController::class, 'index'])->name('admin.reimbursement.report_RB');
-    Route::post('/report/RB/search_date', [ReportRBController::class, 'search_date'])->name('admin.reimbursement.search_date_RB');
     // Route Cash Advance 
     Route::get('/cash_advance', [Cash_AdvanceController::class, 'index'])->name('admin.cash_advance');
     Route::get('/cash_advance/tambah_cash_advance', [Cash_AdvanceController::class, 'tambah_CA'])->name('admin.cash_advance.tambah_cash_advance');
@@ -271,12 +272,25 @@ Route::prefix('admin')->middleware(['auth', 'auth:web', 'admin'])->group(functio
     Route::get('/purchase_order/bulan', [PurchaseOrderController::class, 'search_by_date'])->name('admin.purchase_order.bulan');
 
     // Route Laporan RB untuk Admin
+    Route::get('/report/RB', [ReportRBController::class, 'index'])->name('admin.reimbursement.report_RB');
+    Route::post('/report/RB/search_date', [ReportRBController::class, 'search_date'])->name('admin.reimbursement.search_date_RB');
 
-    // Route Laporan CA, CAR untuk Admin
-    // Route Laporan PR, PO untuk Admin 
+    // Route Laporan CA untuk Admin
+    Route::get('/report/CA', [ReportCAController::class, 'index'])->name('admin.CA.report_CA');
+    Route::post('/report/CA/search_date', [ReportCAController::class, 'search_date'])->name('admin.CA.search_date_CA');
+
+    // Route Laporan CAR
+    Route::get('/report/CAR', [ReportCARController::class, 'index'])->name('admin.CAR.report_CAR');
+    Route::post('/report/CAR/search_date', [ReportCARController::class, 'search_date'])->name('admin.CAR.search_date_CAR');
+    // Route Laporan PR untuk Admin 
+    Route::get('/report/PR', [ReportPRController::class, 'index'])->name('admin.PR.report_PR');
+    Route::post('/report/PR/search_date', [ReportPRController::class, 'search_date'])->name('admin.PR.search_date_PR');
+    // Route Laporan PO untuk Admin 
+    Route::get('/report/PO', [ReportPOController::class, 'index'])->name('admin.PO.report_PO');
+    Route::post('/report/PO/search_date', [ReportPOController::class, 'index'])->name('admin.PO.search_date_PO');
 });
 
-Route::prefix('karyawan')->middleware(['auth:karyawan', 'karyawan'])->group(function () {
+Route::prefix('karyawan')->middleware(['karyawan'])->group(function () {
     Route::get('/beranda', [KaryawanBerandaController::class, 'index'])->name('karyawan.beranda');
     Route::get('/beranda/profile', [KaryawanBerandaController::class, 'profile'])->name('karyawan.beranda.profile');
     Route::get('/beranda/profile/update_profile', [KaryawanBerandaController::class, 'update_profile'])->name('karyawan.beranda.profile.update_profile');
@@ -325,7 +339,7 @@ Route::prefix('karyawan')->middleware(['auth:karyawan', 'karyawan'])->group(func
     Route::get('/admin/getDetailByTipePR', [KaryawanPurchaseOrderController::class, 'getDataByPR'])->name('karyawan.getDetailByTipePR');
 });
 
-Route::prefix('direksi')->middleware(['auth:direksi'])->group(function () {
+Route::prefix('direksi')->middleware(['direksi'])->group(function () {
     Route::get('/beranda', [DireksiBerandaController::class, 'index'])->name('direksi.beranda');
     Route::get('/beranda/profile', [DireksiBerandaController::class, 'profile'])->name('direksi.beranda.profile');
     Route::post('/beranda/profile/update_profile/{id}', [DireksiBerandaController::class, 'update_profile'])->name('direksi.beranda.update_profile');
@@ -396,7 +410,7 @@ Route::prefix('direksi')->middleware(['auth:direksi'])->group(function () {
     Route::get('/purchase_order/tambah_PO', [DireksiPurchaseOrderController::class, 'tambah_PO'])->name('direksi.purchase_order.tambah_PO');
     Route::post('/purchase_order/simpan_PO', [DireksiPurchaseOrderController::class, 'simpan_PO'])->name('direksi.purchase_order.simpan_PO');
 });
-Route::prefix('kasir')->middleware(['auth:kasir'])->group(function () {
+Route::prefix('kasir')->middleware(['kasir'])->group(function () {
     Route::get('/beranda', [KasirBerandaController::class, 'index'])->name('kasir.beranda');
     Route::get('/beranda/profile', [KasirBerandaController::class, 'profile'])->name('kasir.beranda.profile');
     Route::post('/beranda/update_profile', [KasirBerandaController::class, 'update_profile'])->name('kasir.beranda.update_profile');

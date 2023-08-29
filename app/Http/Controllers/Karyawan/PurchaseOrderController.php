@@ -36,18 +36,19 @@ class PurchaseOrderController extends Controller
     public function view_PO($id)
     {
         $title = 'Lihat Purchase Order';
-        $PO = DB::table('admin_purchase_order')->where('id', $id)->first();
+        $PO = DB::table('admin_purchase_order')->find($id);
+        $PO_Nominal = DB::table('admin_purchase_order')->where('id', $id)->get();
         $PO_detail = DB::table('admin_purchase_order_detail')->where('fk_po', $id)->get();
         $nominal_PO = DB::table('admin_purchase_order_detail')->where('fk_po', $id)->sum('nominal');
-        $PO_Detail = DB::table('admin_purchase_order_detail')->where('fk_po', $id)->get();
         $results = [];
-        foreach ($PO_Detail as $item) {
-            $result = ($item->PPN / 100) * $item->nominal;
-            $PPH = ($item->PPH / 100) * $item->nominal;
-            $PPH_4 = ($item->PPH_4 / 100) * $item->nominal;
+        foreach ($PO_Nominal as $item) {
+            $result = ($item->PPN / 100) * $nominal_PO;
+            $PPH = ($item->PPH / 100) * $nominal_PO;
+            $PPH_4 = ($item->PPH_4 / 100) * $nominal_PO;
+            $ctm_2 = ($item->ctm_2 / 100) * $nominal_PO;
             $results[] = $result; // Tambahkan hasil ke array
         }
-        $grand_total = $nominal_PO + $result - $PPH;
+        $grand_total = $nominal_PO + $result - $PPH - $PPH_4 - $ctm_2;
 
 
         $carbonDate = Carbon::createFromFormat('Y-m-d', $PO->tgl_purchasing)->locale('id');
@@ -61,6 +62,7 @@ class PurchaseOrderController extends Controller
             'PPN' => $result,
             'PPH' => $PPH,
             'PPH_4' => $PPH_4,
+            'ctm_2' => $ctm_2,
             'grand_total' => $grand_total,
             'tgl_purchasing' => $formattedDate
         ]);

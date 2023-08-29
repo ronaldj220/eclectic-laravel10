@@ -97,11 +97,7 @@
                 </div>
             </div>
         </div>
-        <div class="container d-flex justify-content-center">
 
-            <a href="{{ route('karyawan.purchase_request') }}" class="btn btn-danger"><i
-                    class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
-        </div>
     </form>
 
 </body>

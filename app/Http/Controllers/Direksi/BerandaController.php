@@ -13,75 +13,71 @@ class BerandaController extends Controller
     {
         $title = 'Beranda';
         $menyetujui = Auth::guard('direksi')->user()->nama;
-        $dataReimbursement = DB::table('admin_reimbursement')
-            ->orderBy('no_doku_real', 'asc')
-            ->whereIn('status_approved', ['pending'])
-            ->whereIn('status_paid', ['pending'])
-            ->where('menyetujui', $menyetujui)
-            ->paginate(10);
-        $dataCA = DB::table('admin_cash_advance')
-            ->orderBy('no_doku', 'asc')
-            ->whereIn('status_approved', ['pending'])
-            ->whereIn('status_paid', ['pending'])
-            ->where('menyetujui', $menyetujui)
-            ->paginate(10);
-        $dataCAR = DB::table('admin_cash_advance_report')
-            ->orderBy('no_doku', 'asc')
-            ->whereIn('status_approved', ['pending'])
-            ->whereIn('status_paid', ['pending'])
-            ->where('menyetujui', $menyetujui)
-            ->paginate(10);
-        $dataPR = DB::table('admin_purchase_request')
-            ->orderBy('no_doku', 'asc')
-            ->whereIn('status_approved', ['pending'])
-            ->whereIn('status_paid', ['pending'])
-            ->where('menyetujui', $menyetujui)
-            ->paginate(10);
-        $dataPO = DB::table('admin_purchase_order')
-            ->orderBy('no_doku', 'asc')
-            ->whereIn('status_approved', ['pending'])
-            ->whereIn('status_paid', ['pending'])
-            ->where('menyetujui', $menyetujui)
-            ->paginate(10);
+        $statusWaiting = 'pending';
 
-        $RB = DB::table('admin_reimbursement')
-            ->where('status_approved', 'pending')
-            ->where('status_paid', 'pending')
-            ->where('menyetujui', $menyetujui)
-            ->count();
-        $CA = DB::table('admin_cash_advance')
-            ->where('status_approved', 'pending')
-            ->where('status_paid', 'pending')
-            ->where('menyetujui', $menyetujui)
-            ->count();
-        $CAR = DB::table('admin_cash_advance_report')
-            ->where('status_approved', 'pending')
-            ->where('status_paid', 'pending')
-            ->where('menyetujui', $menyetujui)
-            ->count();
-        $PR = DB::table('admin_purchase_request')
-            ->where('status_approved', 'pending')
-            ->where('status_paid', 'pending')
-            ->where('menyetujui', $menyetujui)
-            ->count();
-        $PO = DB::table('admin_purchase_order')
-            ->where('status_approved', 'pending')
-            ->where('status_paid', 'pending')
-            ->where('menyetujui', $menyetujui)
+        $reimbursementQuery = DB::table('admin_reimbursement')
+            ->select('id', 'no_doku_real', 'pemohon', DB::raw("'reimbursement' as source"))
+            ->whereIn('status_approved', [$statusWaiting])
+            ->whereIn('status_paid', [$statusWaiting])
+            ->where('menyetujui', $menyetujui);
 
-            ->count();
+        $cashAdvanceQuery = DB::table('admin_cash_advance')
+            ->select('id', 'no_doku', 'pemohon', DB::raw("'cash_advance' as source"))
+            ->whereIn('status_approved', [$statusWaiting])
+            ->whereIn('status_paid', [$statusWaiting])
+            ->where('menyetujui', $menyetujui);
+
+        $cashAdvanceReportQuery = DB::table('admin_cash_advance_report')
+            ->select('id', 'no_doku', 'pemohon', DB::raw("'cash_advance_report' as source"))
+            ->whereIn('status_approved', [$statusWaiting])
+            ->whereIn('status_paid', [$statusWaiting])
+            ->where('menyetujui', $menyetujui);
+
+        $purchaseRequestQuery = DB::table('admin_purchase_request')
+            ->select('id', 'no_doku', 'pemohon', DB::raw("'cash_advance_report' as source"))
+            ->whereIn('status_approved', [$statusWaiting])
+            ->whereIn('status_paid', [$statusWaiting])
+            ->where('menyetujui', $menyetujui);
+
+
+        $purchaseOrderQuery = DB::table('admin_purchase_order')
+            ->select('id', 'no_doku', 'pemohon', DB::raw("'purchase_order' as source"))
+            ->whereIn('status_approved', [$statusWaiting])
+            ->whereIn('status_paid', [$statusWaiting])
+            ->where('menyetujui', $menyetujui);
+
+        $combinedData = $reimbursementQuery
+            ->union($cashAdvanceQuery)
+            ->union($cashAdvanceReportQuery)
+            ->union($purchaseRequestQuery)
+            ->union($purchaseOrderQuery)
+            ->orderBy('no_doku_real', 'desc')
+            ->get();
+
+        $perPage = 10; // Jumlah item per halaman
+        $currentPage = request()->get('page', 1); // Ambil nomor halaman dari query string
+
+        // Hitung jumlah total data
+        $totalDataCount = $combinedData->count();
+
+        // Ambil data untuk halaman saat ini
+        $currentPageData = $combinedData->forPage($currentPage, $perPage);
+
+        // Buat manual pagination
+        $pagination = new \Illuminate\Pagination\LengthAwarePaginator(
+            $currentPageData,
+            $totalDataCount,
+            $perPage,
+            $currentPage,
+            [
+                'path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(), // Untuk mengambil path URL yang benar
+                'query' => request()->query(), // Untuk mempertahankan query string saat pindah halaman
+            ]
+        );
+
         return view('halaman_direksi.direksi.index', [
             'title' => $title,
-            'reimbursement' => $dataReimbursement,
-            'dataCA' => $dataCA,
-            'dataCAR' => $dataCAR,
-            'dataPR' => $dataPR,
-            'dataPO' => $dataPO,
-            'RB' => $RB,
-            'CA' => $CA,
-            'CAR' => $CAR,
-            'PR' => $PR,
-            'PO' => $PO
+            'combinedData' => $pagination,
         ]);
     }
     public function profile()
