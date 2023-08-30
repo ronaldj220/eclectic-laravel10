@@ -154,9 +154,9 @@
                         <a class="collapse-item"
                             href="{{ route('admin.reimbursement.report_RB') }}">Reimbursement</a>
                         <a class="collapse-item" href="{{ route('admin.CA.report_CA') }}">Cash Advance</a>
-                        <a class="collapse-item" href="{{ route('admin.CAR.report_CAR') }}">Cash Advance Report</a>
-                        <a class="collapse-item" href="{{ route('admin.PR.report_PR') }}">Purchase Request</a>
-                        <a class="collapse-item" href="{{ route('admin.PO.report_PO') }}">Purchase Order</a>
+                        <a class="collapse-item" href="#">Cash Advance Report</a>
+                        <a class="collapse-item" href="#">Purchase Request</a>
+                        <a class="collapse-item" href="#">Purchase Order</a>
                     </div>
                 </div>
             </li>
@@ -225,100 +225,46 @@
                 </nav>
                 <!-- End of Topbar -->
 
-                <!-- Begin Page Content -->
-                <div class="container-fluid" style="margin-right: 60px">
-                    <!-- Di dalam berkas admin.beranda.blade.php atau halaman beranda Anda -->
-                    @if (session('success'))
-                        <script>
-                            window.addEventListener('DOMContentLoaded', function() {
-                                Swal.fire({
-                                    title: 'Berhasil!',
-                                    text: '{{ session('success') }}',
-                                    icon: 'success',
-                                    showConfirmButton: false,
-                                    timer: 1500
-                                });
-                            });
-                        </script>
-                    @endif
-
-                    <table class="table table-borderless table-lg"
-                        style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 16px; margin-right: 150px">
-                        <tr>
-                            <th class="text-center"><a href="{{ route('admin.reimbursement.tambah_reimbursement') }}"
-                                    data-toggle="tooltip" data-placement="bottom" title="Buat Reimbursement"><img
-                                        src="{{ asset('cashback.png') }}" width="80"></a>
-                                <br>
-                                <p style="text-align: center">RB</p>
-                            </th>
-                            <br>
-                            <th class="text-center"><a href="{{ route('admin.cash_advance.tambah_cash_advance') }}"
-                                    data-toggle="tooltip" data-placement="bottom" title="Buat Cash Advance"><img
-                                        src="{{ asset('cash.png') }}" width="80"></a>
-                                <br>
-                                <label class="text-center">CA</label>
-                            </th>
-
-                            <th><a href="{{ route('admin.cash_advance_report.tambah_cash_advance_report') }}"
-                                    data-toggle="tooltip" data-placement="bottom"
-                                    title="Buat Cash Advance Report"><img src="{{ asset('4318314.png') }}"
-                                        width="80"></a>
-                                <br>
-                                <p style="text-align: center">CA Report</p>
-                            </th>
-                            <th>
-                                <!-- Nav Item - Tables -->
-                                <a href="{{ route('admin.purchase_request.tambah_purchase_request') }}"
-                                    data-toggle="tooltip" data-placement="bottom" title="Buat Purchase Request"><img
-                                        src="{{ asset('123.png') }}" width="80"></a>
-                                <br>
-                                <p style="text-align: center">PR</p>
-                            </th>
-                            <th>
-                                <!-- Nav Item - Tables -->
-                                <a href="{{ route('admin.purchase_order.tambah_PO') }}" data-toggle="tooltip"
-                                    data-placement="bottom" title="Buat Purchase Order"><img
-                                        src="{{ asset('images.png') }}" width="65"></a>
-                                <br>
-                                <p style="text-align: center">PO</p>
-                            </th>
-
-                        </tr>
-
-                    </table>
-                    <!-- DataTales Example -->
+                <div class="container-fluid">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary text-center">Incoming New Documents</h6>
+                            <h6 class="m-0 font-weight-bold text-primary text-center">Cari Tanggal Dokumen PO</h6>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" width="100%" cellspacing="0">
-                                    <thead class="text-center">
-                                        <tr>
-                                            <th style="width: 2%">No Dokumen</th>
-                                            <th style="width: 2%">Pemohon</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($combinedData as $item)
-                                            <tr>
-                                                <td>
-                                                    <a
-                                                        href="{{ $item->source == 'reimbursement' ? route('admin.reimbursement.lihat_reimbursement', $item->id) : ($item->source == 'cash_advance' ? route('admin.cash_advance.view_cash_advance', $item->id) : ($item->source == 'cash_advance_report' ? route('admin.cash_advance_report.view_cash_advance_report', $item->id) : ($item->source == 'purchase_request' ? route('admin.purchase_request.view_PR', $item->id) : route('admin.purchase_order.view_PO', $item->id)))) }}">{{ $item->no_doku_real }}</a>
-                                                </td>
-                                                <td>{{ $item->pemohon }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                <!-- /.container-fluid -->
-                                {{ $combinedData->links('pagination::bootstrap-5') }}
-                            </div>
+                            <form action="{{ route('admin.PO.search_date_PO') }}" method="POST">
+                                @csrf
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="">Tanggal Awal</label>
+                                        <input type="date"
+                                            class="form-control @error('tgl_1') is-invalid @enderror" placeholder=""
+                                            name="tgl_1">
+                                        @error('tgl_1')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                    <div class="col">
+                                        <label for="">Tanggal Akhir</label>
+                                        <input type="date"
+                                            class="form-control @error('tgl_2') is-invalid @enderror" placeholder=""
+                                            name="tgl_2">
+                                        @error('tgl_2')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-primary" style="margin-top: 20px;"><i
+                                            class="fa-solid fa-magnifying-glass"></i> Find</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-                <!-- /.container-fluid -->
 
             </div>
             <!-- End of Main Content -->

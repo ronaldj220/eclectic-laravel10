@@ -12,7 +12,7 @@ class BerandaController extends Controller
     public function index()
     {
         $title = 'Beranda';
-        $menyetujui = Auth::guard('direksi')->user()->nama;
+        $menyetujui = Auth::user()->nama;
         $statusWaiting = 'pending';
 
         $reimbursementQuery = DB::table('admin_reimbursement')
@@ -51,7 +51,7 @@ class BerandaController extends Controller
             ->union($cashAdvanceReportQuery)
             ->union($purchaseRequestQuery)
             ->union($purchaseOrderQuery)
-            ->orderBy('no_doku_real', 'desc')
+            ->orderBy('no_doku', 'desc')
             ->get();
 
         $perPage = 10; // Jumlah item per halaman

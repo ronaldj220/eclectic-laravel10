@@ -13,7 +13,7 @@ class BerandaController extends Controller
     public function index()
     {
         $title = 'Beranda';
-
+        dd(Auth::user()->nama);
         $reimbursementQuery = DB::table('admin_reimbursement')
             ->select('id', 'no_doku_real', 'pemohon', DB::raw("'reimbursement' as source"))
             ->whereIn('status_approved', ['approved'])

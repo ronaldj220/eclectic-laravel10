@@ -19,6 +19,9 @@
             <b><a style="text-transform: uppercase;">cash advance report</a></b>
             <br>
             <a style="text-transform: capitalize;">PT. Eclectic Consulting</a>
+            <br>
+            <b><a style="text-transform: uppercase">{{ date('d.m.Y', strtotime($tgl_awal)) }}</a> - <a
+                    style="text-transform: uppercase">{{ date('d.m.Y', strtotime($tgl_akhir)) }}</a></b>
         </figure>
         @foreach ($CAR as $no_doku_CAR => $items)
             <table class="table table-borderless table-sm"
@@ -108,6 +111,33 @@
                     </tr>
                 @endif
             </table>
+            <div>
+                <table class="table is-striped table-bordered border-dark text-center"
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
+                    <tr style="height:2cm;">
+                        <td style="width:25%">
+                            <div class="center" style="font-weight: bold">Pemohon,</div>
+                            <div style="margin-top: 40px"></div>
+                            <div class="center">{{ $items[0]->pemohon_ca }}</div>
+                        </td>
+                        <td style="width:25%">
+                            <div class="center" style="font-weight: bold">Accounting,</div>
+                            <div style="margin-top: 40px"></div>
+                            <div class="center">{{ $items[0]->acc_ca }}</div>
+                        </td>
+                        <td style="width:25%">
+                            <div class="center" style="font-weight: bold">Kasir,</div>
+                            <div style="margin-top: 40px"></div>
+                            <div class="center">{{ $items[0]->kasir_ca }}</div>
+                        </td>
+                        <td style="width:25%">
+                            <div class="center" style="font-weight: bold">Menyetujui,</div>
+                            <div style="margin-top: 40px"></div>
+                            <div class="center">{{ $items[0]->direksi }}</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
             <?php $totalAllCAR += $totalSumCAR; ?>
         @endforeach
         <div class="text-end fw-bold">

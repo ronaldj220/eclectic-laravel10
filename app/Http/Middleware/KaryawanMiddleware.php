@@ -16,10 +16,10 @@ class KaryawanMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::guard('karyawan')->check()) {
+        if (Auth::check() && Auth::user()->role_has_user[0]->fk_role == 2) {
             return $next($request);
         } else {
-            abort(403, 'Karyawan tidak bisa diakses halaman lain');
+            return redirect(route('home'));
         }
     }
 }

@@ -84,7 +84,7 @@
                     <span>Cash Advance Report</span></a>
             </li>
 
-            @if (Auth::guard('karyawan')->user()->jabatan == 'Staff')
+            @if (Auth::user()->jabatan == 'Staff')
                 <!-- Divider -->
                 <hr class="sidebar-divider my-0">
 
@@ -109,28 +109,28 @@
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
-            @if (Auth::guard('karyawan')->user()->jabatan == 'Konsultan')
+            @if (Auth::user()->jabatan == 'Konsultan')
                 <li class="nav-item">
                     <a class="nav-link"
                         href="https://drive.google.com/file/d/1FYmGvS7aYSU4HFpk7zngHP5TPRfcQSVf/view?usp=sharing">
                         <i class="fa-regular fa-circle-question"></i>
                         <span>Help</span></a>
                 </li>
-            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Project Manager')
+            @elseif (Auth::user()->jabatan == 'Project Manager')
                 <li class="nav-item">
                     <a class="nav-link"
                         href="https://drive.google.com/file/d/1AFEoQgVbNCqmZuyB98W3pvWQflVISr-5/view?usp=sharing">
                         <i class="fa-regular fa-circle-question"></i>
                         <span>Help</span></a>
                 </li>
-            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Support Manager')
+            @elseif (Auth::user()->jabatan == 'Support Manager')
                 <li class="nav-item">
                     <a class="nav-link"
                         href="https://drive.google.com/file/d/1AFEoQgVbNCqmZuyB98W3pvWQflVISr-5/view?usp=sharing">
                         <i class="fa-regular fa-circle-question"></i>
                         <span>Help</span></a>
                 </li>
-            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Staff')
+            @elseif (Auth::user()->jabatan == 'Staff')
                 <li class="nav-item">
                     <a class="nav-link"
                         href="https://drive.google.com/file/d/1AFEoQgVbNCqmZuyB98W3pvWQflVISr-5/view?usp=sharing">
@@ -168,10 +168,9 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span
-                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::guard('karyawan')->user()->nama }}
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->nama }}
                                     <br>
-                                    <small>{{ Auth::guard('karyawan')->user()->jabatan }}</small></span>
+                                    <small>{{ Auth::user()->jabatan }}</small></span>
                                 <img class="img-profile rounded-circle"
                                     src="{{ asset('assets') }}/img/undraw_profile_3.svg">
                             </a>
@@ -181,8 +180,8 @@
 
                                 <a class="dropdown-item" href="{{ route('karyawan.beranda.profile') }}">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile ({{ Auth::guard('karyawan')->user()->nama }}) |
-                                    {{ Auth::guard('karyawan')->user()->jabatan }}
+                                    Profile ({{ Auth::user()->nama }} |
+                                    {{ Auth::user()->jabatan }})
                                 </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal"
                                     data-target="#logoutModal">
@@ -233,7 +232,7 @@
                                 <br>
                                 <p style="text-align: center">CA Report</p>
                             </th>
-                            @if (Auth::guard('karyawan')->user()->jabatan == 'Staff')
+                            @if (Auth::user()->jabatan == 'Staff')
                                 <th>
                                     <!-- Nav Item - Tables -->
                                     <a href="{{ route('karyawan.purchase_request.tambah_PR') }}"

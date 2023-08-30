@@ -16,9 +16,10 @@ class KasirMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::guard('kasir')->check()) {
+        if (Auth::check() && Auth::user()->role_has_user[0]->fk_role == 4) {
             return $next($request);
+        } else {
+            return redirect(route('home'));
         }
-        abort(403, 'Kasir tidak bisa akses halaman lain');
     }
 }

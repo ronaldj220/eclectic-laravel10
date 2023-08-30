@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('menyetujui', function (Blueprint $table) {
+        Schema::create('role', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->nullable();
-            $table->string('nama')->nullable();
-            $table->string('password')->nullable();
-            $table->string('jabatan')->nullable();
+            $table->string('role')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('menyetujui');
+        Schema::dropIfExists('role');
     }
 };

@@ -12,10 +12,11 @@ class BerandaController extends Controller
     public function index()
     {
         $title = 'Beranda';
-        $authId = Auth::guard('karyawan')->user()->nama;
+        $authId = Auth::user()->nama;
+        dd($authId);
         $dataReimbursement = DB::table('admin_reimbursement')
             ->where('pemohon', $authId)
-            ->orderBy('no_doku_real', 'asc')
+            ->orderBy('no_doku', 'asc')
             ->whereIn('status_approved', ['pending'])
             ->whereIn('status_paid', ['pending'])
             ->paginate(10);

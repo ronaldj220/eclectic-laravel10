@@ -56,6 +56,8 @@ class ReportCARController extends Controller
 
         return view('halaman_admin.admin.cash_advance_report.report.result', [
             'title' => $title,
+            'tgl_awal' => $tgl_awal,
+            'tgl_akhir' => $tgl_akhir,
             'CAR' => $CAR
         ]);
     }

@@ -11,9 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accounting', function (Blueprint $table) {
+        Schema::create('role_has_user', function (Blueprint $table) {
             $table->id();
-            $table->string('nama')->nullable();
+            $table->unsignedBigInteger('fk_role');
+
+            $table->foreign('fk_role')->references('id')->on('role');
+            $table->unsignedBigInteger('fk_user');
+
+            $table->foreign('fk_user')->references('id')->on('user');
             $table->timestamps();
         });
     }
@@ -23,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accounting');
+        Schema::dropIfExists('role_has_user_tables');
     }
 };

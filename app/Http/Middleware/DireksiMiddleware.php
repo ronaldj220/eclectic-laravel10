@@ -16,9 +16,10 @@ class DireksiMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::guard('direksi')->check()) {
+        if (Auth::check() && Auth::user()->role_has_user[0]->fk_role == 3) {
             return $next($request);
+        } else {
+            return redirect(route('home'));
         }
-        abort(403, 'Direksi tidak bisa akses halaman lain');
     }
 }

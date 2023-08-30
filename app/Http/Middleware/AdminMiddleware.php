@@ -16,11 +16,10 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::guard('web')->check()) {
+        if (Auth::check() && Auth::user()->role_has_user[0]->fk_role == 1) {
             return $next($request);
         } else {
-
-            abort(403, 'Tidak bisa diakses');
+            return redirect(route('home'));
         }
     }
 }

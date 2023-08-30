@@ -11,14 +11,18 @@ class LoginController extends Controller
     public function home()
     {
         if (Auth::check()) {
-            dd(Auth::user()->role_has_user);
-            // if (Auth::user()->role_has_user->fk_role == 1) {
-            //     // return redirect()->route('admin.beranda');
-            // } elseif (Auth::user()->role_has_user->fk_role == 2) {
-            //     return redirect()->route('karyawan.beranda');
-            // }
+            // dd(Auth::user()->role_has_user[0]->fk_role);
+            if (Auth::user()->role_has_user[0]->fk_role == 1) {
+                return redirect()->route('admin.beranda');
+            } elseif (Auth::user()->role_has_user[0]->fk_role == 2) {
+                return redirect()->route('karyawan.beranda');
+            } elseif (Auth::user()->role_has_user[0]->fk_role == 3) {
+                return redirect()->route('kasir.beranda');
+            } elseif (Auth::user()->role_has_user[0]->fk_role == 4) {
+                return redirect()->route('direksi.beranda');
+            }
         } else {
-            return redirect(route('login'));
+            return redirect()->route('login');
         }
     }
     public function index()
@@ -40,7 +44,11 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            return redirect()->intended('/');
+            return redirect()->route('home');
+        } else {
+            return back()->withErrors([
+                'email' => 'Email atau Password salah! Silahkan Lakukan Login Kembali.',
+            ]);
         }
 
 

@@ -287,7 +287,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('/report/PR/search_date', [ReportPRController::class, 'search_date'])->name('admin.PR.search_date_PR');
     // Route Laporan PO untuk Admin 
     Route::get('/report/PO', [ReportPOController::class, 'index'])->name('admin.PO.report_PO');
-    Route::post('/report/PO/search_date', [ReportPOController::class, 'index'])->name('admin.PO.search_date_PO');
+    Route::post('/report/PO/search_date', [ReportPOController::class, 'search_date'])->name('admin.PO.search_date_PO');
 });
 
 Route::prefix('karyawan')->middleware(['karyawan'])->group(function () {

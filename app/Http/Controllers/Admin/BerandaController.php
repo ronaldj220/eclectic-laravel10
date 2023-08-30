@@ -12,7 +12,7 @@ class BerandaController extends Controller
     {
         $title = 'Beranda';
         $reimbursementQuery = DB::table('admin_reimbursement')
-            ->select('id', 'no_doku_real', 'pemohon', DB::raw("'reimbursement' as source"))
+            ->select('id', 'no_doku', 'pemohon', DB::raw("'reimbursement' as source"))
             ->whereIn('status_approved', ['rejected'])
             ->whereIn('status_paid', ['rejected']);
 
@@ -41,7 +41,7 @@ class BerandaController extends Controller
             ->union($cashAdvanceReportQuery)
             ->union($purchaseRequestQuery)
             ->union($purchaseOrderQuery)
-            ->orderBy('no_doku_real', 'desc')
+            ->orderBy('no_doku', 'desc')
             ->get();
 
         // Manual pagination

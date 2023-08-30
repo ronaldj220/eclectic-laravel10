@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::table('admin_reimbursement', function (Blueprint $table) {
             $table->string('no_telp_direksi')->nullable()->after('no_referensi');
-            $table->string('no_telp_admin')->nullable()->after('no_telp_direksi');
         });
     }
 

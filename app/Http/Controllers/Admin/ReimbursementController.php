@@ -28,7 +28,7 @@ class ReimbursementController extends Controller
 
         $sortColumn = 'tgl_diajukan'; // Kolom untuk pengurutan
         $sortDirection = 'desc'; // Arah pengurutan (desc untuk descending, asc untuk ascending)
-        $sortColumn2 = 'no_doku_real';
+        $sortColumn2 = 'no_doku';
         $sortDirection2 = 'desc';
 
         if ($request->has('search')) {
@@ -36,11 +36,11 @@ class ReimbursementController extends Controller
                 ->where('judul_doku', 'LIKE', '%' . $request->search . '%')
                 ->orWhere('pemohon', 'LIKE', '%' . $request->search . '%')
                 ->orderBy('tgl_diajukan', 'desc')
-                ->orderBy('no_doku_real', 'desc')
+                ->orderBy('no_doku', 'desc')
                 ->paginate(1000);
         } elseif ($request->has('bulan')) {
             $query = DB::table('admin_reimbursement')
-                ->orderBy('no_doku_real', 'asc')
+                ->orderBy('no_doku', 'asc')
                 ->orderByRaw("
             CASE
                 WHEN status_approved = 'approved' THEN 1
