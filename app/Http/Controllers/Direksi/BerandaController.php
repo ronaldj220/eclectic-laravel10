@@ -16,7 +16,7 @@ class BerandaController extends Controller
         $statusWaiting = 'pending';
 
         $reimbursementQuery = DB::table('admin_reimbursement')
-            ->select('id', 'no_doku_real', 'pemohon', DB::raw("'reimbursement' as source"))
+            ->select('id', 'no_doku', 'pemohon', DB::raw("'reimbursement' as source"))
             ->whereIn('status_approved', [$statusWaiting])
             ->whereIn('status_paid', [$statusWaiting])
             ->where('menyetujui', $menyetujui);

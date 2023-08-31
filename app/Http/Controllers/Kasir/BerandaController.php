@@ -13,9 +13,9 @@ class BerandaController extends Controller
     public function index()
     {
         $title = 'Beranda';
-        dd(Auth::user()->nama);
+        // dd(Auth::user()->nama);
         $reimbursementQuery = DB::table('admin_reimbursement')
-            ->select('id', 'no_doku_real', 'pemohon', DB::raw("'reimbursement' as source"))
+            ->select('id', 'no_doku', 'pemohon', DB::raw("'reimbursement' as source"))
             ->whereIn('status_approved', ['approved'])
             ->whereIn('status_paid', ['pending']);
 
@@ -38,7 +38,7 @@ class BerandaController extends Controller
             ->union($cashAdvanceQuery)
             ->union($cashAdvanceReportQuery)
             ->union($purchaseOrderQuery)
-            ->orderBy('no_doku_real', 'desc')
+            ->orderBy('no_doku', 'desc')
             ->get();
 
         // Manual pagination

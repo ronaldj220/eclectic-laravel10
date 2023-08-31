@@ -277,15 +277,12 @@
                                                 <option value="Head of Business Development">Head of Business
                                                     Development</option>
                                                 <option value="Support Manager">Support Manager</option>
-                                                <option value="Admin">Admin</option>
                                             </select>
                                         </div>
                                         <div class="d-flex justify-content-center">
                                             <button type="submit" class="btn btn-primary"><i
                                                     class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Submit</button>
-                                            &nbsp;&nbsp;
-                                            <a href="{{ route('admin.menyetujui') }}" class="btn btn-danger"><i
-                                                    class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
+
                                         </div>
                                     </form>
                                 </div>

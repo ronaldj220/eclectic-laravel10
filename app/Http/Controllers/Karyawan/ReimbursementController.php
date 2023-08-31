@@ -21,7 +21,7 @@ class ReimbursementController extends Controller
     public function index(Request $request)
     {
         $title = 'Reimbursement';
-        $authId = Auth::guard('karyawan')->user()->nama;
+        $authId = Auth::user()->nama;
         if ($request->has('search')) {
             $dataReimbursement = DB::table('admin_reimbursement')
                 ->where('pemohon', 'LIKE', '%' . $request->search . '%')

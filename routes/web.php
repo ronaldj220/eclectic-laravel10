@@ -145,6 +145,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/reimbursement/edit_doc_RB/{id}', [ReimbursementController::class, 'edit_doc_RB'])->name('admin.reimbursement.edit_doc_RB');
     Route::post('/reimbursement/update_doc_RB/{id}', [ReimbursementController::class, 'update_doc_RB'])->name('admin.reimbursement.update_doc_RB');
     Route::get('/reimbursement/edit_RB/{id}', [ReimbursementController::class, 'edit_RB'])->name('admin.reimbursement.edit_RB');
+    Route::post('/reimbursement/update_RB/{id}', [ReimbursementController::class, 'update_RB'])->name('admin.reimbursement.update_RB');
     Route::get('/reimbursement/tambah_reimbursement', [ReimbursementController::class, 'tambah_reimbursement'])->name('admin.reimbursement.tambah_reimbursement');
     Route::post('/reimbursement/tambah_reimbursement', [ReimbursementController::class, 'simpan_reimbursement'])->name('admin.reimbursement.simpan_reimbursement');
     Route::get('/reimbursement/excel_reimbursement/{id}', [ReimbursementController::class, 'excel_reimbursement'])->name('admin.reimbursement.excel_reimbursement');

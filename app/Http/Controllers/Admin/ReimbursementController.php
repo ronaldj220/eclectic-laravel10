@@ -28,7 +28,7 @@ class ReimbursementController extends Controller
 
         $sortColumn = 'tgl_diajukan'; // Kolom untuk pengurutan
         $sortDirection = 'desc'; // Arah pengurutan (desc untuk descending, asc untuk ascending)
-        $sortColumn2 = 'no_doku';
+        $sortColumn2 = 'no_doku_real';
         $sortDirection2 = 'desc';
 
         if ($request->has('search')) {
@@ -259,7 +259,7 @@ class ReimbursementController extends Controller
                     $file->move(public_path('bukti_RB_admin'), $filePath);
                     $fileName = basename($filePath);
 
-                    $rb_detail->bukti_rb = $fileName;
+                    $rb_detail->bukti_reim = $fileName;
                 }
 
                 $rb_detail->no_bukti = $request->nobu[$deskripsi];
@@ -344,7 +344,7 @@ class ReimbursementController extends Controller
                         $file->move(public_path('bukti_RB_admin'), $filePath);
                         $fileName = basename($filePath);
 
-                        $rb_detail->bukti_rb = $fileName;
+                        $rb_detail['bukti_reim'] = $fileName;
                     }
 
                     $rb_detail->no_bukti = $request->nobu[$deskripsi];
@@ -403,7 +403,7 @@ class ReimbursementController extends Controller
                         $file->move(public_path('bukti_RB_admin'), $filePath);
                         $fileName = basename($filePath);
 
-                        $rb_detail->bukti_rb = $fileName;
+                        $rb_detail['bukti_reim'] = $fileName;
                     }
 
                     $rb_detail->no_bukti = $request->nobu[$deskripsi];
@@ -447,6 +447,69 @@ class ReimbursementController extends Controller
             'menyetujui' => $menyetujui,
             'rb_detail' => $rb_detail,
         ]);
+    }
+    public function update_RB(Request $request, $id)
+    {
+        if ($request->input('submitAction') == 'true') {
+            try {
+                $data = DB::table('admin_reimbursement')->where('id', $id)->first();
+                $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+                $tgl_diajukan = $tanggal->format('Y-m-d');
+
+                $reimbursement = [
+                    'no_doku_real' => $request->no_doku,
+                    'no_doku_draft' => null,
+                    'tgl_diajukan' => $tgl_diajukan,
+                    'judul_doku' => $request->judul_doku,
+                    'pemohon' => $request->pemohon,
+                    'accounting' => $request->accounting,
+                    'kasir' => $request->kasir,
+                    'menyetujui' => $request->nama_menyetujui,
+                    'no_telp_direksi' => $request->no_telp,
+                    'halaman' => 'RB',
+                    'status_approved' => 'rejected',
+                    'status_paid' => 'rejected'
+                ];
+
+                DB::table('admin_reimbursement')->where('id', $id)->update($reimbursement);
+
+                foreach ($request->deskripsi as $deskripsi => $value) {
+                    if ($request->flag[$deskripsi] == 'u') {
+                        $idItem = $request->id[$deskripsi];
+                        $rb_detail = Rb_Detail::find($idItem);
+                    } elseif ($request->flag[$deskripsi] == 'i') {
+                        $rb_detail = new Rb_Detail();
+                    }
+                    $rb_detail->deskripsi = $value;
+
+                    if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
+                        $file = $request->file('foto')[$deskripsi];
+
+                        // Menyimpan gambar asli tanpa kompresi
+                        $filePath = 'bukti_RB_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                        $file->move(public_path('bukti_RB_admin'), $filePath);
+                        $fileName = basename($filePath);
+
+                        $rb_detail->bukti_reim = $fileName;
+                    }
+
+                    $rb_detail->no_bukti = $request->nobu[$deskripsi];
+                    $rb_detail->curr = $request->kurs_rb[$deskripsi];
+                    $rb_detail->nominal = $request->nom_rb[$deskripsi];
+                    $rb_detail->tanggal_1 = $request->tgl1[$deskripsi];
+                    $rb_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
+                    $rb_detail->keperluan = $request->project[$deskripsi];
+                    $rb_detail->fk_rb = $id;
+
+                    // $rbDetails[] = $rb_detail;
+                    $rb_detail->save();
+                }
+                $halaman = $data->halaman;
+                return redirect()->route('admin.reimbursement')->with('success', 'Data ' . $halaman . ' Berhasil Diperbarui');
+            } catch (Exception $e) {
+                return redirect()->route('admin.reimbursement')->with('gagal', $e->getMessage());
+            }
+        }
     }
     public function getNomor(Request $request)
     {

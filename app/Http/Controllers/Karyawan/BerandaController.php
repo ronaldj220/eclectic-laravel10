@@ -13,7 +13,7 @@ class BerandaController extends Controller
     {
         $title = 'Beranda';
         $authId = Auth::user()->nama;
-        dd($authId);
+        // dd($authId);
         $dataReimbursement = DB::table('admin_reimbursement')
             ->where('pemohon', $authId)
             ->orderBy('no_doku', 'asc')

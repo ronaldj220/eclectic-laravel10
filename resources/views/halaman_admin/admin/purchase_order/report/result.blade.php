@@ -1,3 +1,7 @@
+@php
+    use Carbon\Carbon;
+@endphp
+
 <!doctype html>
 <html lang="en">
 
@@ -12,7 +16,9 @@
 </head>
 
 <body>
-    <?php $totalPPN = 0; ?>
+    @php
+        $totalAll = 0;
+    @endphp
     <div class="container">
         <figure class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
             <b><a style="text-transform: uppercase;">purchase order</a></b>
@@ -238,7 +244,8 @@
                         </td>
                     </tr>
                 @endif
-                <?php $totalAll = $totalPO + $ppnValue - $pphValue; ?>
+                <?php $totalAll2 = $totalPO + $ppnValue - $pphValue; ?>
+                <?php $totalAll += $totalPO + $ppnValue - $pphValue; ?>
                 <tr style="font-weight: bold" class="print_jumlah">
                     <td colspan="4" class="text-end">Grand Total</td>
                     <td class="text-center">
@@ -254,22 +261,57 @@
                     </td>
                     <td class="text-end">
                         @if ($item->curr == 'IDR')
-                            {{ number_format($totalAll, 2, ',', '.') }}
+                            {{ number_format($totalAll2, 2, ',', '.') }}
                         @elseif ($item->curr == 'USD')
-                            {{ number_format($totalAll, 2, ',', '.') }}
+                            {{ number_format($totalAll2, 2, ',', '.') }}
                         @elseif ($item->curr == 'SGD')
-                            {{ number_format($totalAll, 2, ',', '.') }}
+                            {{ number_format($totalAll2, 2, ',', '.') }}
                         @elseif ($item->curr == 'EUR')
-                            {{ number_format($totalAll, 2, ',', '.') }}
+                            {{ number_format($totalAll2, 2, ',', '.') }}
                         @endif
                     </td>
                 </tr>
             </table>
+            <?php
+            $carbonDate = Carbon::createFromFormat('Y-m-d', $items[0]->tgl_purchasing)->locale('id');
+            $formattedDate = $carbonDate->isoFormat('DD MMMM YYYY');
+            ?>
             <p
                 style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; text-align: right; margin-top: -10px;">
                 Surabaya,
-                {{ $items[0]->tgl_purchasing }}</p>
+                {{ $formattedDate }}</p>
+            <div style="margin-top: 20px">
+                <table class="table is-striped table-bordered border-dark text-center"
+                    style="font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
+                    <tr style="height:2cm;">
+                        <td style="width:25%">
+                            <div class="center" style="text-transform: uppercase">purchasing,</div>
+                            <div style="margin-top: 70px"></div>
+                            <div class="center">{{ $items[0]->pemohon }}</div>
+                        </td>
+                        <td style="width:25%">
+                            <div class="center" style="text-transform: uppercase">accounting,</div>
+                            <div style="margin-top: 70px"></div>
+                            <div class="center">{{ $items[0]->acc }}</div>
+                        </td>
+                        <td style="width:25%">
+                            <div class="center" style="text-transform: uppercase">kasir,</div>
+                            <div style="margin-top: 70px"></div>
+                            <div class="center">{{ $items[0]->kasir }}</div>
+                        </td>
+                        <td style="width:25%">
+                            <div class="center" style="text-transform: uppercase">menyetujui,</div>
+                            <div style="margin-top: 70px"></div>
+                            <div class="center">{{ $items[0]->menyetujui }}</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         @endforeach
+        <div class="text-end fw-bold">
+            Total PO {{ date('d.m.Y', strtotime($tgl_awal)) }} - {{ date('d.m.Y', strtotime($tgl_akhir)) }} Rp.
+            {{ number_format($totalAll, 2, ',', '.') }}
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous">

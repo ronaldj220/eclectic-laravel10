@@ -232,10 +232,10 @@
                         <br>
                         <b><a style="text-transform: uppercase;">PT. Eclectic Consulting</a></b>
                     </figure>
-                    <form action=# method="POST" id="formId" enctype="multipart/form-data">
+                    <form action="{{ route('admin.reimbursement.update_RB', $reimbursement->id) }}" method="POST"
+                        id="formId" enctype="multipart/form-data">
                         @csrf
                         <!-- Tambahkan input tersembunyi untuk menandai tombol "Save as Draft" ditekan -->
-                        <input type="hidden" name="draftAction" value="true">
                         <input type="hidden" name="submitAction" value="true">
                         <table class="table table-borderless table-sm"
                             style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 12px; margin-left: -5px;">
@@ -282,7 +282,7 @@
                                             {{ $no++ . '.' }}</td>
                                         <td style="text-transform:capitalize;">
                                             <input type="hidden" name="id[]" value="{{ $item->id }}">
-                                            <input type="hidden" name=flag[] value='u'>
+                                            <input type="hidden" name=flag[] value='i'>
                                             <input type="text" name="deskripsi[]"
                                                 placeholder="Tuliskan deskripsi di kolom ini." style="width: 50%"
                                                 value="{{ $item->deskripsi }}">
@@ -387,13 +387,8 @@
                             </table>
                         </div>
                         <div class="d-flex justify-content-center">
-
-                            <button type="button" class="btn btn-warning" id="draftBtn" name="draftBtn"><i
-                                    class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Save as Draft</button>
-                            &nbsp;
                             <button type="button" class="btn btn-primary" id="submitBtn" name="submitBtn"><i
                                     class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Submit</button>
-
                         </div>
                     </form>
 
@@ -546,27 +541,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const draftBtn = document.getElementById('draftBtn');
             const submitBtn = document.getElementById('submitBtn');
-            const draftActionInput = document.querySelector('input[name="draftAction"]');
             const submitActionInput = document.querySelector('input[name="submitAction"]');
 
-            draftBtn.addEventListener('click', function() {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Are you sure?',
-                    text: 'Do you want to save your changes as a draft?',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, Save as Draft',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        draftActionInput.value = 'true'; // Isi nilai input tersembunyi
-                        submitActionInput.value = 'false'; // Isi nilai input tersembunyi
-                        document.getElementById('formId').submit();
-                    }
-                });
-            });
             submitBtn.addEventListener('click', function() {
                 Swal.fire({
                     icon: 'question',
@@ -578,7 +555,6 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         submitActionInput.value = 'true'; // Isi nilai input tersembunyi
-                        draftActionInput.value = 'false'; // Isi nilai input tersembunyi
                         document.getElementById('formId').submit();
                     }
                 });
