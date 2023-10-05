@@ -17,13 +17,18 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    @if (Session::has('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ Session::get('success') }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
+                    @if (session('success'))
+                        <script>
+                            window.addEventListener('DOMContentLoaded', function() {
+                                Swal.fire({
+                                    title: 'Berhasil!',
+                                    text: '{{ session('success') }}',
+                                    icon: 'success',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            });
+                        </script>
                     @endif
                     <table class="table table-borderless table-lg"
                         style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 16px; margin-right: 150px">
@@ -65,8 +70,24 @@
                                     <br>
                                     <p style="text-align: center">PO</p>
                                 </th>
+                            @elseif (Auth::user()->jabatan == 'Accounting')
+                                <th>
+                                    <!-- Nav Item - Tables -->
+                                    <a href="{{ route('karyawan.purchase_request.tambah_PR') }}" data-toggle="tooltip"
+                                        data-placement="bottom" title="Buat Purchase Request"><img
+                                            src="{{ asset('123.png') }}" width="80"></a>
+                                    <br>
+                                    <p style="text-align: center">PR</p>
+                                </th>
+                                <th>
+                                    <!-- Nav Item - Tables -->
+                                    <a href="{{ route('karyawan.purchase_order.tambah_PO') }}" data-toggle="tooltip"
+                                        data-placement="bottom" title="Buat Purchase Order"><img
+                                            src="{{ asset('images.png') }}" width="65"></a>
+                                    <br>
+                                    <p style="text-align: center">PO</p>
+                                </th>
                             @endif
-
                         </tr>
 
                     </table>

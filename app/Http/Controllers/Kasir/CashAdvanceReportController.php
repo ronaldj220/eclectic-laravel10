@@ -50,10 +50,13 @@ class CashAdvanceReportController extends Controller
         } else {
             $dataCAR = DB::table('admin_cash_advance_report')
                 ->orderBy('no_doku', 'desc')
+                ->orderByRaw("CASE 
+            WHEN status_approved = 'approved' AND status_paid = 'pending' THEN 1
+            WHEN status_approved = 'approved' THEN 2
+            ELSE 2
+        END")
                 ->where('pemohon', $kasir)
                 ->orWhere('kasir', $kasir)
-                ->whereIn('status_approved', ['rejected', 'approved'])
-                ->whereIn('status_paid', ['rejected', 'pending'])
                 ->paginate(20);
         }
 

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Karyawan;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class BerandaController extends Controller
 {
@@ -69,24 +71,27 @@ class BerandaController extends Controller
     }
     public function update_profile_karyawan(Request $request, $id)
     {
-        $folderPath = public_path('ttd_karyawan/'); // create signatures folder in public directory
-        $image_parts = explode(";base64,", $request->signed);
+
+        $image_parts = explode(";base64,", $request->input('signature'));
         $image_type_aux = explode("image/", $image_parts[0]);
         $image_type = $image_type_aux[1];
         $image_base64 = base64_decode($image_parts[1]);
-        $namaFileSignature = uniqid() . '.' . $image_type; // Generate unique filename for the signature
+        $filename = 'TTD_' . date('YmdHis') . '.' . $image_type;
 
-        $file = $folderPath . $namaFileSignature;
-        file_put_contents($file, $image_base64);
-
-        DB::table('karyawan')->where('id', $id)->update([
+        $filePath = 'signatures/' . $filename;
+        $fullFilePath = public_path($filePath);
+        // Simpan file dalam direktori public
+        file_put_contents($fullFilePath, $image_base64);
+        $data = [
             'email' => $request->email,
             'nama' => $request->nama,
+            'password' => Hash::make($request->password),
             'no_rekening' => $request->no_rekening,
             'bank' => $request->bank,
-            'signature' => $namaFileSignature
-        ]);
-
+            'ttd' => $filename
+        ];
+        // dd($data);
+        User::where('id', $id)->update($data);
         return redirect()->route('karyawan.beranda')->with('success', 'Karyawan Berhasil Diperbarui!');
     }
 }

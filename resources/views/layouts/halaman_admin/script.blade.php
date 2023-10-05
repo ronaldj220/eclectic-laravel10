@@ -10,3 +10,17 @@
 <script src="{{ asset('assets/js/tooltip.js') }}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function showSuccessToast(message) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: message,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+    }
+</script>

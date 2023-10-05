@@ -6,6 +6,7 @@ use App\Exports\Kasir\PurchaseOrderExports;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Purchase_Order;
 use App\Models\Admin\Purchase_Order_Detail;
+use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class PurchaseOrderController extends Controller
     public function index(Request $request)
     {
         $title = 'Purchase Order';
-        $kasir = Auth::guard('kasir')->user()->nama;
+        $kasir = Auth::user()->nama;
         if ($request->has('search')) {
             $dataPO = DB::table('admin_purchase_order as a')
                 ->select(
@@ -38,8 +39,9 @@ class PurchaseOrderController extends Controller
                         ->whereColumn('a.id', 'd.fk_po')
                         ->limit(1);
                 }, 'judul')
-                ->leftJoin('admin_purchase_request as b', 'a.no_doku', '=', 'b.no_doku')
+                ->leftJoin('admin_purchase_request as b', 'a.tipe_pr', '=', 'b.no_doku')
                 ->where('a.supplier', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('d.judul', 'LIKE', '%' . $request->search . '%')
                 ->where(function ($query) {
                     $query->where(function ($query) {
                         $query->where('a.pemohon', 'Suzy. A')
@@ -306,12 +308,19 @@ class PurchaseOrderController extends Controller
                 $no_dokumen = sprintf("%02s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . date('Y');
             }
         }
-        $karyawan = Auth::guard('kasir')->user()->nama;
+        $karyawan = Auth::user()->nama;
         $tipe_pr = DB::select('SELECT * FROM admin_purchase_request WHERE pemohon = ?', [$karyawan]);
         $pemohon = DB::select('SELECT * FROM karyawan');
-        $accounting = DB::select('SELECT * FROM accounting');
-        $kasir = DB::select('SELECT * from kasir');
-        $menyetujui = DB::select('SELECT * from menyetujui');
+        $accounting = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 2)
+            ->get();
+        $kasir = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 3)
+            ->get();
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->orderBy('nama', 'asc')
+            ->get();
         $kurs = DB::select('SELECT * FROM kurs');
 
         $supplier = DB::select('SELECT * FROM supplier WHERE PIC = ?', [$karyawan]);

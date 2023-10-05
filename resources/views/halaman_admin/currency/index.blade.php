@@ -28,15 +28,7 @@
                                 Currency</a>
                             @if (session('success'))
                                 <script>
-                                    window.addEventListener('DOMContentLoaded', function() {
-                                        Swal.fire({
-                                            title: 'Berhasil!',
-                                            text: '{{ session('success') }}',
-                                            icon: 'success',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        });
-                                    });
+                                    showSuccessToast('{{ session('success') }}');
                                 </script>
                             @endif
                             <div class="table-responsive">

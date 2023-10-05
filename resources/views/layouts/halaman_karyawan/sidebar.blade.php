@@ -71,6 +71,26 @@
                 <i class="fa-solid fa-cart-arrow-down"></i>
                 <span>Purchase Order</span></a>
         </li>
+    @elseif (Auth::user()->jabatan == 'Accounting')
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <!-- Nav Item - Tables -->
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('karyawan.purchase_request') }}">
+                <i class="fa-solid fa-chart-bar"></i>
+                <span>Purchase Request</span></a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0">
+
+        <!-- Nav Item - Tables -->
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('karyawan.purchase_order') }}">
+                <i class="fa-solid fa-cart-arrow-down"></i>
+                <span>Purchase Order</span></a>
+        </li>
     @endif
 
     <!-- Divider -->
@@ -98,6 +118,13 @@
                 <span>Help</span></a>
         </li>
     @elseif (Auth::user()->jabatan == 'Staff')
+        <li class="nav-item">
+            <a class="nav-link"
+                href="https://drive.google.com/file/d/1AFEoQgVbNCqmZuyB98W3pvWQflVISr-5/view?usp=sharing">
+                <i class="fa-regular fa-circle-question"></i>
+                <span>Help</span></a>
+        </li>
+    @elseif (Auth::user()->jabatan == 'Accounting')
         <li class="nav-item">
             <a class="nav-link"
                 href="https://drive.google.com/file/d/1AFEoQgVbNCqmZuyB98W3pvWQflVISr-5/view?usp=sharing">

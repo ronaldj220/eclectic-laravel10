@@ -7,8 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\Cash_Advance;
 use App\Models\Admin\CashAdvanceReport;
 use App\Models\Admin\CashAdvanceReportDetail;
+use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -19,7 +21,7 @@ class CashAdvanceReportController extends Controller
 {
     public function index(Request $request)
     {
-        $title = 'Cash Advance Report';
+        $title = 'CAR';
         if ($request->has('search')) {
             $dataCashAdvanceReport = DB::table('admin_cash_advance_report')
                 ->where('judul_doku', 'LIKE', '%' . $request->search . '%')
@@ -28,6 +30,26 @@ class CashAdvanceReportController extends Controller
                 ->orderBy('tgl_diajukan', 'desc')
                 ->orderBy('no_doku', 'desc')
                 ->paginate(1000);
+        } elseif ($request->has('bulan')) {
+            $query = DB::table('admin_cash_advance_report')
+                ->orderBy('no_doku', 'asc')
+                ->orderByRaw("
+            CASE
+                WHEN status_approved = 'approved' THEN 1
+                WHEN status_approved = 'pending' THEN 2
+                WHEN status_approved = 'rejected' THEN 3
+                ELSE 4
+            END
+        ");
+
+            // Memeriksa apakah parameter bulan dikirimkan dalam request POST
+            if ($request->has('bulan')) {
+                $bulan = $request->bulan;
+                $query->whereMonth('tgl_diajukan', date('m', strtotime($bulan)))
+                    ->whereYear('tgl_diajukan', date('Y', strtotime($bulan)));
+            }
+
+            $dataCashAdvanceReport = $query->paginate(100);
         } else {
             $dataCashAdvanceReport = DB::table('admin_cash_advance_report')
                 ->orderBy('no_doku', 'desc')
@@ -39,37 +61,10 @@ class CashAdvanceReportController extends Controller
             'cashAdvance' => $dataCashAdvanceReport
         ]);
     }
-    public function search_by_date(Request $request)
-    {
-        $title = 'Cash Advance Report';
-        $query = DB::table('admin_cash_advance_report')
-            ->orderBy('no_doku', 'asc')
-            ->orderByRaw("
-            CASE
-                WHEN status_approved = 'approved' THEN 1
-                WHEN status_approved = 'pending' THEN 2
-                WHEN status_approved = 'rejected' THEN 3
-                ELSE 4
-            END
-        ");
 
-        // Memeriksa apakah parameter bulan dikirimkan dalam request POST
-        if ($request->has('bulan')) {
-            $bulan = $request->bulan;
-            $query->whereMonth('tgl_diajukan', date('m', strtotime($bulan)))
-                ->whereYear('tgl_diajukan', date('Y', strtotime($bulan)));
-        }
-
-        $dataCashAdvanceReport = $query->paginate(100);
-
-        return view('halaman_admin.admin.cash_advance_report.index', [
-            'title' => $title,
-            'cashAdvance' => $dataCashAdvanceReport
-        ]);
-    }
     public function tambah_CAR()
     {
-        $title = 'Cash Advance Report';
+        $title = 'Tambah CAR';
         $AWAL = 'CAR';
         $bulanRomawi = array("", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12");
         $noUrutAkhir = DB::table('admin_cash_advance_report')
@@ -81,7 +76,7 @@ class CashAdvanceReportController extends Controller
         $no_dokumen = null;
         $currentMonth = date('n');
         if (date('j') == 1) {
-            $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir));
+            $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
         } else {
             if ($noUrutAkhir) {
                 $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
@@ -90,28 +85,29 @@ class CashAdvanceReportController extends Controller
             }
         }
         // dd($no_dokumen);
-        $accounting = DB::select('SELECT * FROM accounting');
-        $kasir = DB::select('SELECT * from kasir');
-        $menyetujui = DB::select('SELECT * from menyetujui');
+        $accounting = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 2)
+            ->get();
+        $kasir = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 3)
+            ->get();
 
-        $cash_advance = DB::select('SELECT * FROM admin_cash_advance ORDER BY no_doku ASC');
+        $cash_advance = DB::select('
+        SELECT ca.no_doku
+        FROM admin_cash_advance ca
+        LEFT JOIN admin_cash_advance_report car ON ca.no_doku = car.tipe_ca
+        WHERE car.no_doku IS NULL
+        ORDER BY ca.tgl_diajukan DESC
+        ');
 
         $currency = DB::select('SELECT * FROM kurs');
-        $karyawan = DB::table('karyawan')
-            ->select('nama')
-            ->union(DB::table('menyetujui')->select('nama'))
-            ->union(DB::table('kasir')->select('nama'))
-            ->orderBy('nama')
-            ->get();
         return view('halaman_admin.admin.cash_advance_report.tambah_cash_advance_report', [
             'title' => $title,
             'no_dokumen' => $no_dokumen,
             'accounting' => $accounting,
             'kasir' => $kasir,
-            'menyetujui' => $menyetujui,
             'kurs' => $currency,
             'cash_advance' => $cash_advance,
-            'karyawan' => $karyawan
         ]);
     }
     public function getNominal(Request $request)
@@ -123,6 +119,7 @@ class CashAdvanceReportController extends Controller
 
         return response()->json(
             [
+                'judul_doku' => $result[0]->judul_doku,
                 'nominal_ca' => $nominal,
                 'pemohon' => $result[0]->pemohon,
                 'nama_menyetujui' => $result[0]->menyetujui,
@@ -182,7 +179,7 @@ class CashAdvanceReportController extends Controller
     }
     public function view_cash_advance_report($id)
     {
-        $title = 'Lihat Cash Advance Report';
+        $title = 'Lihat CAR';
         $cashAdvanceReport = CashAdvanceReport::find($id);
         $CAR_Detail = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->get();
         $nominal = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->sum('nominal');
@@ -291,7 +288,7 @@ class CashAdvanceReportController extends Controller
     }
     public function print_cash_advance_report($id)
     {
-        $title = 'Cetak Cash Advance Report';
+        $title = 'Cetak CAR';
         $cash_advance_report = DB::table('admin_cash_advance_report')->find($id);
         $cash_advance_report_detail = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->get();
         $nominal_CAR = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->sum('nominal');
@@ -305,7 +302,7 @@ class CashAdvanceReportController extends Controller
     }
     public function print_bukti_cash_advance_report($id)
     {
-        $title = 'Cetak Bukti Cash Advance Report';
+        $title = 'Cetak Bukti CAR';
         $bukti_CAR = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->get();
         return view('halaman_admin.admin.cash_advance_report.print_bukti_cash_advance_report', [
             'title' => $title,
@@ -314,69 +311,98 @@ class CashAdvanceReportController extends Controller
     }
     public function edit_CAR($id)
     {
-        $title = 'Edit Cash Advance Report';
+        $title = 'Edit CAR';
         $CAR = DB::table('admin_cash_advance_report')->where('id', $id)->first();
-        $menyetujui = DB::select('SELECT * from menyetujui');
+        $originalDate = $CAR->tgl_diajukan;
+        $formattedDate = date('d/m/Y', strtotime($originalDate));
+        $CAR_detail = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->get();
         $currency = DB::select('SELECT * FROM kurs');
         $cash_advance = DB::select('SELECT * FROM admin_cash_advance');
-
-
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->orderBy('nama', 'asc')
+            ->get();
         return view('halaman_admin.admin.cash_advance_report.edit_CAR', [
             'title' => $title,
             'CAR' => $CAR,
-            'menyetujui' => $menyetujui,
+            'tgl_diajukan' => $formattedDate,
+            'CAR_detail' => $CAR_detail,
             'kurs' => $currency,
-            'cash_advance' => $cash_advance
+            'cash_advance' => $cash_advance,
+            'menyetujui' => $menyetujui,
+            'count' => count($CAR_detail)
         ]);
     }
     public function update_CAR(Request $request, $id)
     {
-        $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
-        $tgl_diajukan = $tanggal->format('Y-m-d');
+        if ($request->input('submitAction') == 'true') {
 
-        DB::table('admin_cash_advance_report')
-            ->where('id', $id)
-            ->update([
-                'no_doku' => $request->no_doku,
-                'tgl_diajukan' => $tgl_diajukan,
-                'judul_doku' => $request->judul_doku,
-                'tipe_ca' => $request->tipe_ca_id,
-                'nominal_ca' => $request->nominal_ca,
-                'pemohon' => $request->pemohon,
-                'accounting' => $request->accounting,
-                'kasir' => $request->kasir,
-                'menyetujui' => $request->nama_menyetujui
-            ]);
+            try {
+                $data = DB::table('admin_cash_advance_report')->where('id', $id)->first();
 
-        foreach ($request->deskripsi as $deskripsi => $value) {
-            $CAR_detail = [
-                'deskripsi' => $value,
-                'no_bukti' => $request->nobu[$deskripsi],
-                'curr' => $request->kurs[$deskripsi],
-                'nominal' => $request->nom[$deskripsi],
-                'tanggal_1' => $request->tgl1[$deskripsi],
-                'tanggal_2' => isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null,
-                'keperluan' => $request->keperluan[$deskripsi],
-                'fk_ca' => $id
-            ];
+                $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+                $tgl_diajukan = $tanggal->format('Y-m-d');
 
-            if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
-                $files = $request->file('foto');
+                $CAR = [
+                    'no_doku' => $request->no_doku,
+                    'tgl_diajukan' => $tgl_diajukan,
+                    'judul_doku' => $request->judul_doku,
+                    'tipe_ca' => $request->tipe_ca,
+                    'nominal_ca' => $request->nominal_ca,
+                    'pemohon' => $request->pemohon,
+                    'accounting' => $request->accounting,
+                    'kasir' => $request->kasir,
+                    'menyetujui' => $request->nama_menyetujui,
+                    'no_telp' => $request->no_telp,
+                    'status_approved' => 'rejected',
+                    'status_paid' => 'rejected'
+                ];
 
-                $file = $files[$deskripsi];
-                $fileExtension = $file->getClientOriginalExtension();
-                $fileName = time() . '_' . $deskripsi . '.' . $fileExtension;
-                $filePath = public_path('bukti_ca/') . $fileName;
+                // dd($CAR);
 
-                $file->move(public_path('bukti_ca/'), $filePath);
+                DB::table('admin_cash_advance_report')->where('id', $id)->update($CAR);
 
-                $CAR_Detail['bukti_ca'] = $fileName;
+                // dd($request->deskripsi);
+                foreach ($request->deskripsi as $deskripsi => $value) {
+                    if ($request->flag[$deskripsi] == 'u') {
+                        $idItem = $request->id[$deskripsi];
+                        $CAR_detail = CashAdvanceReportDetail::find($idItem);
+                    } elseif ($request->flag[$deskripsi] == 'i') {
+                        $CAR_detail = new CashAdvanceReportDetail();
+                    }
+                    dd($CAR_detail);
+                    // $CAR_detail->deskripsi = $value;
+
+                    // if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
+                    //     $file = $request->file('foto')[$deskripsi];
+
+                    //     // Menyimpan gambar asli tanpa kompresi
+                    //     $filePath = 'bukti_CAR_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                    //     $file->move(public_path('bukti_CAR_admin'), $filePath);
+                    //     $fileName = basename($filePath);
+
+                    //     $CAR_detail->bukti_ca = $fileName;
+                    // }
+                    // $CAR_detail->no_bukti = $request->nobu[$deskripsi];
+                    // $CAR_detail->curr = $request->kurs_rb[$deskripsi];
+                    // $CAR_detail->nominal = $request->nom_rb[$deskripsi];
+                    // $CAR_detail->tanggal_1 = $request->tgl1[$deskripsi];
+                    // $CAR_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
+                    // $CAR_detail->keperluan = $request->project[$deskripsi];
+                    // $CAR_detail->fk_ca = $id;
+
+                    // $rbDetails[] = $CAR_detail;
+
+                    // dd($rbDetails);
+
+                    $CAR_detail->save();
+                }
+                $no_doku = $data->no_doku;
+                return redirect()->route('admin.cash_advance_report')->with('success', 'Data ' . $no_doku . ' Berhasil Diperbarui');
+            } catch (Exception $e) {
+                dd($e->getMessage());
             }
-            DB::table('admin_cash_advance_report_detail')
-                ->where('fk_ca', $id)
-                ->update($CAR_detail);
         }
-        return redirect()->route('admin.cash_advance_report')->with('success', 'Data Cash Advance Report Berhasil Diperbarui!');
     }
     public function paid_CAR($id, Request $request)
     {

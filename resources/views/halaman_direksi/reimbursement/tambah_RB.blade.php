@@ -1,130 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Eclectic (Direksi) | {{ $title }}</title>
-
-    <!-- Custom fonts for this template-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
-
-    <!-- Custom styles for this template-->
-    <link href="{{ asset('assets') }}/css/sb-admin-2.min.css" rel="stylesheet">
-
-    <link rel="icon" href="{{ asset('logo.png') }}">
-
-</head>
+@include('layouts.halaman_direksi.header')
 
 <body id="page-top">
 
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient sidebar sidebar-dark accordion" id="accordionSidebar"
-            style="background-color: #900C3F">
-
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center"
-                href="{{ route('direksi.beranda') }}">
-                <div class="sidebar-brand-icon">
-                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
-                </div>
-                <div class="sidebar-brand-text">
-                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
-                </div>
-
-            </a>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item ">
-                <a class="nav-link" href="{{ route('direksi.beranda') }}">
-                    <i class="fa-solid fa-home"></i>
-                    <span>Beranda</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('direksi.reimbursement') }}">
-                    <i class="fa-solid fa-hand-holding-heart"></i>
-                    <span>Reimbursement</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('direksi.cash_advance') }}">
-                    <i class="fa-solid fa-sack-dollar"></i>
-                    <span>Cash Advance</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('direksi.cash_advance_report') }}">
-                    <i class="fa-solid fa-file-invoice-dollar"></i>
-                    <span>Cash Advance Report</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('direksi.purchase_request') }}">
-                    <i class="fa-solid fa-chart-bar"></i>
-                    <span>Purchase Request</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('direksi.purchase_order') }}">
-                    <i class="fa-solid fa-cart-arrow-down"></i>
-                    <span>Purchase Order</span></a>
-            </li>
-
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link"
-                    href="https://drive.google.com/file/d/1BygET-_qrafRbWvjUho_qb8m3GOdQzqF/view?usp=sharing">
-                    <i class="fa-regular fa-circle-question"></i>
-                    <span>Help</span></a>
-            </li>
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-
-
-        </ul>
-        <!-- End of Sidebar -->
+        @include('layouts.halaman_direksi.sidebar')
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -132,226 +13,166 @@
             <!-- Main Content -->
             <div id="content">
 
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                @include('layouts.halaman_direksi.topbar')
 
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
+                <div class="container">
+                    <figure class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                        <b><a style="text-transform: uppercase;">reimbursement</a></b>
+                        <br>
+                        <b><a style="text-transform: uppercase;">PT. Eclectic Consulting</a></b>
+                    </figure>
+                    <form action="{{ route('karyawan.reimbursement.simpan_reimbursement') }}" method="POST"
+                        id="formId" enctype="multipart/form-data">
+                        @csrf
+                        <!-- Tambahkan input tersembunyi untuk menandai tombol "Save as Draft" ditekan -->
+                        <input type="hidden" name="draftAction" value="true">
+                        <input type="hidden" name="submitAction" value="true">
+                        <table class="table table-borderless table-sm"
+                            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 12px; margin-left: -5px;">
+                            <tr>
+                                <td>No<br>Tanggal</td>
+                                <td>: <input type="text" name="no_doku" readonly><br>:<input type="text" readonly
+                                        name="tgl_diajukan" value="{{ date('d/m/Y') }}">
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="table is-striped table-bordered border-dark table-sm"
+                            style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 12px; margin-top: -20px;">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 6%">No.</th>
+                                    <th class="text-center" style="width: 50%">Keterangan</th>
+                                    <th class="text-center" style="width: 10%;">No. Bukti</th>
+                                    <th class="text-center" style="width: 5%">Curr</th>
+                                    <th class="text-center" style="width: 15%">Nominal</th>
+                                </tr>
 
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
+                                <!-- table title --->
+                                <tr>
+                                    <th class="text-center " style="width: 100%; text-transform:capitalize;"
+                                        colspan="5">
+                                        <input type="text" name="judul_doku"
+                                            placeholder="Isikan Keterangan RB disini. Contoh: keperluan kantor, keperluan project ABC, keperluan tender ABC."
+                                            style="width: 50%">
 
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span
-                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::guard('direksi')->user()->nama }}
-                                    <br>
-                                    <small>{{ Auth::guard('direksi')->user()->jabatan }}</small></span>
-                                <img class="img-profile rounded-circle"
-                                    src="{{ asset('assets') }}/img/undraw_profile_2.svg">
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
-
-                                <a class="dropdown-item" href="{{ route('direksi.beranda.profile') }}">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile ({{ Auth::guard('direksi')->user()->nama }}) |
-                                    {{ Auth::guard('direksi')->user()->jabatan }}
-                                </a>
-                                <a class="dropdown-item" href="#" data-toggle="modal"
-                                    data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </div>
-                        </li>
-
-                    </ul>
-
-                </nav>
-                <!-- End of Topbar -->
-
-                <!-- Begin Page Content -->
-                <div class="container" style="margin-top: -10px; margin-right: -20px">
-                    <div class="row">
-                        <div class="col-lg-8">
-                            <!-- DataTales Example -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary text-center">Tambah Reimbursement
-                                    </h6>
-                                </div>
-                                <div class="card-body">
-                                    <form action="{{ route('direksi.reimbursement.simpan_RB') }}" method="POST"
-                                        enctype="multipart/form-data">
-                                        @csrf
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail1">No Dokumen</label>
-                                            <input type="text" class="form-control" id="exampleInputEmail1"
-                                                aria-describedby="emailHelp" name="no_doku" readonly
-                                                value="{{ $no_dokumen }}">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Tanggal</label>
-                                            <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="tgl_diajukan" value="{{ date('d/m/Y') }}" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Keterangan</label>
-                                            <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="judul_doku" autofocus>
-                                            <small id="emailHelp" class="form-text text-muted">Contoh: keperluan
-                                                kantor, keperluan project ABC, keperluan tender ABC.</small>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Pemohon</label>
-                                            <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="pemohon" value="{{ Auth::guard('direksi')->user()->nama }}"
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="detail">
+                                <?php $no = 1; ?>
+                                <tr>
+                                    <td class="text-center" style="max-width: 5%; text-align: center;">
+                                        {{ $no . '.' }}</td>
+                                    <td style="text-transform:capitalize;">
+                                        <input type="text" name="deskripsi[]"
+                                            placeholder="Tuliskan deskripsi di kolom ini." style="width: 50%"
+                                            class="validate-input" data-validate="Deskripsi Harap Diisi!">
+                                        &nbsp;
+                                        <input type="text" name="project[]" placeholder="Isi Keperluan Project"
+                                            style="width: 25%" class="validate-input"
+                                            data-validate="Project Harap Diisi!"> &nbsp; <input type="file"
+                                            name="foto[]" accept=".jpg, .png, .jpeg" style="width: 20%;" class="img"
+                                            onchange="readUrl(this);" nomerData={{ $no }}>
+                                        <br>
+                                        <img id="blah{{ $no++ }}" src="" alt="your image"
+                                            class="review">
+                                        <input type="date" name="tgl1[]" style="width:20%">
+                                        &nbsp; s/d &nbsp;
+                                        <input type="date" name="tgl2[]" style="width:23%">
+                                        <span style="margin-left: 170px">Harus JPG atau PNG</span>
+                                    </td>
+                                    <td class="text-center" style="max-width: 5%;">
+                                        <input type="text" name="nobu[]" placeholder="Nomor Bukti"
+                                            style="text-align: center; width: 100%">
+                                        Nomor Struk, Nota, Atau <i>Receipt</i>
+                                    </td>
+                                    <td class="text-end">
+                                        <select name="kurs_rb[]" style="text-align: center;">
+                                            <option value=""> --- Pilih --- </option>
+                                            @foreach ($kurs as $item)
+                                                <option value="{{ $item->mata_uang }}"
+                                                    {{ $item->mata_uang == 'IDR' ? 'selected' : '' }}>
+                                                    {{ $item->mata_uang }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" name='nom_rb[]' style="text-align:right; width: 100%"
+                                            placeholder="Input Nominal">
+                                    </td>
+                                </tr>
+                                <!-- Tabel detail akan ditambahkan di sini oleh JavaScript -->
+                            </tbody>
+                        </table>
+                        <a href="javascript:;" class="btn btn-info justify-content-between btn-sm" onclick="addRB()"><i
+                                class="fa-solid fa-circle-plus fa-bounce"></i>&nbsp;Add
+                            More</a>
+                        <div style="margin-top: 30px;">
+                            <table class="table is-striped table-bordered border-dark text-center"
+                                style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; margin-top: -20px;">
+                                <tr>
+                                    <td style="width:25%">
+                                        <div class="text-center" style="font-weight: bold">Pemohon, &nbsp;<input
+                                                type="text" name="pemohon" value="{{ Auth::user()->nama }}"
                                                 readonly>
+                                            </select>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Accounting</label>
-                                            <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="accounting" value="{{ $accounting[0]->nama }}" readonly>
+
+                                    </td>
+                                    <td style="width:25%" hidden>
+                                        <div class="text-center" style="font-weight: bold">Accounting,</div>
+                                        <div style="margin-top: 40px"></div>
+                                        <div class="text-center">
+                                            <input type="text" name="accounting"
+                                                value="{{ $accounting[0]->nama }}" readonly
+                                                style="text-align: center">
                                         </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Kasir</label>
-                                            <input type="text" class="form-control" id="exampleInputPassword1"
-                                                name="kasir" value="{{ $kasir[0]->nama }}" readonly>
+                                    </td>
+                                    <td style="width:25%" hidden>
+                                        <div class="text-center" style="font-weight: bold">Kasir,</div>
+                                        <div style="margin-top: 40px"></div>
+                                        <div class="text-center">
+                                            <input type="text" name="kasir" value="{{ $kasir[0]->nama }}"
+                                                readonly style="text-align: center">
                                         </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword1">Menyetujui</label>
-                                            <select class="form-control" id="menyetujui" name="nama_menyetujui"
-                                                onchange="updateFields2()"
-                                                data-url="{{ route('direksi.reimbursement.getNomor') }}">
+                                    </td>
+                                    <td style="width:25%">
+                                        <div class="text-center" style="font-weight: bold">Menyetujui, &nbsp;<select
+                                                id="menyetujui" name="nama_menyetujui" onchange="updateFields2()"
+                                                data-url="{{ route('karyawan.reimbursement.getNomor') }}"
+                                                style="text-align: center">
                                                 <option value=""> --- Pilih --- </option>
                                                 @foreach ($menyetujui as $item)
                                                     <option value="{{ $item->nama }}">{{ $item->nama }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="form-text text-muted"
-                                            style="font-size: 16px; font-family: Arial; color: red">
-                                            * Aris (Keperluan Direksi) <br>
-                                            * Sujiono (Keperluan Project) <br>
-                                            * Yacob (Keperluan Office) <br>
-                                            * Richard (Keperluan Marketing)
-                                        </div>
+
                                         <div class="form-group" hidden>
                                             <label for="exampleInputPassword1">Nomor Telepon</label>
-                                            <input type="text" class="form-control" id="no_telp" name="no_telp"
-                                                readonly>
+                                            <input type="text" id="no_telp" name="no_telp" readonly>
                                         </div>
-                                        <div class="form-group" style="margin-top: 10px; margin-bottom: 2px">
-                                            <label for="">Pilih</label>
-                                        </div>
-                                        <div class="form-group">
-                                            @if (Auth::guard('direksi')->user()->jabatan == 'Direktur')
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="project"
-                                                        id="inlineRadio1" value="RB (Reimbursement)">
-                                                    <label class="form-check-label" for="inlineRadio1">RB
-                                                        (Reimbursement)</label>
-                                                </div>
-                                            @elseif (Auth::guard('direksi')->user()->jabatan == 'Head of Business Development')
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="project"
-                                                        id="inlineRadio1" value="RB (Reimbursement)">
-                                                    <label class="form-check-label" for="inlineRadio1">RB
-                                                        (Reimbursement)</label>
-                                                </div>
-                                            @endif
-
-
-                                        </div>
-
-                                        <div class="form-group mt-3">
-                                            <div id="detail"></div>
-                                        </div>
-                                        <div class="d-flex justify-content-center" style="margin-top: 20px">
-                                            <a href="javascript:;" class="btn btn-info" onclick="getRadioValue()"><i
-                                                    class="fa-solid fa-circle-plus fa-bounce"></i>&nbsp;Tambah RB</a>
-                                            &nbsp;&nbsp;
-                                            <button type="button" class="btn btn-primary" id="submit"
-                                                data-toggle="modal" data-target="#exampleModal"><i
-                                                    class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Submit</button>
-                                            <!-- Modal -->
-                                            <div class="modal fade" id="exampleModal" tabindex="-1"
-                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel">Pengiriman
-                                                                Dokumen
-                                                            </h5>
-                                                            <button type="button" class="close"
-                                                                data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body" style="text-transform: uppercase">
-                                                            apakah anda yakin ingin submit? <br> pastikan semua data
-                                                            telah terisi dengan benar. <br>
-                                                            setelah disubmit, maka dokumen tidak bisa diubah/dihapus.
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">Periksa Kembali</button>
-                                                            <button type="submit"
-                                                                class="btn btn-primary">Simpan</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
-                    </div>
+                        <div class="d-flex justify-content-center">
+
+                            <button type="button" class="btn btn-warning" id="draftBtn" name="draftBtn"><i
+                                    class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Save as Draft</button>
+                            &nbsp;
+                            <button type="button" class="btn btn-primary" id="submitBtn" name="submitBtn"><i
+                                    class="fa-solid fa-floppy-disk fa-bounce"></i>&nbsp;Submit</button>
+
+                        </div>
+                    </form>
+
                 </div>
 
             </div>
             <!-- End of Main Content -->
 
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Eclectic {{ date('Y') }}</span>
-                    </div>
-                </div>
-            </footer>
-            <!-- End of Footer -->
+            @include('layouts.halaman_direksi.footer')
 
         </div>
         <!-- End of Content Wrapper -->
@@ -364,183 +185,84 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="{{ route('logout') }}">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('layouts.halaman_direksi.logout')
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="{{ asset('assets') }}/vendor/jquery/jquery.min.js"></script>
-    <script src="{{ asset('assets') }}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="{{ asset('assets') }}/vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="{{ asset('assets') }}/js/sb-admin-2.min.js"></script>
+    @include('layouts.halaman_direksi.script')
 
     <script>
-        function getRadioValue() {
-            var radio = document.getElementsByName('project');
-            var selectedValue = '';
-            for (i = 0; i < radio.length; i++) {
-                if (radio[i].checked) {
+        let no = 2;
 
-                    selectedValue = radio[i].value;
+        function addRB() {
+            var project = document.getElementById('detail');
 
-                    // Validasi berdasarkan jabatan pengguna
-                    var userRole = {!! $userRoleJSON !!};
-                    if (userRole === 'Konsultan') {
-                        if (selectedValue !== 'RB (Reimbursement)') {
-                            // Validasi gagal, tampilkan pesan error atau lakukan tindakan lain
-                            alert('Konsultan hanya dapat memilih opsi Reimbursement (RB)');
-                            return;
-                        }
-                    } else if (userRole === 'Project Manager') {
-                        if (selectedValue !== 'RB (Reimbursement)' && selectedValue === 'TP (Timesheet Project)') {
-                            // Validasi gagal, tampilkan pesan error atau lakukan tindakan lain
-                            alert(
-                                'Project Manager hanya dapat memilih opsi Reimbursement (RB) atau Timesheet Project (TP)'
-                            );
-                            return;
-                        }
-                    } else if (userRole === 'Support Manager') {
-                        if (selectedValue === 'ST (Support Ticket)' && selectedValue === 'SL (Support Lembur)' &&
-                            selectedValue === 'RB (Reimbursement)') {
-                            // Validasi gagal, tampilkan pesan error atau lakukan tindakan lain
-                            alert('Support Manager hanya dapat memilih opsi Support Ticket (ST) atau Support Lembur (SL)');
-                            return;
-                        }
-                    }
+            // Buat elemen <tr> baru untuk tabel
+            var newRow = document.createElement('tr');
 
-                    // Setelah validasi berhasil, atur template yang akan ditampilkan berdasarkan opsi yang dipilih
-                    let template = '';
+            // Isi konten untuk <tr> baru
+            newRow.innerHTML = `
+                <td class="text-center">${no}</td>
+                <td style="text-transform:capitalize;">
+                    <input type="text" name="deskripsi[]" placeholder="Tuliskan deskripsi di kolom ini." style="width: 50%">
+                    &nbsp;
+                    <input type="text" name="project[]" placeholder="Isi Keperluan Project" style="width: 25%">
+                    &nbsp;
+                    <input type="file" name="foto[]" accept=".jpg, .png, .jpeg" style="width: 20%;" onchange="readUrl(this);" nomerData=${no}>
+                    <br>
+                    <img id="blah${no}" src="" alt="your image" >
+                    <br>
+                    <input type="date" name="tgl1[]" style="width:20%">
+                    &nbsp; s/d &nbsp;
+                    <input type="date" name="tgl2[]" style="width:23%">
+                    <span style="margin-left: 170px">Harus JPG atau PNG</span>
+                </td>
+                <td class="text-center">
+                    <input type="text" name="nobu[]" placeholder="Nomor Bukti" style="text-align: center; width: 100%">
+                    Nomor Struk, Nota, Atau <i>Receipt</i>
+                </td>
+                <td class="text-end">
+                    <select name="kurs_rb[]" style="text-align: center;">
+                        <option value=""> --- Pilih --- </option>
+                        @foreach ($kurs as $item)
+                            <option value="{{ $item->mata_uang }}" {{ $item->mata_uang == 'IDR' ? 'selected' : '' }}>
+                                {{ $item->mata_uang }}</option>
+                        @endforeach
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name='nom_rb[]' style="text-align:right; width: 75%" placeholder="Input Nominal"> &nbsp; <button name="delete${no}" id="delete${no}" onclick="deleteRow(this);" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i></button>
+                </td>
+            `;
 
-                    if (selectedValue === 'RB (Reimbursement)') {
-                        template =
-                            `<center>
-                                <div class='container'>
-                                    <div class = 'row'>
-                                        <div class = 'col-md-6'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Deskripsi</label>
-                                                <textarea class="form-control" name="deskripsi[]" rows="6"></textarea>
-                                            </div>                                           
-                                        </div>
-                                        <div class='col-md-6'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">File Bukti</label>
-                                                <input type="file" class="form-control-file" name='foto[]' accept='.png, .jpg, .jpeg, .pdf'>
-                                                <br>
-                                                <div class="form-text text-muted"
-                                                    style="font-size: 12px; font-family: Arial; margin-bottom: 20px">
-                                                    Harus JPG atau PNG
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">No Bukti</label>
-                                                <input type="text" class="form-control" name='nobu[]'>
-                                            </div>
-                                            <div class="form-text text-muted"
-                                                    style="font-size: 12px; font-family: Arial; margin-top: -15px;">
-                                                    Struk, Nota, Atau <i>Receipt</i>
-                                                </div>
-                                        </div>
-                                        <div class='col-md-6'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Mata Uang</label>
-                                                <select class="form-control" id="exampleFormControlSelect1" name="kurs_rb[]">
-                                                    <option value=""> --- Pilih --- </option>
-                                                    @foreach ($kurs as $item)
-                                                        <option value="{{ $item->mata_uang }}" {{ $item->mata_uang == 'IDR' ? 'selected' : '' }}>{{ $item->mata_uang }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-6'>
-                                            <div class="form-group">
-                                                <label for="exampleInputPassword1">Nominal</label>
-                                                <input type="number" class="form-control" name='nom_rb[]'>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-5'>
-                                            <div class="form-group">
-                                                <label for="tgl1">Tanggal</label>
-                                                <input type="date" class="form-control" name='tgl1[]'>
-                                            </div>
-                                        </div>
-                                        <div class='col' style = 'margin-top: 40px'>
-                                            <span>s/d</span>
-                                        </div>
-                                        <div class='col-md-5'>
-                                            <div class="form-group">
-                                                <label for="tgl2">Tanggal</label>
-                                                <input type="date" class="form-control" name='tgl2[]'>
-                                                <div class="form-text text-muted"
-                                                    style="font-size: 12px; font-family: Arial; margin-bottom: 20px">
-                                                    * OPSIONAL (Gunakan jika memerlukan rentang tanggal)
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class='col-md-5'>
-                                            <div class="form-group">
-                                                <label for="keprluan">Project/Instansi/Perusahaan</label>
-                                                <input type="text" class="form-control @error('keperluan') is-invalid @enderror" name='keperluan[]' autofocus >
-                                                @error('keperluan')
-                                                    <div class="alert alert-danger">{{ $message }}</div>
-                                                @enderror
-                                                <div class="form-text text-muted"
-                                                    style="font-size: 12px; font-family: Arial; margin-bottom: 20px">
-                                                    * Isi buat keperluan Project
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class = 'row'>
-                                        <div class = 'col-md-12'>
-                                            <div class="form-group" style = 'margin-top: 20px'>
-                                                <button name="delete${i}" id="delete${i}" onclick="deleteRow(this)" type="button" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash fa-bounce"></i>&nbsp;Hapus</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </center>`;
-                    }
+            // Tambahkan <tr> baru ke dalam tabel
+            project.appendChild(newRow);
+            $('#blah' + no++).hide();
 
+            function readUrl(input) {
+                alert('coba');
+                var nomorData = $(input).attr('nomerData');
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
 
+                    reader.onload = function(e) {
+                        $('#blah' + nomorData)
+                            .attr('src', e.target.result);
+                        $('#blah' + nomorData).show();
+                    };
 
-                    // Kode lanjutan untuk opsi yang valid dipilih
-                    let container = document.getElementById('detail');
-                    let div = document.createElement('div');
-                    div.innerHTML = template;
-                    container.appendChild(div);
-
-                    i++;
+                    reader.readAsDataURL(input.files[0]);
                 }
             }
         }
 
+        function deleteRow(button) {
+            // Dapatkan elemen induk dari tombol yang diklik (yaitu <tr>)
+            let row = button.parentNode.parentNode;
 
-        function deleteRow(id) {
-            var row;
-            row = id.name.substring(id.name.length - 1, id.name.length);
-            var id = $('#id' + row).val();
-            $('#delete' + row).closest('center').remove();
+            // Dapatkan elemen tabel yang berisi baris yang ingin dihapus
+            let table = row.parentNode;
+
+            // Hapus baris dari tabel
+            table.removeChild(row);
         }
 
         function updateFields2() {
@@ -564,58 +286,68 @@
             xhr.send();
         }
     </script>
-    <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script>
 
     <script>
-        const input = document.getElementById('file-input');
-        input.addEventListener('change', function() {
-            readXlsxFile(input.files[0]).then(function(data) {
-                console.log(data);
+        document.addEventListener('DOMContentLoaded', function() {
+            const draftBtn = document.getElementById('draftBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const draftActionInput = document.querySelector('input[name="draftAction"]');
+            const submitActionInput = document.querySelector('input[name="submitAction"]');
 
-                // Trace data bagian Deskripsi
-                const deskripsiData = [];
-                for (let i = 0; i < data.length; i++) {
-                    const deskripsi = data[4][1]; // Asumsikan Deskripsi berada di kolom kedua (indeks 1)
-                    deskripsiData.push(deskripsi);
-                }
-                // console.log(deskripsiData);
-
-                // // Trace data bagian No Bukti
-                const nobuData = data[4][5]; // Asumsikan No Bukti berada di kolom keempat (indeks 3)
-                // console.log(nobuData);
-
-
-                // Tampilkan data deskripsi dalam textarea
-                const textarea = document.querySelectorAll('textarea[name="deskripsi[]"]');
-                for (let i = 0; i < textarea.length; i++) {
-                    textarea[i].value = deskripsiData[4] ||
-                        ''; // Jika data tidak ada, beri nilai default string kosong
-                }
-
-
-                // // Tampilkan data No Bukti dalam input text
-                const nobuInputs = document.querySelectorAll('input[name="nobu[]"]');
-                for (let i = 0; i < nobuInputs.length; i++) {
-                    nobuInputs[i].value = nobuData ||
-                        ''; // Jika data tidak ada, beri nilai default string kosong
-                }
-
-                // Trace data bagian Nominal
-                const nominalData = data[4][7]; // Asumsikan Nominal berada di kolom keenam (indeks 5)
-                // console.log(nominalData);
-
-                // Tampilkan data Nominal dalam input number
-                const nominalInputs = document.querySelectorAll('input[name="nom_rb[]"]');
-                for (let i = 0; i < nominalInputs.length; i++) {
-                    nominalInputs[i].value = nominalData ||
-                        ''; // Jika data tidak ada, beri nilai default string kosong
-                }
+            draftBtn.addEventListener('click', function() {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Are you sure?',
+                    text: 'Do you want to save your changes as a draft?',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Save as Draft',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        draftActionInput.value = 'true'; // Isi nilai input tersembunyi
+                        submitActionInput.value = 'false'; // Isi nilai input tersembunyi
+                        document.getElementById('formId').submit();
+                    }
+                });
+            });
+            submitBtn.addEventListener('click', function() {
+                Swal.fire({
+                    icon: 'question',
+                    title: 'Are you sure?',
+                    text: 'Do you want to submit?',
+                    showCancelButton: true,
+                    confirmButtonText: 'Submit',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        submitActionInput.value = 'true'; // Isi nilai input tersembunyi
+                        draftActionInput.value = 'false'; // Isi nilai input tersembunyi
+                        document.getElementById('formId').submit();
+                    }
+                });
             });
         });
     </script>
 
-</body>
+    <script>
+        $('#blah1').hide();
 
-@include('sweetalert::alert')
+        function readUrl(input) {
+            // alert('coba');
+            var nomorData = $(input).attr('nomerData');
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    $('#blah' + nomorData)
+                        .attr('src', e.target.result);
+                    $('#blah' + nomorData).show();
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</body>
 
 </html>

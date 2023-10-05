@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Direksi;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\CashAdvanceReport;
 use App\Models\Admin\CashAdvanceReportDetail;
+use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
@@ -17,47 +18,25 @@ class CashAdvanceReportController extends Controller
 {
     public function index()
     {
-        $title = 'Cash Advance Report';
-        $menyetujui = Auth::guard('direksi')->user()->nama;
+        $title = 'CAR';
+        $menyetujui = Auth::user()->nama;
         $datacashadvancereport = DB::table('admin_cash_advance_report')
-            ->where(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->where('status_approved', 'approved')
-                    ->where('status_paid', 'pending');
-            })
+            ->where('pemohon', $menyetujui)
             ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->where(function ($query) {
-                        $query->where('status_approved', 'rejected')
-                            ->orWhere('status_paid', 'rejected');
-                    });
+                $query->where('status_approved', 'pending')
+                    ->where('status_paid', 'pending')
+                    ->where('menyetujui', $menyetujui);
             })
-            ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->where('status_approved', 'pending')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->where('status_approved', 'approved')
-                    ->where('status_paid', 'paid');
-            })
-            ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', '<>', $menyetujui)
-                    ->where('status_approved', 'rejected')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', '<>', $menyetujui)
-                    ->where('status_approved', 'pending')
-                    ->where('status_paid', 'pending');
-            })
-            ->where(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->orWhere('menyetujui', $menyetujui);
-            })
-            ->orderByRaw("CASE WHEN status_approved = 'pending' AND status_paid = 'pending' THEN 0 WHEN status_approved = 'pending' OR status_paid = 'pending' THEN 1 ELSE 2 END, CASE WHEN pemohon = 'Yacob' THEN 1 ELSE 2 END")
-            ->paginate(10);
+
+            ->orderByRaw("CASE 
+    WHEN status_approved = 'pending' AND status_paid = 'pending' THEN 0
+    WHEN status_approved = 'rejected' AND status_paid = 'rejected' THEN 1
+    WHEN pemohon = 'Yacob' THEN 2 
+    ELSE 3 
+END")
+            ->orderBy('tgl_diajukan', 'desc')
+            ->orderBy('no_doku', 'desc')
+            ->paginate(20);
         return view('halaman_direksi.cash_advance_report.index', [
             'title' => $title,
             'cash_advance_report' => $datacashadvancereport
@@ -77,18 +56,16 @@ class CashAdvanceReportController extends Controller
             'nominal' => $nominal_CAR
         ]);
     }
-    public function print_cash_advance_report($id)
+    public function view_CA($id)
     {
-        $title = 'Cetak Cash Advance Report';
-        $data_CAR = DB::table('admin_cash_advance_report')->find($id);
-        $cash_advance_report_detail = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->get();
-        $nominal_CAR = DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->sum('nominal');
+        $title = 'Lihat CA';
+        $cash_advance = CashAdvanceReport::find($id);
+        $nominal_CA = DB::table('admin_cash_advance')->where('id', $id)->sum('nominal');
 
-        return view('halaman_direksi.cash_advance_report.print_cash_advance_report', [
+        return view('halaman_direksi.cash_advance_report.view_CA', [
             'title' => $title,
-            'cash_advance_report' => $data_CAR,
-            'data_CAR' => $cash_advance_report_detail,
-            'nominal' => $nominal_CAR
+            'cash_advance' => $cash_advance,
+            'nominal' => $nominal_CA
         ]);
     }
     public function print_bukti_cash_advance_report($id)
@@ -113,7 +90,7 @@ class CashAdvanceReportController extends Controller
                 'tgl_persetujuan' => Carbon::now()
             ]);
             $no_doku = $data->no_doku;
-            return redirect()->route('direksi.beranda')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil disetujui.');
+            return redirect()->route('direksi.cash_advance_report')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil disetujui.');
         } catch (\Exception $e) {
             return redirect()->route('direksi.cash_advance_report')->with('gagal', $e->getMessage());
         }
@@ -128,23 +105,38 @@ class CashAdvanceReportController extends Controller
             ]);
             $no_doku = $data->no_doku;
             $alasan = $request->alasan;
-            return redirect()->route('direksi.beranda')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan CAR yang berbeda');
+            return redirect()->route('direksi.cash_advance_report')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan CAR yang berbeda');
         } catch (\Exception $e) {
             return redirect()->route('direksi.cash_advance_report')->with('gagal', $e->getMessage());
         }
+    }
+    public function paid_CAR(Request $request, $id)
+    {
+        $data = DB::table('admin_cash_advance_report')->find($id);
+        DB::table('admin_cash_advance_report')->where('id', $id)->update([
+            'status_approved' => 'approved',
+            'status_paid' => 'paid',
+            'no_referensi' => $request->no_ref,
+            'tgl_bayar' => Carbon::now()
+        ]);
+        $no_doku = $data->no_doku;
+        return redirect()->route('direksi.cash_advance_report')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dibayar!');
     }
     public function tambah_CAR()
     {
         $title = 'Cash Advance Report';
         $AWAL = 'CAR';
         $bulanRomawi = array("", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12");
-        $noUrutAkhir = DB::table('admin_cash_advance_report')->whereMonth('tgl_diajukan', '=', date('m'))->count();
+        $noUrutAkhir = DB::table('admin_cash_advance_report')
+            ->whereRaw('MONTH(tgl_diajukan) = MONTH(CURRENT_DATE())')
+            ->whereRaw('YEAR(tgl_diajukan) = YEAR(CURRENT_DATE())')
+            ->count();
         $no = 1;
         // dd($noUrutAkhir);
         $no_dokumen = null;
         $currentMonth = date('n');
         if (date('j') == 1) {
-            $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($no));
+            $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
         } else {
             if ($noUrutAkhir) {
                 $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
@@ -152,14 +144,29 @@ class CashAdvanceReportController extends Controller
                 $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($no));
             }
         }
-
-
-        $accounting = DB::select('SELECT * FROM accounting');
-        $kasir = DB::select('SELECT * from kasir');
-        $menyetujui = DB::select('SELECT * from menyetujui');
-
-        $direksi = Auth::guard('direksi')->user()->nama;
-        $cash_advance = DB::select('SELECT * FROM admin_cash_advance WHERE pemohon = ?', [$direksi]);
+        // dd($no_dokumen);
+        $accounting = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 2)
+            ->get();
+        $kasir = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 3)
+            ->get();
+        $userLoggedIn = Auth::user()->nama;
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->where('nama', '!=', $userLoggedIn)
+            ->orderBy('nama', 'asc')
+            ->get();
+        $direksi = Auth::user()->nama;
+        $cash_advance = DB::select(
+            '
+        SELECT ca.no_doku
+        FROM admin_cash_advance ca
+        LEFT JOIN admin_cash_advance_report car ON ca.no_doku = car.tipe_ca
+        WHERE car.no_doku IS NULL AND ca.pemohon = ? 
+        ORDER BY ca.tgl_diajukan DESC',
+            [$direksi]
+        );
 
         $currency = DB::select('SELECT * FROM kurs');
 
@@ -182,6 +189,7 @@ class CashAdvanceReportController extends Controller
 
         return response()->json(
             [
+                'judul_doku' => $result[0]->judul_doku,
                 'nominal_ca' => $nominal,
                 'pemohon' => $result[0]->pemohon,
                 'nama_menyetujui' => $result[0]->menyetujui,

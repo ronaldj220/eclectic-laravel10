@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Direksi;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Rb_Detail;
 use App\Models\Admin\Reimbursement;
+use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
@@ -17,47 +18,25 @@ class ReimbursementController extends Controller
 {
     public function index()
     {
-        $title = 'Reimbursement';
-        $menyetujui = Auth::guard('direksi')->user()->nama;
+        $title = 'RB';
+        $menyetujui = Auth::user()->nama;
         $dataReimbursement = DB::table('admin_reimbursement')
-            ->where(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->where('status_approved', 'approved')
-                    ->where('status_paid', 'pending');
-            })
+            ->where('pemohon', $menyetujui)
             ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->where(function ($query) {
-                        $query->where('status_approved', 'rejected')
-                            ->orWhere('status_paid', 'rejected');
-                    });
+                $query->where('status_approved', 'pending')
+                    ->where('status_paid', 'pending')
+                    ->where('menyetujui', $menyetujui);
             })
-            ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->where('status_approved', 'pending')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->where('status_approved', 'approved')
-                    ->where('status_paid', 'paid');
-            })
-            ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', '<>', $menyetujui)
-                    ->where('status_approved', 'rejected')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', '<>', $menyetujui)
-                    ->where('status_approved', 'pending')
-                    ->where('status_paid', 'pending');
-            })
-            ->where(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->orWhere('menyetujui', $menyetujui);
-            })
-            ->orderByRaw("CASE WHEN status_approved = 'pending' AND status_paid = 'pending' THEN 0 WHEN status_approved = 'pending' OR status_paid = 'pending' THEN 1 ELSE 2 END, CASE WHEN pemohon = 'Yacob' THEN 1 ELSE 2 END")
-            ->paginate(10);
+
+            ->orderByRaw("CASE 
+        WHEN status_approved = 'pending' AND status_paid = 'pending' THEN 0
+        WHEN status_approved = 'rejected' AND status_paid = 'rejected' THEN 1
+        WHEN pemohon = 'Yacob' THEN 2 
+        ELSE 3 
+    END")
+            ->orderBy('tgl_diajukan', 'desc')
+            ->paginate(20);
+
 
         return view('halaman_direksi.reimbursement.index', [
             'title' => $title,
@@ -69,7 +48,7 @@ class ReimbursementController extends Controller
         // Data Reimbursement
         $reimbursement = Reimbursement::find($id);
         if ($reimbursement->halaman == 'RB') {
-            $title = 'Lihat Reimbursement';
+            $title = 'Lihat RB';
             $rb_detail = DB::table('admin_rb_detail')->where('fk_rb', $id)->get();
             $nominal = DB::table('admin_rb_detail')->where('fk_rb', $id)->sum('nominal');
 
@@ -80,7 +59,7 @@ class ReimbursementController extends Controller
                 'nominal' => $nominal,
             ]);
         } elseif ($reimbursement->halaman == 'TS') {
-            $title = 'Lihat Timesheet Support';
+            $title = 'Lihat TS';
             // Data Timesheet Project
             $timesheet_project_detail = DB::table('admin_timesheet_project_detail')
                 ->where('fk_timesheet_project', $id)
@@ -106,7 +85,7 @@ class ReimbursementController extends Controller
 
             ]);
         } elseif ($reimbursement->halaman == 'ST') {
-            $title = 'Lihat Support Ticket';
+            $title = 'Lihat ST';
             $support_ticket_detail = DB::table('admin_support_ticket_detail')->where('fk_support_ticket', $id)->get();
             $results = []; // Array untuk menyimpan hasil perhitungan masing-masing item
 
@@ -125,7 +104,7 @@ class ReimbursementController extends Controller
                 'total' => $total
             ]);
         } elseif ($reimbursement->halaman == 'SL') {
-            $title = 'Lihat Support Lembur';
+            $title = 'Lihat SL';
             $support_lembur_detail = DB::table('admin_support_lembur_detail')->where('fk_support_lembur', $id)->get();
             $results = []; // Array untuk menyimpan hasil perhitungan masing-masing item
 
@@ -288,10 +267,10 @@ class ReimbursementController extends Controller
 
                 ]);
             }
-            $no_doku = $data->no_doku;
-            return redirect()->route('direksi.beranda')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil disetujui.');
+            $no_doku = $data->no_doku_real;
+            return redirect()->route('direksi.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil disetujui.');
         } catch (\Exception $e) {
-            return redirect()->route('direksi.beranda')->with('gagal', $e->getMessage());
+            return redirect()->route('direksi.reimbursement')->with('gagal', $e->getMessage());
         }
     }
     public function tolak_reimbursement($id, Request $request)
@@ -319,16 +298,15 @@ class ReimbursementController extends Controller
                     'alasan' => $request->alasan
                 ]);
             }
-            $no_doku = $data->no_doku;
+            $no_doku = $data->no_doku_real;
             $alasan = $request->alasan;
-            return redirect()->route('direksi.beranda')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan Reimbursement yang berbeda!');
+            return redirect()->route('direksi.reimbursement')->with('error', 'Data dengan no dokumen ' . $no_doku . ' tidak disetujui karena ' . $alasan . ' Mohon Ajukan Reimbursement yang berbeda!');
         } catch (\Exception $e) {
-            return redirect()->route('direksi.beranda')->with('gagal', $e->getMessage());
+            return redirect()->route('direksi.reimbursement')->with('gagal', $e->getMessage());
         }
     }
-    public function tambah_RB()
+    public function new_no_doku()
     {
-        $title = 'Tambah Reimbursement';
         $AWAL = 'RB';
 
         $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
@@ -338,7 +316,11 @@ class ReimbursementController extends Controller
         $currentMonth = date('n');
 
         if (date('j') == 1) { // Cek jika tanggal saat ini adalah tanggal 1
-            $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            if ($noUrutAkhir) {
+                $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            } else {
+                $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+            }
         } else {
             if ($noUrutAkhir) {
                 $no_dokumen = sprintf("%05s", abs($noUrutAkhir + 1)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
@@ -346,23 +328,52 @@ class ReimbursementController extends Controller
                 $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
             }
         }
-        $accounting = DB::select('SELECT * FROM accounting');
-        $kasir = DB::select('SELECT * from kasir');
-        $menyetujui = DB::select('SELECT * from menyetujui');
+        return $no_dokumen;
+    }
+    public function new_updated_no_doku()
+    {
+        $AWAL = 'RB';
+        $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
+        $currentMonth = date('n');
+        $latestSubmittedDoc = Reimbursement::where('status_approved', '!=', 'hold')
+            ->where('status_paid', '!=', 'hold')
+            ->whereMonth('tgl_diajukan', '=', now()->format('m'))
+            ->whereYear('tgl_diajukan', '=', now()->format('Y'))
+            ->orderBy('no_doku_real', 'desc')
+            ->first();
 
+        $newDocNumber = 1; // Nomor default jika belum ada dokumen yang disubmit
+
+        if ($latestSubmittedDoc) {
+            $newDocNumber = intval($latestSubmittedDoc->no_doku_real) + 1;
+        }
+
+        return str_pad($newDocNumber, 5, '0', STR_PAD_LEFT) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
+    }
+    public function tambah_RB()
+    {
+        $title = 'Tambah Reimbursement';
+        $accounting = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 2)
+            ->get();
+        $kasir = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 3)
+            ->get();
+        $userLoggedIn = Auth::user()->nama;
+        $menyetujuiOptions = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->where('nama', '!=', $userLoggedIn)
+            ->orderBy('nama', 'asc')
+            ->get();
+        // dd($menyetujui);
         $currency = DB::select('SELECT * FROM kurs');
-
-        $userRole = Auth::guard('direksi')->user()->jabatan;
-        $userRoleJSON = json_encode($userRole);
 
         return view('halaman_direksi.reimbursement.tambah_RB', [
             'title' => $title,
-            'no_dokumen' => $no_dokumen,
             'accounting' => $accounting,
             'kasir' => $kasir,
-            'menyetujui' => $menyetujui,
+            'menyetujui' => $menyetujuiOptions,
             'kurs' => $currency,
-            'userRoleJSON' => $userRoleJSON
         ]);
     }
     public function simpan_RB(Request $request)

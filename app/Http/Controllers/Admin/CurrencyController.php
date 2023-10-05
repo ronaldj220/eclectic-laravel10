@@ -12,7 +12,7 @@ class CurrencyController extends Controller
     public function index()
     {
         $title = 'Mata Uang';
-        $dataCurrency = DB::table('kurs')->paginate(10);
+        $dataCurrency = Kurs::paginate(10);
         return view('halaman_admin.currency.index', [
             'title' => $title,
             'kurs' => $dataCurrency
@@ -32,7 +32,7 @@ class CurrencyController extends Controller
         ], [
             'kurs.*' => 'Mata Uang tidak boleh digunakan kedua kali!'
         ]);
-        DB::table('kurs')->insert([
+        Kurs::create([
             'mata_uang' => $request->kurs
         ]);
         return redirect()->route('admin.currency')->with('success', 'Data Currency Berhasil Ditambahkan!');

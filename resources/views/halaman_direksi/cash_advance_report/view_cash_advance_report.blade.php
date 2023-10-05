@@ -12,17 +12,23 @@
 
 
 </head>
+<style>
+    .negative-value {
+        color: red
+    }
+</style>
 
 <body>
     <!-- Begin Page Content -->
     <div class="container" style="margin-right: 60px; ">
-        <figure class="text-center" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+        <figure class="text-center"
+            style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-size: 10px;">
             <b><a style="text-transform: uppercase;">cash advance report</a></b>
             <br>
             <a style="text-transform: capitalize;">PT. Eclectic Consulting</a>
         </figure>
         <table class="table table-borderless table-sm"
-            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 12px">
+            style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px">
             <tr>
                 <td>No<br>Tanggal</td>
                 <td>: {{ $cash_advance_report->no_doku }}<br>:
@@ -30,11 +36,8 @@
                 </td>
             </tr>
         </table>
-        <form action="">
-
-        </form>
         <table class="table is-striped table-bordered border-dark table-sm"
-            style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+            style="width: 100%; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-top: -20px;">
             <thead>
                 <tr>
                     <th class="text-center" style="width: 3%">No.</th>
@@ -78,8 +81,8 @@
                         {{ $item->no_bukti }}</td>
                     <td class="text-center" style="max-width: 5%;">{{ $item->curr }}
                     </td>
-                    <td class="text-end">
-                        {{ number_format($item->nominal, 0, ',', '.') }}
+                    <td class="text-end {{ $item->nominal < 0 ? 'negative-value' : '' }}">
+                        {{ number_format($item->nominal, 2, ',', '.') }}
                     </td>
                 </tr>
             @endforeach
@@ -87,33 +90,33 @@
             <tr style="font-weight: bold">
                 <td colspan="3" class="text-end">Jumlah</td>
                 <td class="text-center">{{ $item->curr }}</td>
-                <td class="text-end">{{ number_format($nominal, 0, ',', '.') }}</td>
+                <td class="text-end">{{ number_format($nominal, 2, ',', '.') }}</td>
             </tr>
             <tr style="font-weight: bold">
                 <td colspan="3" class="text-end">Cash Advance {{ $cash_advance_report->tipe_ca }}</td>
                 <td class="text-center">{{ $item->curr }}</td>
-                <td class="text-end">{{ number_format($cash_advance_report->nominal_ca, 0, ',', '.') }}</td>
+                <td class="text-end">{{ number_format($cash_advance_report->nominal_ca, 2, ',', '.') }}</td>
             </tr>
             @if ($nominal < $cash_advance_report->nominal_ca)
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end">Lebih</td>
                     <td class="text-center">{{ $item->curr }}</td>
                     <td class="text-end">
-                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 0, ',', '.') }}</td>
+                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 2, ',', '.') }}</td>
                 </tr>
             @elseif ($nominal > $cash_advance_report->nominal_ca)
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end" style="color: red">Kurang</td>
-                    <td class="text-center">{{ $item->curr }}</td>
-                    <td class="text-end">
-                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 0, ',', '.') }}</td>
+                    <td class="text-center" style="color: red">{{ $item->curr }}</td>
+                    <td class="text-end" style="color: red">
+                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 2, ',', '.') }}</td>
                 </tr>
             @elseif ($nominal = $cash_advance_report->nominal_ca)
                 <tr style="font-weight: bold">
                     <td colspan="3" class="text-end" style="color: black">Kurang</td>
                     <td class="text-center">{{ $item->curr }}</td>
                     <td class="text-end">
-                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 0, ',', '.') }}</td>
+                        {{ number_format(abs($nominal - $cash_advance_report->nominal_ca), 2, ',', '.') }}</td>
                 </tr>
             @endif
         </table>
@@ -128,7 +131,7 @@
                 <div class="col" style="margin-right: -28px; margin-top: -30px;">
                     <div class="p-3">
                         <table class="table is-striped table-bordered border-dark text-center"
-                            style="font-family: Arial, Helvetica, sans-serif; font-size: 12px;">
+                            style="font-family: Arial, Helvetica, sans-serif; font-size: 10px;">
                             <tr>
 
                                 <td style="width: 50%; text-align: center; ">
@@ -151,7 +154,7 @@
         </div>
         <div class="d-flex justify-content-center" style="margin-top: 5px">
 
-            @if ($cash_advance_report->status_approved == 'pending')
+            @if ($cash_advance_report->status_approved == 'pending' && $cash_advance_report->status_paid == 'pending')
                 <a href="{{ route('direksi.cash_advance_report.setujui_cash_advance_report', $cash_advance_report->id) }}"
                     class="btn btn-primary"><i class="fa-solid fa-square-check fa-beat"></i>&nbsp;Setujui</a>
                 &nbsp; &nbsp;
@@ -160,12 +163,171 @@
                         class="fa-solid fa-xmark fa-beat"></i>&nbsp;
                     Tolak
                 </button>
-                &nbsp; &nbsp;
-                <a href="{{ route('direksi.cash_advance_report') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
-            @elseif ($cash_advance_report->status_approved == 'approved')
-                <a href="{{ route('direksi.cash_advance_report') }}" class="btn btn-danger"><i
-                        class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
+            @elseif ($cash_advance_report->status_approved == 'approved' && $cash_advance_report->status_paid == 'pending')
+                @if ($nominal < $cash_advance_report->nominal_ca)
+                    <div class="d-flex justify-content-center">
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
+                            <i class="fa-solid fa-cash-register fa-beat"></i> &nbsp;
+                            Bayar
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Pembayaran CAR</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{ route('direksi.CAR.paid_CAR', $cash_advance_report->id) }}"
+                                            method="POST">
+                                            @csrf
+                                            <input type="text" name="no_ref" class="form-control"
+                                                placeholder="Masukkan Nomor Referensi">
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Bayar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @elseif ($nominal = $cash_advance_report->nominal_ca)
+                    Done
+                @endif
+                <div class="container" style="margin-top: -30px">
+                    <div class="row">
+                        <div class="col">
+                        </div>
+                        @if ($cash_advance_report->menyetujui == 'Aris')
+                            <div class="col">
+                            </div>
+                        @else
+                            <div class="col">
+                                <table class="table table-borderless table-sm"
+                                    style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-left: 430px; margin-right: -10px;">
+                                    <tr class="text-center">
+                                        <td>Approved on
+                                            {{ date('d/m/Y', strtotime($cash_advance_report->tgl_persetujuan)) }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @elseif ($cash_advance_report->status_approved == 'approved' && $cash_advance_report->status_paid == 'paid')
+                <div class="container" style="margin-top: -40px">
+                    <div class="row">
+                        <div class="col">
+                        </div>
+                        @if ($cash_advance_report->menyetujui == 'Aris')
+                            @if ($nominal < $cash_advance_report->nominal_ca)
+                                <div class="col">
+                                    <table class="table table-borderless table-sm"
+                                        style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 145px;">
+                                        <tr class="text-center">
+                                            <td>Paid on
+                                                {{ date('d/m/Y', strtotime($cash_advance_report->tgl_bayar)) }} <br>
+                                                ({{ $cash_advance_report->no_referensi }})
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            @elseif ($nominal > $cash_advance_report->nominal_ca)
+                                <div class="col">
+                                    <table class="table table-borderless table-sm"
+                                        style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 145px;">
+                                        <tr class="text-center">
+                                            <td>Paid on
+                                                {{ date('d/m/Y', strtotime($cash_advance_report->tgl_bayar)) }} <br>
+                                                ({{ $cash_advance_report->no_referensi }})
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            @elseif ($nominal = $cash_advance_report->nominal_ca)
+                                <div class="col">
+                                    <table class="table table-borderless table-sm"
+                                        style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 145px">
+                                        <tr class="text-center">
+                                            <td>Paid on
+                                                {{ date('d/m/Y', strtotime($cash_advance_report->tgl_bayar)) }} <br>
+                                                ({{ $cash_advance_report->no_referensi }})
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            @endif
+                        @else
+                            @if ($nominal < $cash_advance_report->nominal_ca)
+                                <div class="col">
+                                    <table class="table table-borderless table-sm"
+                                        style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 145px;">
+                                        <tr class="text-center">
+                                            <td>Paid on
+                                                {{ date('d/m/Y', strtotime($cash_advance_report->tgl_bayar)) }} <br>
+                                                ({{ $cash_advance_report->no_referensi }})
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col">
+                                    <table class="table table-borderless table-sm"
+                                        style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 220px;">
+                                        <tr class="text-center">
+                                            <td>Approved on
+                                                {{ date('d/m/Y', strtotime($cash_advance_report->tgl_persetujuan)) }}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            @elseif ($nominal > $cash_advance_report->nominal_ca)
+                                <div class="col">
+                                    <table class="table table-borderless table-sm"
+                                        style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 360px;">
+                                        <tr class="text-center">
+                                            <td>Paid on
+                                                {{ date('d/m/Y', strtotime($cash_advance_report->tgl_bayar)) }} <br>
+                                                ({{ $cash_advance_report->no_referensi }})
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <div class="col">
+                                    <table class="table table-borderless table-sm"
+                                        style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 220px;">
+                                        <tr class="text-center">
+                                            <td>Approved on
+                                                {{ date('d/m/Y', strtotime($cash_advance_report->tgl_persetujuan)) }}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            @elseif ($nominal = $cash_advance_report->nominal_ca)
+                                <div class="col">
+                                    <table class="table table-borderless table-sm"
+                                        style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 430px;">
+                                        <tr class="text-center">
+                                            <td>Approved on
+                                                {{ date('d/m/Y', strtotime($cash_advance_report->tgl_persetujuan)) }}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            @endif
+                        @endif
+                    </div>
+                </div>
             @endif
         </div>
 

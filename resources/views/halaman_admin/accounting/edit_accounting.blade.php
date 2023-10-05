@@ -29,6 +29,11 @@
                                         method="POST">
                                         @csrf
                                         <div class="form-group">
+                                            <label for="exampleInputPassword1">Email</label>
+                                            <input type="text" class="form-control" id="exampleInputPassword1"
+                                                name="email" value="{{ $accounting->email }}">
+                                        </div>
+                                        <div class="form-group">
                                             <label for="exampleInputPassword1">Nama Accounting</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
                                                 name="nama_accounting" value="{{ $accounting->nama }}">

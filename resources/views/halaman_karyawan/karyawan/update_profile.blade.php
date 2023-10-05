@@ -27,7 +27,7 @@
                                 <div class="card-body">
                                     <form
                                         action="{{ route('karyawan.beranda.profile.update_profile_karyawan', Auth::user()->id) }}"
-                                        method="POST">
+                                        method="POST" id="formId">
                                         @csrf
                                         <div class="col-md-12">
                                             <label class="" for="">Email:</label>

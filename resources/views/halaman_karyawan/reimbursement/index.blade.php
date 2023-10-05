@@ -37,13 +37,30 @@
                                     </div>
                                 </form>
                             </div>
-                            @if (Session::has('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ Session::get('success') }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
+                            @if (session('success'))
+                                <script>
+                                    window.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            title: 'Berhasil!',
+                                            text: '{{ session('success') }}',
+                                            icon: 'success',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                    });
+                                </script>
+                            @elseif (session('error'))
+                                <script>
+                                    window.addEventListener('DOMContentLoaded', function() {
+                                        Swal.fire({
+                                            title: 'Gagal!',
+                                            text: '{{ session('error') }}',
+                                            icon: 'error',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                    });
+                                </script>
                             @endif
                             <div class="table-responsive">
                                 <table class="table table-bordered" width="100%" cellspacing="0">
@@ -153,8 +170,7 @@
                                                             <a href="{{ route('karyawan.reimbursement.view_reimbursement', $item->id) }}"
                                                                 data-toggle="tooltip" data-placement="bottom"
                                                                 title="Print Dokumen">
-                                                                <i class="fa-solid fa-print"
-                                                                    style="color: #900C3F"></i>
+                                                                <i class="fa-solid fa-print" style="color: #900C3F"></i>
                                                             </a>
                                                             &nbsp;
                                                             <a href="{{ route('karyawan.reimbursement.lihat_bukti_reimbursement', $item->id) }}"

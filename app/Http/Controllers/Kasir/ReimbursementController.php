@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Kasir;
 
+use App\Exports\Admin\ReimbursementExport as AdminReimbursementExport;
 use App\Exports\Kasir\ReimbursementExport;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Rb_Detail;
@@ -9,6 +10,7 @@ use App\Models\Admin\Reimbursement;
 use App\Models\Admin\Support_Lembur_Detail;
 use App\Models\Admin\Support_Ticket_Detail;
 use App\Models\Admin\Timesheet_Project_Detail;
+use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
 use Exception;
@@ -23,7 +25,7 @@ class ReimbursementController extends Controller
     public function index(Request $request)
     {
         $title = 'Reimbursement';
-        $kasir = Auth::guard('kasir')->user()->nama;
+        $kasir = Auth::user()->nama;
         if ($request->has('search')) {
             $dataReimbursement = DB::table('admin_reimbursement')
                 ->where('judul_doku', 'LIKE', '%' . $request->search . '%')
@@ -66,7 +68,7 @@ class ReimbursementController extends Controller
 
     public function excel_reimbursement($id)
     {
-        return Excel::download(new ReimbursementExport($id), 'reimbursement_kasir_' . $id . '.xlsx');
+        return Excel::download(new AdminReimbursementExport($id), 'RB_kasir_' . $id . '.xlsx');
     }
     public function view_reimbursement($id)
     {
@@ -359,17 +361,23 @@ class ReimbursementController extends Controller
     {
         $title = 'Tambah Reimbursement';
 
-        $accounting = DB::select('SELECT * FROM accounting');
-        $karyawan = DB::select('SELECT * FROM karyawan');
+        $accounting = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 2)
+            ->get();
+        $kasir = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 3)
+            ->get();
         $nominal_awal = DB::select('SELECT * FROM fee_timesheet');
         $nominal_project = DB::select('SELECT * FROM fee_project');
         $aliases = DB::select('SELECT * FROM client');
-        $kasir = DB::select('SELECT * from kasir');
-        $menyetujui = DB::select('SELECT * from menyetujui');
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->orderBy('nama', 'asc')
+            ->get();
 
         $currency = DB::select('SELECT * FROM kurs');
 
-        $userRole = Auth::guard('kasir')->user()->jabatan;
+        $userRole = Auth::user()->jabatan;
         $userRoleJSON = json_encode($userRole);
 
         return view('halaman_finance.reimbursement.tambah_RB', [
@@ -377,7 +385,6 @@ class ReimbursementController extends Controller
             'accounting' => $accounting,
             'kasir' => $kasir,
             'menyetujui' => $menyetujui,
-            'karyawan' => $karyawan,
             'kurs' => $currency,
             'userRoleJSON' => $userRoleJSON,
             'nominal_awal' => $nominal_awal,

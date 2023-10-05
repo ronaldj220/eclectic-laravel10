@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Karyawan;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Purchase_Request;
 use App\Models\Admin\Purchase_Request_Detail;
+use App\Models\User;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,7 @@ class PurchaseRequestController extends Controller
     public function index(Request $request)
     {
         $title = 'Purchase Request';
-        $karyawan = Auth::guard('karyawan')->user()->nama;
+        $karyawan = Auth::user()->nama;
         if ($request->has('search')) {
             $data_PR = DB::table('admin_purchase_request')
                 ->where('pemohon', 'LIKE', '%' . $request->search . '%')
@@ -57,7 +58,9 @@ class PurchaseRequestController extends Controller
         }
 
 
-        $menyetujui = DB::select('SELECT * FROM menyetujui');
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->get();
 
         return view('halaman_karyawan.purchase_request.tambah_PR', [
             'title' => $title,

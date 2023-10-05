@@ -57,12 +57,12 @@
                                                 <td>{{ $data->nama }}</td>
                                                 <td>{{ $data->jabatan }}</td>
                                                 <td class="d-flex justify-content-center">
-                                                    <a href="{{ route('admin.menyetujui.edit_menyetujui', $data->id) }}"
+                                                    <a href="{{ route('admin.menyetujui.edit_menyetujui', $data->fk_user) }}"
                                                         class="btn btn-info" data-toggle="tooltip"
                                                         data-placement="bottom" title="Edit"><i
                                                             class="fa-solid fa-pen-to-square"></i></a>
                                                     &nbsp;&nbsp;
-                                                    <a href="{{ route('admin.menyetujui.hapus_menyetujui', $data->id) }}"
+                                                    <a href="{{ route('admin.menyetujui.hapus_menyetujui', $data->fk_user) }}"
                                                         class="btn btn-warning" data-toggle="tooltip"
                                                         data-placement="bottom" title="Hapus"><i
                                                             class="fa-solid fa-trash"></i></a>

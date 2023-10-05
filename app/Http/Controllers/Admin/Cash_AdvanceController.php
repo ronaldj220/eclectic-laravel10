@@ -6,6 +6,7 @@ use App\Exports\Admin\CashAdvanceExport;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Cash_Advance;
 use App\Models\Admin\CashAdvanceReport;
+use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class Cash_AdvanceController extends Controller
 {
     public function index(Request $request)
     {
-        $title = 'Cash Advance';
+        $title = 'CA';
         if ($request->has('search')) {
             $dataCashAdvance = DB::table('admin_cash_advance')
                 ->where('admin_cash_advance.pemohon', 'LIKE', '%' . $request->search . '%')
@@ -27,11 +28,37 @@ class Cash_AdvanceController extends Controller
                 ->leftJoin('admin_cash_advance_report as b', 'admin_cash_advance.no_doku', '=', 'b.tipe_ca')
                 ->orderBy('admin_cash_advance.no_doku', 'desc')
                 ->paginate(100);
+        } elseif ($request->has('bulan') && $request->has('search')) {
+            $bulan = $request->bulan;
+            $search = $request->search;
+
+            $dataCashAdvance = DB::table('admin_cash_advance')
+                ->select('admin_cash_advance.id', 'admin_cash_advance.no_doku', 'admin_cash_advance.tgl_diajukan', 'admin_cash_advance.judul_doku', 'admin_cash_advance.pemohon', 'b.id as id_car', 'b.no_doku as tipe_car', 'admin_cash_advance.status_approved', 'admin_cash_advance.status_paid')
+                ->leftJoin('admin_cash_advance_report as b', 'admin_cash_advance.no_doku', '=', 'b.tipe_ca')
+                ->whereMonth('admin_cash_advance.tgl_diajukan', date('m', strtotime($bulan)))
+                ->whereYear('admin_cash_advance.tgl_diajukan', date('Y', strtotime($bulan)))
+                ->where(function ($query) use ($search) {
+                    $query->where('admin_cash_advance.no_doku', 'like', '%' . $search . '%')
+                        ->orWhere('admin_cash_advance.judul_doku', 'like', '%' . $search . '%')
+                        ->orWhere('admin_cash_advance.pemohon', 'like', '%' . $search . '%');
+                })
+                ->orderBy('admin_cash_advance.no_doku', 'asc')
+                ->paginate(100);
+        } elseif ($request->has('bulan')) {
+            $bulan = $request->bulan;
+
+            $dataCashAdvance = DB::table('admin_cash_advance')
+                ->select('admin_cash_advance.id', 'admin_cash_advance.no_doku', 'admin_cash_advance.tgl_diajukan', 'admin_cash_advance.judul_doku', 'admin_cash_advance.pemohon', 'b.id as id_car', 'b.no_doku as tipe_car', 'admin_cash_advance.status_approved', 'admin_cash_advance.status_paid')
+                ->leftJoin('admin_cash_advance_report as b', 'admin_cash_advance.no_doku', '=', 'b.tipe_ca')
+                ->whereMonth('admin_cash_advance.tgl_diajukan', date('m', strtotime($bulan)))
+                ->whereYear('admin_cash_advance.tgl_diajukan', date('Y', strtotime($bulan)))
+                ->orderBy('admin_cash_advance.no_doku', 'asc')
+                ->paginate(100);
         } else {
             $dataCashAdvance = DB::table('admin_cash_advance')
                 ->select('admin_cash_advance.id', 'admin_cash_advance.no_doku', 'admin_cash_advance.tgl_diajukan', 'admin_cash_advance.judul_doku', 'admin_cash_advance.pemohon', 'b.id as id_car', 'b.no_doku as tipe_car', 'admin_cash_advance.status_approved', 'admin_cash_advance.status_paid')
                 ->leftJoin('admin_cash_advance_report as b', 'admin_cash_advance.no_doku', '=', 'b.tipe_ca')
-                ->orderBy('admin_cash_advance.no_doku', 'desc')
+                ->orderBy('admin_cash_advance.tgl_diajukan', 'desc')
                 ->paginate(20);
         }
         return view('halaman_admin.admin.cash_advance.index', [
@@ -39,30 +66,10 @@ class Cash_AdvanceController extends Controller
             'CashAdvance' => $dataCashAdvance,
         ]);
     }
-    public function search_by_date(Request $request)
-    {
-        $title = 'Cash Advance';
-        $bulan = $request->input('bulan'); // Ambil nilai bulan dari input form
 
-        // Pisahkan nilai bulan dan tahun dari input bulan
-        list($tahun, $bulan) = explode('-', $bulan);
-
-        $dataCashAdvance = DB::table('admin_cash_advance')
-            ->select('admin_cash_advance.id', 'admin_cash_advance.no_doku', 'admin_cash_advance.tgl_diajukan', 'admin_cash_advance.judul_doku', 'admin_cash_advance.pemohon', 'b.id as id_car', 'b.no_doku as tipe_car', 'admin_cash_advance.status_approved', 'admin_cash_advance.status_paid')
-            ->leftJoin('admin_cash_advance_report as b', 'admin_cash_advance.no_doku', '=', 'b.tipe_ca')
-            ->whereMonth('admin_cash_advance.tgl_diajukan', $bulan)
-            ->whereYear('admin_cash_advance.tgl_diajukan', $tahun)
-            ->orderBy('admin_cash_advance.no_doku', 'asc')
-            ->paginate(100);
-
-        return view('halaman_admin.admin.cash_advance.index', [
-            'title' => $title,
-            'CashAdvance' => $dataCashAdvance
-        ]);
-    }
     public function tambah_CA()
     {
-        $title = 'Tambah Cash Advance';
+        $title = 'Tambah CA';
         $AWAL = 'CA';
         $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
         $noUrutAkhir = DB::table('admin_cash_advance')
@@ -81,16 +88,16 @@ class Cash_AdvanceController extends Controller
         // dd($currentMonth);
 
         $accounting = DB::select('SELECT * FROM accounting');
-        $kasir = DB::select('SELECT * from kasir');
-        $menyetujui = DB::select('SELECT * from menyetujui ORDER by nama ASC');
+        $kasir = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 3)
+            ->get();
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->orderBy('nama', 'asc')
+            ->get();
 
         $currency = DB::select('SELECT * FROM kurs');
-        $karyawan = DB::table('karyawan')
-            ->select('nama')
-            ->union(DB::table('menyetujui')->select('nama'))
-            ->union(DB::table('kasir')->select('nama'))
-            ->orderBy('nama')
-            ->get();
+        $karyawan = User::all();
         return view('halaman_admin.admin.cash_advance.tambah_cash_advance', [
             'title' => $title,
             'no_dokumen' => $no_dokumen,

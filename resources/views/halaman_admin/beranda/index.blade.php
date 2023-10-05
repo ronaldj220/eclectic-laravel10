@@ -94,7 +94,7 @@
                                             <tr>
                                                 <td>
                                                     <a
-                                                        href="{{ $item->source == 'reimbursement' ? route('admin.reimbursement.lihat_reimbursement', $item->id) : ($item->source == 'cash_advance' ? route('admin.cash_advance.view_cash_advance', $item->id) : ($item->source == 'cash_advance_report' ? route('admin.cash_advance_report.view_cash_advance_report', $item->id) : ($item->source == 'purchase_request' ? route('admin.purchase_request.view_PR', $item->id) : route('admin.purchase_order.view_PO', $item->id)))) }}">{{ $item->no_doku_real }}</a>
+                                                        href="{{ $item->source == 'reimbursement' ? route('admin.reimbursement.lihat_reimbursement', $item->id) : ($item->source == 'cash_advance' ? route('admin.cash_advance.view_cash_advance', $item->id) : ($item->source == 'cash_advance_report' ? route('admin.cash_advance_report.view_cash_advance_report', $item->id) : ($item->source == 'purchase_request' ? route('admin.purchase_request.view_PR', $item->id) : route('admin.purchase_order.view_PO', $item->id)))) }}">{{ $item->no_doku }}</a>
                                                 </td>
                                                 <td>{{ $item->pemohon }}</td>
                                             </tr>

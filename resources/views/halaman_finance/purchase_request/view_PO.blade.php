@@ -114,106 +114,111 @@
                     @endif
                 </td>
             </tr>
-            <tr style="font-weight: bold" class="print_jumlah">
-                <td colspan="4" class="text-end">VAT (11%)</td>
-                <td class="text-center">
-                    @if ($item->curr == 'IDR')
-                        {{ $item->curr }}
-                    @elseif ($item->curr == 'USD')
-                        {{ $item->curr }}
-                    @elseif ($item->curr == 'SGD')
-                        {{ $item->curr }}
-                    @elseif ($item->curr == 'EUR')
-                        {{ $item->curr }}
-                    @endif
-                </td>
-                <td class="text-end">
-                    @if ($item->curr == 'IDR')
-                        {{ number_format($PPN, 2, ',', '.') }}
-                    @elseif ($item->curr == 'USD')
-                        {{ number_format($PPN, 2, ',', '.') }}
-                    @elseif ($item->curr == 'SGD')
-                        {{ number_format($PPN, 2, ',', '.') }}
-                    @elseif ($item->curr == 'EUR')
-                        {{ number_format($PPN, 2, ',', '.') }}
-                    @endif
-                </td>
-            </tr>
-            <tr style="font-weight: bold" class="print_jumlah">
-                <td colspan="4" class="text-end">PPh23 (2%)</td>
-                <td class="text-center">
-                    @if ($item->curr == 'IDR')
-                        {{ $item->curr }}
-                    @elseif ($item->curr == 'USD')
-                        {{ $item->curr }}
-                    @elseif ($item->curr == 'SGD')
-                        {{ $item->curr }}
-                    @elseif ($item->curr == 'EUR')
-                        {{ $item->curr }}
-                    @endif
-                </td>
-                <td class="text-end "@if ($PPH != 0) style="color: red" @endif>
-                    @if ($item->curr == 'IDR')
-                        {{ number_format($PPH, 2, ',', '.') }}
-                    @elseif ($item->curr == 'USD')
-                        {{ number_format($PPH, 2, ',', '.') }}
-                    @elseif ($item->curr == 'SGD')
-                        {{ number_format($PPH, 2, ',', '.') }}
-                    @elseif ($item->curr == 'EUR')
-                        {{ number_format($PPH, 2, ',', '.') }}
-                    @endif
-                </td>
-            </tr>
-            <tr style="font-weight: bold" class="print_jumlah">
-                <td colspan="4" class="text-end">PPh 4 (2)</td>
-                <td class="text-center">
-                    @if ($item->curr == 'IDR')
-                        {{ $item->curr }}
-                    @elseif ($item->curr == 'USD')
-                        {{ $item->curr }}
-                    @elseif ($item->curr == 'SGD')
-                        {{ $item->curr }}
-                    @elseif ($item->curr == 'EUR')
-                        {{ $item->curr }}
-                    @endif
-                </td>
-                <td class="text-end "@if ($PPH_4 != 0) style="color: red" @endif>
-                    @if ($item->curr == 'IDR')
-                        {{ number_format($PPH_4, 2, ',', '.') }}
-                    @elseif ($item->curr == 'USD')
-                        {{ number_format($PPH_4, 2, ',', '.') }}
-                    @elseif ($item->curr == 'SGD')
-                        {{ number_format($PPH_4, 2, ',', '.') }}
-                    @elseif ($item->curr == 'EUR')
-                        {{ number_format($PPH_4, 2, ',', '.') }}
-                    @endif
-                </td>
-            </tr>
-            <tr style="font-weight: bold" class="print_jumlah">
-                <td colspan="4" class="text-end">{{ $PO->ctm_1 }}</td>
-                <td class="text-center">
-                    @if ($item->curr == 'IDR')
-                        {{ $item->curr }}
-                    @elseif ($item->curr == 'USD')
-                        {{ $item->curr }}
-                    @elseif ($item->curr == 'SGD')
-                        {{ $item->curr }}
-                    @elseif ($item->curr == 'EUR')
-                        {{ $item->curr }}
-                    @endif
-                </td>
-                <td class="text-end "@if ($ctm_2 != 0) style="color: red" @endif>
-                    @if ($item->curr == 'IDR')
-                        {{ number_format($ctm_2, 2, ',', '.') }}
-                    @elseif ($item->curr == 'USD')
-                        {{ number_format($ctm_2, 2, ',', '.') }}
-                    @elseif ($item->curr == 'SGD')
-                        {{ number_format($ctm_2, 2, ',', '.') }}
-                    @elseif ($item->curr == 'EUR')
-                        {{ number_format($ctm_2, 2, ',', '.') }}
-                    @endif
-                </td>
-            </tr>
+            @if ($PPN)
+                <tr style="font-weight: bold" class="print_jumlah">
+                    <td colspan="4" class="text-end">VAT (11%)</td>
+                    <td class="text-center">
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ $item->curr }}
+                        @endif
+                    </td>
+                    <td class="text-end">
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ number_format($PPN, 2, ',', '.') }}
+                        @endif
+                    </td>
+                </tr>
+            @elseif ($PPN == null)
+                <tr style="font-weight: bold" class="print_jumlah" hidden>
+                    <td colspan="4" class="text-end">VAT (11%)</td>
+                    <td class="text-center">
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ $item->curr }}
+                        @endif
+                    </td>
+                    <td class="text-end">
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ number_format($PPN, 2, ',', '.') }}
+                        @endif
+                    </td>
+                </tr>
+            @endif
+
+            @if ($PPH)
+                <tr style="font-weight: bold" class="print_jumlah">
+                    <td colspan="4" class="text-end">PPh23 (2%)</td>
+                    <td class="text-center">
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ $item->curr }}
+                        @endif
+                    </td>
+                    <td class="text-end "@if ($PPH != 0) style="color: red" @endif>
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ number_format($PPH, 2, ',', '.') }}
+                        @endif
+                    </td>
+                </tr>
+            @elseif ($PPH == null)
+                <tr style="font-weight: bold" class="print_jumlah" hidden>
+                    <td colspan="4" class="text-end">PPh23 (2%)</td>
+                    <td class="text-center">
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ $item->curr }}
+                        @endif
+                    </td>
+                    <td class="text-end "@if ($PPH != 0) style="color: red" @endif>
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ number_format($PPH, 2, ',', '.') }}
+                        @endif
+                    </td>
+                </tr>
+            @endif
+
+            @if ($PPH_4)
+                <tr style="font-weight: bold" class="print_jumlah">
+                    <td colspan="4" class="text-end">PPh 4 (2)</td>
+                    <td class="text-center">
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ $item->curr }}
+                        @endif
+                    </td>
+                    <td class="text-end "@if ($PPH_4 != 0) style="color: red" @endif>
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ number_format($PPH_4, 2, ',', '.') }}
+                        @endif
+                    </td>
+                </tr>
+            @elseif ($PPH_4 == null)
+                <tr style="font-weight: bold" class="print_jumlah" hidden>
+                    <td colspan="4" class="text-end">PPh 4 (2)</td>
+                    <td class="text-center">
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ $item->curr }}
+                        @endif
+                    </td>
+                    <td class="text-end "@if ($PPH_4 != 0) style="color: red" @endif>
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ number_format($PPH_4, 2, ',', '.') }}
+                        @endif
+                    </td>
+                </tr>
+            @endif
+
+            @if ($PO->ctm_1 && $ctm_2 !== null)
+                <tr style="font-weight: bold" class="print_jumlah">
+                    <td colspan="4" class="text-end">{{ $PO->ctm_1 }}</td>
+                    <td class="text-center">
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ $item->curr }}
+                        @endif
+                    </td>
+                    <td class="text-end "@if ($ctm_2 != 0) style="color: red" @endif>
+                        @if ($item->curr == 'IDR' || $item->curr == 'USD' || $item->curr == 'SGD' || $item->curr == 'EUR')
+                            {{ number_format($ctm_2, 2, ',', '.') }}
+                        @endif
+                    </td>
+                </tr>
+            @endif
             <tr style="font-weight: bold" class="print_jumlah">
                 <td colspan="4" class="text-end">Grand Total</td>
                 <td class="text-center">

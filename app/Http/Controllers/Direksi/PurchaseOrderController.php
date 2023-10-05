@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Direksi;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Purchase_Order;
 use App\Models\Admin\Purchase_Order_Detail;
+use App\Models\Admin\Purchase_Request;
+use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
@@ -15,47 +17,25 @@ class PurchaseOrderController extends Controller
 {
     public function index()
     {
-        $title = 'Purchase Order';
-        $menyetujui = Auth::guard('direksi')->user()->nama;
-        $dataPO = DB::table('admin_purchase_order')
-            ->where(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->where('status_approved', 'approved')
-                    ->where('status_paid', 'pending');
-            })
+        $title = 'PO';
+        $menyetujui = Auth::user()->nama;
+        $dataPO = DB::table('admin_purchase_order as a')
+            ->select('a.id', 'a.no_doku', 'a.tgl_purchasing', 'b.id as id_pr', 'b.no_doku as tipe_pr', 'a.supplier', 'a.status_approved', 'a.status_paid')
+            ->leftJoin('admin_purchase_request as b', 'a.tipe_pr', '=', 'b.no_doku')
+            ->where('a.pemohon', $menyetujui)
             ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->where(function ($query) {
-                        $query->where('status_approved', 'rejected')
-                            ->orWhere('status_paid', 'rejected');
-                    });
+                $query->where('a.status_approved', 'pending')
+                    ->where('a.status_paid', 'pending')
+                    ->where('a.menyetujui', $menyetujui);
             })
-            ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->where('status_approved', 'pending')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->where('status_approved', 'approved')
-                    ->where('status_paid', 'paid');
-            })
-            ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', '<>', $menyetujui)
-                    ->where('status_approved', 'rejected')
-                    ->where('status_paid', 'pending');
-            })
-            ->orWhere(function ($query) use ($menyetujui) {
-                $query->where('pemohon', '<>', $menyetujui)
-                    ->where('status_approved', 'pending')
-                    ->where('status_paid', 'pending');
-            })
-            ->where(function ($query) use ($menyetujui) {
-                $query->where('pemohon', $menyetujui)
-                    ->orWhere('menyetujui', $menyetujui);
-            })
-            ->orderByRaw("CASE WHEN status_approved = 'pending' AND status_paid = 'pending' THEN 0 WHEN status_approved = 'pending' OR status_paid = 'pending' THEN 1 ELSE 2 END, CASE WHEN pemohon = 'Yacob' THEN 1 ELSE 2 END")
-            ->paginate(10);
+            ->orderByRaw("CASE 
+                WHEN a.status_approved = 'pending' AND a.status_paid = 'pending' THEN 0
+                WHEN a.status_approved = 'rejected' AND a.status_paid = 'rejected' THEN 1
+                ELSE 3 
+            END")
+            ->orderBy('tgl_purchasing', 'desc')
+            ->orderBy('no_doku', 'desc')
+            ->paginate(20);
         return view('halaman_direksi.purchase_order.index', [
             'title' => $title,
             'PO' => $dataPO
@@ -64,7 +44,7 @@ class PurchaseOrderController extends Controller
 
     public function view_PO($id)
     {
-        $title = 'Lihat Purchase Order';
+        $title = 'Lihat PO';
         $PO = DB::table('admin_purchase_order')->find($id);
         $PO_Nominal = DB::table('admin_purchase_order')->where('id', $id)->get();
         $PO_detail = DB::table('admin_purchase_order_detail')->where('fk_po', $id)->get();
@@ -96,7 +76,18 @@ class PurchaseOrderController extends Controller
             'tgl_purchasing' => $formattedDate
         ]);
     }
+    public function view_PR($id_pr)
+    {
+        $title = 'Lihat PR';
+        $PR = Purchase_Request::find($id_pr);
+        $PR_detail = DB::table('admin_purchase_request_detail')->where('fk_pr', $id_pr)->get();
 
+        return view('halaman_direksi.purchase_order.view_PR', [
+            'title' => $title,
+            'PR' => $PR,
+            'PR_detail' => $PR_detail
+        ]);
+    }
     public function setujui_PO($id)
     {
         try {
@@ -130,7 +121,7 @@ class PurchaseOrderController extends Controller
     }
     public function print_PO($id)
     {
-        $title = 'Cetak Purchase Order';
+        $title = 'Cetak PO';
         $PO = DB::table('admin_purchase_order')->where('id', $id)->first();
         $PO_detail = DB::table('admin_purchase_order_detail')->where('fk_po', $id)->get();
         $nominal_PO = DB::table('admin_purchase_order_detail')->where('fk_po', $id)->sum('nominal');
@@ -162,7 +153,7 @@ class PurchaseOrderController extends Controller
     }
     public function tambah_PO()
     {
-        $title = 'Tambah Purchase Order';
+        $title = 'Tambah PO';
         $AWAL = 'PO';
 
         $bulanRomawi = array("", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12");
@@ -179,13 +170,19 @@ class PurchaseOrderController extends Controller
                 $no_dokumen = sprintf("%02s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . date('Y');
             }
         }
-        $karyawan = Auth::guard('direksi')->user()->nama;
-        $tipe_pr = DB::select('SELECT * FROM admin_purchase_request WHERE pemohon = ?', [$karyawan]);
-        $accounting = DB::select('SELECT * FROM accounting');
-        $kasir = DB::select('SELECT * from kasir');
-        $menyetujui = DB::select('SELECT * from menyetujui');
+        $accounting = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 2)
+            ->get();
+        $kasir = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 3)
+            ->get();
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->get();
         $kurs = DB::select('SELECT * FROM kurs');
 
+        $karyawan = Auth::user()->nama;
+        $tipe_pr = DB::select('SELECT * FROM admin_purchase_request WHERE pemohon = ? AND status_approved = "rejected" AND status_paid = "rejected"', [$karyawan]);
         $supplier = DB::select('SELECT * FROM supplier WHERE PIC = ?', [$karyawan]);
 
         return view('halaman_direksi.purchase_order.tambah_PO', [

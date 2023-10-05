@@ -29,11 +29,21 @@
                                         id="formId">
                                         @csrf
                                         <div class="form-group">
+                                            <label for="exampleInputPassword1">Email</label>
+                                            <input type="text" class="form-control" id="exampleInputPassword1"
+                                                name="email">
+                                        </div>
+                                        <div class="form-group">
                                             <label for="exampleInputPassword1">Nama Accounting</label>
                                             <input type="text" class="form-control" id="exampleInputPassword1"
                                                 name="nama_accounting">
                                         </div>
-                                        @error('kurs')
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Password</label>
+                                            <input type="password" class="form-control" id="exampleInputPassword1"
+                                                name="password">
+                                        </div>
+                                        @error('nama_accounting')
                                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                                 {{ $message }}
                                                 <button type="button" class="close" data-dismiss="alert"

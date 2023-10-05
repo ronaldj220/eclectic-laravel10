@@ -13,7 +13,7 @@ class CashAdvanceController extends Controller
     public function index(Request $request)
     {
         $title = 'Cash Advance';
-        $authId = Auth::guard('karyawan')->user()->nama;
+        $authId = Auth::user()->nama;
         if ($request->has('search')) {
             $dataCashAdvance = DB::table('admin_cash_advance')
                 ->where('pemohon', 'LIKE', '%' . $request->search . '%')
@@ -23,10 +23,10 @@ class CashAdvanceController extends Controller
                 ->paginate(20);
         }
         $dataCashAdvance = DB::table('admin_cash_advance')
-            ->where('pemohon', $authId)
-            ->orderBy('no_doku', 'asc')
-            ->whereIn('status_approved', ['rejected', 'pending', 'approved'])
-            ->whereIn('status_paid', ['pending', 'rejected', 'paid'])
+            ->select('admin_cash_advance.id', 'admin_cash_advance.no_doku', 'admin_cash_advance.tgl_diajukan', 'admin_cash_advance.judul_doku', 'admin_cash_advance.pemohon', 'b.id as id_car', 'b.no_doku as tipe_car', 'admin_cash_advance.status_approved', 'admin_cash_advance.status_paid')
+            ->leftJoin('admin_cash_advance_report as b', 'admin_cash_advance.no_doku', '=', 'b.tipe_ca')
+            ->where('admin_cash_advance.pemohon', $authId)
+            ->orderBy('admin_cash_advance.no_doku', 'desc')
             ->paginate(10);
 
         return view('halaman_karyawan.cash_advance.index', [

@@ -53,7 +53,12 @@
                             @endif
                         </td>
                         <td class="text-center" style="max-width: 12%; word-break: break-all;">
-                            {{ $item->jumlah }}</td>
+                            @if (floor($item->jumlah) == $item->jumlah)
+                                {{ number_format($item->jumlah, 0, ',', '.') }}
+                            @else
+                                {{ number_format($item->jumlah, 1, ',', '.') }}
+                            @endif
+                        </td>
                         <td class="text-center" style="max-width: 12%; word-break: break-all;">
                             {{ $item->satuan }}</td>
                         <td class="text-center" style="max-width: 12%; word-break: break-all;">
@@ -97,6 +102,29 @@
                 </div>
             </div>
         </div>
+        @if ($PR->status_approved == 'approved' && $PR->status_paid == 'pending')
+            <div class="container" style="margin-top: -30px">
+                <div class="row">
+                    <div class="col">
+                    </div>
+                    @if ($PR->menyetujui == 'Aris')
+                        <div class="col">
+                        </div>
+                    @else
+                        <div class="col">
+                            <table class="table table-borderless table-sm"
+                                style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 10px; margin-right: -150px; margin-left: 430px;">
+                                <tr class="text-center">
+                                    <td>Approved on
+                                        {{ date('d/m/Y', strtotime($PR->tgl_approval)) }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @endif
 
     </form>
 

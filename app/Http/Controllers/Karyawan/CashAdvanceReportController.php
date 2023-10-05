@@ -18,7 +18,7 @@ class CashAdvanceReportController extends Controller
     public function index(Request $request)
     {
         $title = 'Cash Advance Report';
-        $karyawan = Auth::guard('karyawan')->user()->nama;
+        $karyawan = Auth::user()->nama;
         if ($request->has('search')) {
             $dataCashAdvanceReport = DB::table('admin_cash_advance_report')
                 ->where('pemohon', 'LIKE', '%' . $request->search . '%')
@@ -28,9 +28,9 @@ class CashAdvanceReportController extends Controller
                 ->paginate(20);
         }
         $dataCashAdvanceReport = DB::table('admin_cash_advance_report')
-            ->orderBy('no_doku', 'desc')
             ->where('pemohon', $karyawan)
-            ->paginate(10);
+            ->orderBy('no_doku', 'desc')
+            ->paginate(20);
 
         return view('halaman_karyawan.cash_advance_report.index', [
             'title' => $title,
@@ -51,7 +51,7 @@ class CashAdvanceReportController extends Controller
         $no_dokumen = null;
         $currentMonth = date('n');
         if (date('j') == 1) {
-            $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir));
+            $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir + 1));
         } else {
             if ($noUrutAkhir) {
                 $no_dokumen = date('y') . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . sprintf("%05s", abs($noUrutAkhir + 1));

@@ -70,12 +70,12 @@
                                                 <td>{{ $item->nama }}</td>
                                                 <td>{{ $item->jabatan }}</td>
                                                 <td class="d-flex justify-content-center">
-                                                    <a href="{{ route('admin.karyawan.edit_karyawan', $item->id) }}"
+                                                    <a href="{{ route('admin.karyawan.edit_karyawan', $item->fk_user) }}"
                                                         class="btn btn-info" data-toggle="tooltip"
                                                         data-placement="bottom" title="Edit"><i
                                                             class="fa-solid fa-pen-to-square"></i></a>
                                                     &nbsp;&nbsp;
-                                                    <a href="{{ route('admin.karyawan.hapus_karyawan', $item->id) }}"
+                                                    <a href="{{ route('admin.karyawan.hapus_karyawan', $item->fk_user) }}"
                                                         class="btn btn-warning" data-toggle="tooltip"
                                                         data-placement="bottom" title="Hapus"><i
                                                             class="fa-solid fa-trash"></i></a>

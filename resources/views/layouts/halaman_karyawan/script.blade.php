@@ -8,7 +8,7 @@
 <!-- Custom scripts for all pages-->
 <script src="{{ asset('assets') }}/js/sb-admin-2.min.js"></script>
 
-<script src="{{ asset('assets/js/tooltip.js') }}"></script>
+<script src="{{ asset('assets2/js/main.js') }}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

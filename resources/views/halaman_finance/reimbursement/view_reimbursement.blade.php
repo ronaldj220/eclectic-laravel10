@@ -369,7 +369,7 @@
         <div class="d-flex justify-content-center" style="margin-top: 20px">
 
             @if ($reimbursement->status_approved == 'pending' && $reimbursement->status_paid == 'pending')
-                @if ($reimbursement->pemohon == Auth::guard('kasir')->user()->nama)
+                @if ($reimbursement->pemohon == Auth::user()->nama)
                     <a href="{{ route('kasir.beranda') }}" class="btn btn-danger"><i
                             class="fa-solid fa-arrow-left fa-bounce"></i>&nbsp;Kembali</a>
                 @endif

@@ -1,158 +1,23 @@
 @php
     date_default_timezone_set('Asia/Jakarta');
 @endphp
-<!DOCTYPE html>
-<html lang="en">
+<style>
+    .img {
+        max-width: 100px;
+    }
 
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Eclectic (Karyawan) | {{ $title }}</title>
-
-    <!-- Custom fonts for this template-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
-
-    <!-- Custom styles for this template-->
-    <link href="{{ asset('assets') }}/css/sb-admin-2.min.css" rel="stylesheet">
-
-
-    <link rel="icon" href="{{ asset('logo.png') }}">
-
-</head>
-
-
-
-
+    .review {
+        max-width: 100px;
+    }
+</style>
+@include('layouts.halaman_karyawan.header')
 
 <body id="page-top">
 
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient sidebar sidebar-dark accordion" id="accordionSidebar"
-            style="background-color: #900C3F">
-
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center"
-                href="{{ route('karyawan.beranda') }}">
-                <div class="sidebar-brand-icon">
-                    <img src="{{ asset('ECLECTIC GSM CROP1.png') }}" alt="" width="90%">
-                </div>
-                <div class="sidebar-brand-text">
-                    <img src="{{ asset('ECLECTIC GSM CROP2.png') }}" alt="" width="100%">
-                </div>
-            </a>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('karyawan.beranda') }}">
-                    <i class="fa-solid fa-home"></i>
-                    <span>Beranda</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('karyawan.reimbursement') }}">
-                    <i class="fa-solid fa-hand-holding-heart"></i>
-                    <span>Reimbursement</span></a>
-            </li>
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('karyawan.cash_advance') }}">
-                    <i class="fa-solid fa-sack-dollar"></i>
-                    <span>Cash Advance</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('karyawan.cash_advance_report') }}">
-                    <i class="fa-solid fa-file-invoice-dollar"></i>
-                    <span>Cash Advance Report</span></a>
-            </li>
-
-            @if (Auth::guard('karyawan')->user()->jabatan == 'Staff')
-                <!-- Divider -->
-                <hr class="sidebar-divider my-0">
-
-                <!-- Nav Item - Tables -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('karyawan.purchase_request') }}">
-                        <i class="fa-solid fa-chart-bar"></i>
-                        <span>Purchase Request</span></a>
-                </li>
-                <!-- Divider -->
-                <hr class="sidebar-divider my-0">
-
-                <!-- Nav Item - Tables -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('karyawan.purchase_order') }}">
-                        <i class="fa-solid fa-cart-arrow-down"></i>
-                        <span>Purchase Order</span></a>
-                </li>
-            @endif
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            @if (Auth::guard('karyawan')->user()->jabatan == 'Konsultan')
-                <li class="nav-item">
-                    <a class="nav-link"
-                        href="https://drive.google.com/file/d/1FYmGvS7aYSU4HFpk7zngHP5TPRfcQSVf/view?usp=sharing">
-                        <i class="fa-regular fa-circle-question"></i>
-                        <span>Help</span></a>
-                </li>
-            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Project Manager')
-                <li class="nav-item">
-                    <a class="nav-link"
-                        href="https://drive.google.com/file/d/1AFEoQgVbNCqmZuyB98W3pvWQflVISr-5/view?usp=sharing">
-                        <i class="fa-regular fa-circle-question"></i>
-                        <span>Help</span></a>
-                </li>
-            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Support Manager')
-                <li class="nav-item">
-                    <a class="nav-link"
-                        href="https://drive.google.com/file/d/1AFEoQgVbNCqmZuyB98W3pvWQflVISr-5/view?usp=sharing">
-                        <i class="fa-regular fa-circle-question"></i>
-                        <span>Help</span></a>
-                </li>
-            @elseif (Auth::guard('karyawan')->user()->jabatan == 'Staff')
-                <li class="nav-item">
-                    <a class="nav-link"
-                        href="https://drive.google.com/file/d/1AFEoQgVbNCqmZuyB98W3pvWQflVISr-5/view?usp=sharing">
-                        <i class="fa-regular fa-circle-question"></i>
-                        <span>Help</span></a>
-                </li>
-            @endif
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-
-        </ul>
-        <!-- End of Sidebar -->
+        @include('layouts.halaman_karyawan.sidebar')
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -160,46 +25,7 @@
             <!-- Main Content -->
             <div id="content">
 
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
-
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
-
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span
-                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->nama }}</span>
-                                <img class="img-profile rounded-circle"
-                                    src="{{ asset('assets') }}/img/undraw_profile.svg">
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
-                                <a class="dropdown-item"
-                                    href="{{ route('admin.admin.edit_admin', Auth::user()->id) }}">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile ({{ Auth::user()->nama }}) | {{ Auth::user()->jabatan }}
-                                </a>
-                                <a class="dropdown-item" href="#" data-toggle="modal"
-                                    data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </div>
-                        </li>
-
-                    </ul>
-
-                </nav>
-                <!-- End of Topbar -->
+                @include('layouts.halaman_karyawan.topbar')
 
 
                 <div class="container">
@@ -208,8 +34,8 @@
                         <br>
                         <b><a style="text-transform: uppercase;">PT. Eclectic Consulting</a></b>
                     </figure>
-                    <form action="{{ route('admin.reimbursement.save_doc_RB') }}" method="POST" id="formId"
-                        enctype="multipart/form-data">
+                    <form action="{{ route('karyawan.reimbursement.simpan_reimbursement') }}" method="POST"
+                        id="formId" enctype="multipart/form-data">
                         @csrf
                         <!-- Tambahkan input tersembunyi untuk menandai tombol "Save as Draft" ditekan -->
                         <input type="hidden" name="draftAction" value="true">
@@ -218,8 +44,8 @@
                             style="width: auto; font-family: Arial, Helvetica, sans-serif; font-size: 12px; margin-left: -5px;">
                             <tr>
                                 <td>No<br>Tanggal</td>
-                                <td>: <input type="text" name="no_doku" readonly><br>:<input type="text"
-                                        readonly name="tgl_diajukan" value="{{ date('d/m/Y') }}">
+                                <td>: <input type="text" name="no_doku" readonly><br>:<input type="text" readonly
+                                        name="tgl_diajukan" value="{{ date('d/m/Y') }}">
                                 </td>
                             </tr>
                         </table>
@@ -249,15 +75,20 @@
                                 <?php $no = 1; ?>
                                 <tr>
                                     <td class="text-center" style="max-width: 5%; text-align: center;">
-                                        {{ $no++ . '.' }}</td>
+                                        {{ $no . '.' }}</td>
                                     <td style="text-transform:capitalize;">
                                         <input type="text" name="deskripsi[]"
-                                            placeholder="Tuliskan deskripsi di kolom ini." style="width: 50%">
+                                            placeholder="Tuliskan deskripsi di kolom ini." style="width: 50%"
+                                            class="validate-input" data-validate="Deskripsi Harap Diisi!">
                                         &nbsp;
                                         <input type="text" name="project[]" placeholder="Isi Keperluan Project"
-                                            style="width: 25%"> &nbsp; <input type="file" name="foto[]"
-                                            accept=".jpg, .png, .jpeg" style="width: 20%;">
+                                            style="width: 25%" class="validate-input"
+                                            data-validate="Project Harap Diisi!"> &nbsp; <input type="file"
+                                            name="foto[]" accept=".jpg, .png, .jpeg" style="width: 20%;" class="img"
+                                            onchange="readUrl(this);" nomerData={{ $no }}>
                                         <br>
+                                        <img id="blah{{ $no++ }}" src="" alt="your image"
+                                            class="review">
                                         <input type="date" name="tgl1[]" style="width:20%">
                                         &nbsp; s/d &nbsp;
                                         <input type="date" name="tgl2[]" style="width:23%">
@@ -286,8 +117,8 @@
                                 <!-- Tabel detail akan ditambahkan di sini oleh JavaScript -->
                             </tbody>
                         </table>
-                        <a href="javascript:;" class="btn btn-info justify-content-between btn-sm"
-                            onclick="addRB()"><i class="fa-solid fa-circle-plus fa-bounce"></i>&nbsp;Add
+                        <a href="javascript:;" class="btn btn-info justify-content-between btn-sm" onclick="addRB()"><i
+                                class="fa-solid fa-circle-plus fa-bounce"></i>&nbsp;Add
                             More</a>
                         <div style="margin-top: 30px;">
                             <table class="table is-striped table-bordered border-dark text-center"
@@ -295,8 +126,8 @@
                                 <tr>
                                     <td style="width:25%">
                                         <div class="text-center" style="font-weight: bold">Pemohon, &nbsp;<input
-                                                type="text" name="pemohon"
-                                                value="{{ Auth::guard('karyawan')->user()->nama }}" readonly>
+                                                type="text" name="pemohon" value="{{ Auth::user()->nama }}"
+                                                readonly>
                                             </select>
                                         </div>
 
@@ -353,15 +184,7 @@
             </div>
             <!-- End of Main Content -->
 
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Eclectic {{ date('Y') }}</span>
-                    </div>
-                </div>
-            </footer>
-            <!-- End of Footer -->
+            @include('layouts.halaman_karyawan.footer')
 
         </div>
         <!-- End of Content Wrapper -->
@@ -374,39 +197,9 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="{{ route('logout') }}">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('layouts.halaman_karyawan.logout')
 
-
-    <!-- Bootstrap core JavaScript-->
-    <script src="{{ asset('assets') }}/vendor/jquery/jquery.min.js"></script>
-    <script src="{{ asset('assets') }}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="{{ asset('assets') }}/vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="{{ asset('assets') }}/js/sb-admin-2.min.js"></script>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @include('layouts.halaman_karyawan.script')
 
     <script>
         let no = 2;
@@ -419,13 +212,15 @@
 
             // Isi konten untuk <tr> baru
             newRow.innerHTML = `
-                <td class="text-center">${no++ + '.'}</td>
+                <td class="text-center">${no}</td>
                 <td style="text-transform:capitalize;">
                     <input type="text" name="deskripsi[]" placeholder="Tuliskan deskripsi di kolom ini." style="width: 50%">
                     &nbsp;
                     <input type="text" name="project[]" placeholder="Isi Keperluan Project" style="width: 25%">
                     &nbsp;
-                    <input type="file" name="foto[]" accept=".jpg, .png, .jpeg" style="width: 20%;">
+                    <input type="file" name="foto[]" accept=".jpg, .png, .jpeg" style="width: 20%;" onchange="readUrl(this);" nomerData=${no}>
+                    <br>
+                    <img id="blah${no}" src="" alt="your image" >
                     <br>
                     <input type="date" name="tgl1[]" style="width:20%">
                     &nbsp; s/d &nbsp;
@@ -452,6 +247,23 @@
 
             // Tambahkan <tr> baru ke dalam tabel
             project.appendChild(newRow);
+            $('#blah' + no++).hide();
+
+            function readUrl(input) {
+                alert('coba');
+                var nomorData = $(input).attr('nomerData');
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        $('#blah' + nomorData)
+                            .attr('src', e.target.result);
+                        $('#blah' + nomorData).show();
+                    };
+
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
         }
 
         function deleteRow(button) {
@@ -527,6 +339,26 @@
                 });
             });
         });
+    </script>
+
+    <script>
+        $('#blah1').hide();
+
+        function readUrl(input) {
+            // alert('coba');
+            var nomorData = $(input).attr('nomerData');
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    $('#blah' + nomorData)
+                        .attr('src', e.target.result);
+                    $('#blah' + nomorData).show();
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
     </script>
 
 

@@ -6,6 +6,7 @@ use App\Exports\Admin\PurchaseOrderExports;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Purchase_Order;
 use App\Models\Admin\Purchase_Order_Detail;
+use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
@@ -16,46 +17,7 @@ class PurchaseOrderController extends Controller
 {
     public function index(Request $request)
     {
-        $title = 'Purchase Order';
-        if ($request->has('search')) {
-            $search = $request->search;
-            $dataPO = DB::table('admin_purchase_order as a')
-                ->select('a.id', 'a.no_doku', 'a.tgl_purchasing', 'b.id as id_pr', 'b.no_doku as tipe_pr', 'a.supplier', 'a.status_approved', 'a.status_paid')
-                ->selectSub(function ($query) use ($search) {
-                    $query->select('judul')
-                        ->from('admin_purchase_order_detail as d')
-                        ->where('d.judul', 'LIKE', '%' . $search . '%')
-                        ->whereColumn('a.id', 'd.fk_po')
-                        ->limit(1);
-                }, 'judul')
-                ->leftJoin('admin_purchase_request as b', 'a.tipe_pr', '=', 'b.no_doku')
-                ->where('a.supplier', 'LIKE', '%' . $request->search . '%')
-                ->orderBy('tgl_purchasing', 'desc')
-                ->paginate(20);
-        } else {
-            $dataPO = DB::table('admin_purchase_order as a')
-                ->select('a.id', 'a.no_doku', 'a.tgl_purchasing', 'b.id as id_pr', 'b.no_doku as tipe_pr', 'a.supplier', 'a.status_approved', 'a.status_paid')
-                ->selectSub(function ($query) {
-                    $query->select('judul')
-                        ->from('admin_purchase_order_detail as d')
-                        ->whereColumn('a.id', 'd.fk_po')
-                        ->limit(1);
-                }, 'judul')
-                ->leftJoin('admin_purchase_request as b', 'a.tipe_pr', '=', 'b.no_doku')
-                ->orderBy('tgl_purchasing', 'desc')
-                ->orderBy('no_doku', 'desc')
-                ->paginate(20);
-        }
-
-
-        return view('halaman_admin.admin.purchase_order.index', [
-            'title' => $title,
-            'PO' => $dataPO
-        ]);
-    }
-    public function search_by_date(Request $request)
-    {
-        $title = 'Purchase Order';
+        $title = 'PO';
         $query = DB::table('admin_purchase_order as a')
             ->select('a.id', 'a.no_doku', 'a.tgl_purchasing', 'b.id as id_pr', 'b.no_doku as tipe_pr', 'a.supplier', 'a.status_approved', 'a.status_paid')
             ->selectSub(function ($query) {
@@ -65,16 +27,20 @@ class PurchaseOrderController extends Controller
                     ->limit(1);
             }, 'judul')
             ->leftJoin('admin_purchase_request as b', 'a.tipe_pr', '=', 'b.no_doku')
+            ->orderBy('tgl_purchasing', 'desc')
             ->orderBy('no_doku', 'desc');
-
-        // Memeriksa apakah parameter bulan dikirimkan dalam request POST
-        if ($request->has('bulan')) {
+        if ($request->has('search')) {
+            $dataPO = $query->where('a.supplier', 'LIKE', '%' . $request->search . '%')
+                ->paginate(20);
+        } elseif ($request->has('bulan')) {
             $bulan = $request->bulan;
             $query->whereMonth('tgl_purchasing', date('m', strtotime($bulan)))
                 ->whereYear('tgl_purchasing', date('Y', strtotime($bulan)));
+            $dataPO = $query->paginate(100);
+        } else {
+            $dataPO = $query->paginate(20);
         }
 
-        $dataPO = $query->paginate(100);
 
         return view('halaman_admin.admin.purchase_order.index', [
             'title' => $title,
@@ -83,7 +49,7 @@ class PurchaseOrderController extends Controller
     }
     public function tambah_PO()
     {
-        $title = 'Tambah Purchase Order';
+        $title = 'Tambah PO';
         $AWAL = 'PO';
 
         $bulanRomawi = array("", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12");
@@ -96,16 +62,26 @@ class PurchaseOrderController extends Controller
         } else {
             $no_dokumen = sprintf("%02s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[date('n')] . '/' . date('Y');
         }
-        $tipe_pr = DB::select('SELECT * FROM admin_purchase_request');
+        $tipe_pr = DB::select('
+        SELECT pr.no_doku
+        FROM admin_purchase_request pr
+        WHERE pr.no_doku NOT IN (SELECT po.tipe_pr FROM admin_purchase_order po)
+        ');
         $pemohon = DB::table('karyawan')
             ->select('nama')
             ->union(DB::table('menyetujui')->select('nama'))
             ->union(DB::table('kasir')->select('nama'))
             ->orderBy('nama')
             ->get();
-        $accounting = DB::select('SELECT * FROM accounting');
-        $kasir = DB::select('SELECT * from kasir');
-        $menyetujui = DB::select('SELECT * from menyetujui');
+        $accounting = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 2)
+            ->get();
+        $kasir = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 3)
+            ->get();
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->get();
         $kurs = DB::select('SELECT * FROM kurs');
 
         $supplier = DB::select('SELECT * FROM supplier ORDER by nama_supplier ASC');
@@ -236,11 +212,12 @@ class PurchaseOrderController extends Controller
         foreach ($PO_Nominal as $item) {
             $result = ($item->PPN / 100) * $nominal_PO;
             $PPH = ($item->PPH / 100) * $nominal_PO;
+            $PPH_21 = ($item->PPH_21 / 100) * $nominal_PO;
             $PPH_4 = ($item->PPH_4 / 100) * $nominal_PO;
             $ctm_2 = ($item->ctm_2 / 100) * $nominal_PO;
             $results[] = $result; // Tambahkan hasil ke array
         }
-        $grand_total = $nominal_PO + $result - $PPH - $PPH_4 - $ctm_2;
+        $grand_total = $nominal_PO + $result - $PPH - $PPH_4 - $PPH_21 - $ctm_2;
 
 
         $carbonDate = Carbon::createFromFormat('Y-m-d', $PO->tgl_purchasing)->locale('id');
@@ -253,6 +230,7 @@ class PurchaseOrderController extends Controller
             'PPN' => $result,
             'PPH' => $PPH,
             'PPH_4' => $PPH_4,
+            'PPH_21' => $PPH_21,
             'ctm_2' => $ctm_2,
             'grand_total' => $grand_total,
             'tgl_purchasing' => $formattedDate
@@ -260,7 +238,7 @@ class PurchaseOrderController extends Controller
     }
     public function view_PO($id)
     {
-        $title = 'Lihat Purchase Order';
+        $title = 'Lihat PO';
         $PO = DB::table('admin_purchase_order')->find($id);
         $PO_Nominal = DB::table('admin_purchase_order')->where('id', $id)->get();
         $PO_detail = DB::table('admin_purchase_order_detail')->where('fk_po', $id)->get();
@@ -270,10 +248,12 @@ class PurchaseOrderController extends Controller
             $result = ($item->PPN / 100) * $nominal_PO;
             $PPH = ($item->PPH / 100) * $nominal_PO;
             $PPH_4 = ($item->PPH_4 / 100) * $nominal_PO;
+            $PPH_21 = ($item->PPH_21 / 100) * $nominal_PO;
+            $diskon = ($item->diskon) * $nominal_PO;
             $ctm_2 = ($item->ctm_2 / 100) * $nominal_PO;
             $results[] = $result; // Tambahkan hasil ke array
         }
-        $grand_total = $nominal_PO + $result - $PPH - $PPH_4 - $ctm_2;
+        $grand_total = $nominal_PO + $result - $PPH - $PPH_4 - $PPH_21 - $ctm_2;
 
 
         $carbonDate = Carbon::createFromFormat('Y-m-d', $PO->tgl_purchasing)->locale('id');
@@ -286,6 +266,8 @@ class PurchaseOrderController extends Controller
             'PPN' => $result,
             'PPH' => $PPH,
             'PPH_4' => $PPH_4,
+            'PPH_21' => $PPH_21,
+            'diskon' => $diskon,
             'ctm_2' => $ctm_2,
             'grand_total' => $grand_total,
             'tgl_purchasing' => $formattedDate

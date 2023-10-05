@@ -50,29 +50,6 @@ class LoginController extends Controller
                 'email' => 'Email atau Password salah! Silahkan Lakukan Login Kembali.',
             ]);
         }
-
-
-        // if (Auth::guard('karyawan')->attempt($credentials, $remember)) {
-        //     $request->session()->regenerate();
-
-        //     return redirect()->route('karyawan.beranda');
-        //     // dd('login berhasil');
-        // }
-        // if (Auth::guard('direksi')->attempt($credentials, $remember)) {
-        //     $request->session()->regenerate();
-
-        //     return redirect()->route('direksi.beranda');
-        //     // dd('login berhasil');
-        // }
-        // if (Auth::guard('kasir')->attempt($credentials, $remember)) {
-        //     $request->session()->regenerate();
-
-        //     return redirect()->route('kasir.beranda');
-        //     // dd('login berhasil');
-        // }
-        // return back()->withErrors([
-        //     'email' => 'Email atau Password salah! Silahkan Lakukan Login Kembali.',
-        // ]);
     }
     public function logout(Request $request)
     {

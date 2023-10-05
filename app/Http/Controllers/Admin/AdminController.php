@@ -13,7 +13,10 @@ class AdminController extends Controller
     public function index()
     {
         $title = 'Admin';
-        $dataAdmin = User::paginate(10)->where('jabatan', 'Admin');
+        $dataAdmin = DB::table('user')->join('role_has_user', 'user.id', '=', 'role_has_user.fk_role')
+            ->where('fk_role', 1)
+            ->paginate(10);
+
         return view('halaman_admin.admin.index', [
             'title' => $title,
             'admin' => $dataAdmin
@@ -30,11 +33,9 @@ class AdminController extends Controller
     {
         $request->validate([
             'email' => 'required|unique:user,email',
-            'signature' => 'required|unique:user,ttd'
         ], [
             'email.unique' => 'Email tidak boleh digunakan kedua kali!',
             'email.required' => 'Email tidak boleh kosong',
-            'signature.required' => 'Tanda Tangan tidak boleh kosong'
         ]);
 
         $image_parts = explode(";base64,", $request->input('signature'));
@@ -56,7 +57,6 @@ class AdminController extends Controller
             'no_rekening' => $request->no_rekening,
             'no_telp' => $request->no_telp,
             'bank' => $request->bank,
-            'ttd' => $filename
         ];
         User::create($data);
         // dd($data);

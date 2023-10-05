@@ -4,27 +4,23 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\Admin\ReimbursementExport;
 use App\Http\Controllers\Controller;
-use App\Imports\ReimbursementImports;
 use App\Models\Admin\Rb_Detail;
 use App\Models\Admin\Reimbursement;
 use App\Models\Admin\Support_Lembur_Detail;
 use App\Models\Admin\Support_Ticket_Detail;
 use App\Models\Admin\Timesheet_Project_Detail;
-use Carbon\Carbon;
+use App\Models\User;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use Intervention\Image\ImageManagerStatic as Image;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ReimbursementController extends Controller
 {
     public function index(Request $request)
     {
-        $title = 'Reimbursement';
+        $title = 'RB';
 
         $sortColumn = 'tgl_diajukan'; // Kolom untuk pengurutan
         $sortDirection = 'desc'; // Arah pengurutan (desc untuk descending, asc untuk ascending)
@@ -36,11 +32,11 @@ class ReimbursementController extends Controller
                 ->where('judul_doku', 'LIKE', '%' . $request->search . '%')
                 ->orWhere('pemohon', 'LIKE', '%' . $request->search . '%')
                 ->orderBy('tgl_diajukan', 'desc')
-                ->orderBy('no_doku', 'desc')
+                ->orderBy('no_doku_real', 'desc')
                 ->paginate(1000);
         } elseif ($request->has('bulan')) {
             $query = DB::table('admin_reimbursement')
-                ->orderBy('no_doku', 'asc')
+                ->orderBy('no_doku_real', 'asc')
                 ->orderByRaw("
             CASE
                 WHEN status_approved = 'approved' THEN 1
@@ -60,6 +56,9 @@ class ReimbursementController extends Controller
             $dataReimbursement = $query->paginate(100);
         } else {
             $dataReimbursement = DB::table('admin_reimbursement')
+                ->where('status_approved', '<>', 'hold')
+                ->where('status_paid', '<>', 'hold')
+
                 ->orderBy($sortColumn, $sortDirection)
                 ->orderBy($sortColumn2, $sortDirection2)
                 ->paginate(20);
@@ -147,17 +146,19 @@ class ReimbursementController extends Controller
     {
         $title = 'Tambah Reimbursement';
         // $no_dokumen = $this->new_num_generated();
-        $accounting = DB::select('SELECT * FROM accounting');
-        $kasir = DB::select('SELECT * from kasir');
-        $menyetujui = DB::select('SELECT * from menyetujui ORDER by nama ASC');
-
-        $currency = DB::select('SELECT * FROM kurs');
-        $karyawan = DB::table('karyawan')
-            ->select('nama')
-            ->union(DB::table('menyetujui')->select('nama'))
-            ->union(DB::table('kasir')->select('nama'))
-            ->orderBy('nama')
+        $accounting = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 2)
             ->get();
+
+        $kasir = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 3)
+            ->get();
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->orderBy('nama', 'asc')
+            ->get();
+        $currency = DB::select('SELECT * FROM kurs');
+        $karyawan = User::all();
         $nominal_awal = DB::select('SELECT * FROM fee_timesheet');
         $nominal_project = DB::select('SELECT * FROM fee_project');
         $aliases = DB::select('SELECT * FROM client');
@@ -177,6 +178,11 @@ class ReimbursementController extends Controller
     }
     public function save_no_doku_RB(Request $request)
     {
+        $request->validate([
+            'judul_doku' => ['required'],
+        ], [
+            'judul_doku.required' => 'Judul Dokumen tidak boleh kosong',
+        ]);
         if ($request->input('draftAction') == 'true') {
             // Tombol "Draft" ditekan
             // Lakukan tindakan yang sesuai untuk pengajuan
@@ -279,7 +285,7 @@ class ReimbursementController extends Controller
     }
     public function edit_doc_RB($id)
     {
-        $title = 'Edit Reimbursement';
+        $title = 'Edit RB';
         $reimbursement = Reimbursement::find($id);
         $currency = DB::select('SELECT * FROM kurs');
         $karyawan = DB::table('karyawan')
@@ -427,7 +433,7 @@ class ReimbursementController extends Controller
 
     public function edit_RB($id)
     {
-        $title = 'Edit Reimbursement';
+        $title = 'Edit RB';
         $reimbursement = Reimbursement::find($id);
         $currency = DB::select('SELECT * FROM kurs');
         $karyawan = DB::table('karyawan')
@@ -438,6 +444,8 @@ class ReimbursementController extends Controller
             ->get();
         $menyetujui = DB::select('SELECT * from menyetujui ORDER by nama ASC');
         $rb_detail = DB::table('admin_rb_detail')->where('fk_rb', $id)->get();
+        $originalDate = $reimbursement->tgl_diajukan;
+        $formattedDate = date('d/m/Y', strtotime($originalDate));
 
         return view('halaman_admin.admin.reimbursement.edit_RB', [
             'title' => $title,
@@ -446,6 +454,8 @@ class ReimbursementController extends Controller
             'karyawan' => $karyawan,
             'menyetujui' => $menyetujui,
             'rb_detail' => $rb_detail,
+            'tgl_diajukan' => $formattedDate,
+            'count' => count($rb_detail)
         ]);
     }
     public function update_RB(Request $request, $id)
@@ -511,6 +521,35 @@ class ReimbursementController extends Controller
             }
         }
     }
+    // Fungsi untuk Edit TS
+    public function edit_TS($id)
+    {
+        $title = 'Edit TS';
+        $reimbursement = Reimbursement::find($id);
+        $currency = DB::select('SELECT * FROM kurs');
+        $karyawan = DB::table('karyawan')
+            ->select('nama')
+            ->union(DB::table('menyetujui')->select('nama'))
+            ->union(DB::table('kasir')->select('nama'))
+            ->orderBy('nama')
+            ->get();
+        $menyetujui = DB::select('SELECT * from menyetujui ORDER by nama ASC');
+        $originalDate = $reimbursement->tgl_diajukan;
+        $formattedDate = date('d/m/Y', strtotime($originalDate));
+
+        $ts_detail = DB::table('admin_timesheet_project_detail')->where('fk_timesheet_project', $id)->get();
+
+        return view('halaman_admin.admin.reimbursement.TS.edit_TS', [
+            'title' => $title,
+            'reimbursement' => $reimbursement,
+            'kurs' => $currency,
+            'karyawan' => $karyawan,
+            'menyetujui' => $menyetujui,
+            'ts_detail' => $ts_detail,
+            'tgl_diajukan' => $formattedDate,
+            'count' => count($ts_detail)
+        ]);
+    }
     public function getNomor(Request $request)
     {
         $menyetujui = $request->input('menyetujui');
@@ -558,17 +597,19 @@ class ReimbursementController extends Controller
                 $no_dokumen = sprintf("%05s", abs($no)) . '/' . $AWAL . '/' . $bulanRomawi[$currentMonth] . '/' . date('y');
             }
         }
-        $accounting = DB::select('SELECT * FROM accounting');
-        $kasir = DB::select('SELECT * from kasir');
-        $menyetujui = DB::select('SELECT * from menyetujui ORDER by nama ASC');
-
-        $currency = DB::select('SELECT * FROM kurs');
-        $karyawan = DB::table('karyawan')
-            ->select('nama')
-            ->union(DB::table('menyetujui')->select('nama'))
-            ->union(DB::table('kasir')->select('nama'))
-            ->orderBy('nama')
+        $accounting = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 2)
             ->get();
+
+        $kasir = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 3)
+            ->get();
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->orderBy('nama', 'asc')
+            ->get();
+        $currency = DB::select('SELECT * FROM kurs');
+        $karyawan = User::all();
         $nominal_awal = DB::select('SELECT * FROM fee_timesheet');
         $nominal_project = DB::select('SELECT * FROM fee_project');
         $aliases = DB::select('SELECT * FROM client');
@@ -1109,17 +1150,59 @@ class ReimbursementController extends Controller
     {
         try {
             $data = DB::table('admin_reimbursement')->where('id', $id)->first();
-            $RB = DB::table('admin_reimbursement')->where('id', $id);
-            $RB->delete();
-
-            $RB_detail = DB::table('admin_rb_detail')->where('fk_rb', $id);
-            $RB_detail->delete();
-
-            $halaman = $data->halaman;
-            // dd($no_doku);
-            return redirect()->route('admin.reimbursement')->with('success', 'Data ' . $halaman . ' berhasil dihapus!');
-        } catch (\Exception $e) {
-            return redirect()->route('admin.reimbursement')->with('error', $e->getMessage());
+            if ($data->status_approved == 'hold' && $data->status_paid == 'hold') {
+                $RB = Reimbursement::findOrFail($id);
+                // dd($RB);
+                if ($RB) {
+                    $RB_detail = Rb_Detail::where('fk_rb', $id);
+                    $RB->delete();
+                    $RB_detail->delete();
+                }
+                $halaman = $data->halaman;
+                // dd($no_doku);
+                return redirect()->route('admin.reimbursement')->with('success', 'Data ' . $halaman . ' berhasil dihapus!');
+            } elseif ($data->status_approved == 'rejected' && $data->status_paid == 'rejected') {
+                // dd($data->halaman);
+                if ($data->halaman == 'RB') {
+                    $RB = Reimbursement::findOrFail($id);
+                    if ($RB) {
+                        $RB_detail = Rb_Detail::where('fk_rb', $id);
+                        $RB->delete();
+                        $RB_detail->delete();
+                    }
+                    $halaman = $data->halaman;
+                    return redirect()->route('admin.reimbursement')->with('success', 'Data ' . $halaman . ' berhasil dihapus!');
+                } elseif ($data->halaman == 'ST') {
+                    $RB = Reimbursement::findOrFail($id);
+                    if ($RB) {
+                        $ST_detail = Support_Ticket_Detail::where('fk_support_ticket', $id);
+                        $RB->delete();
+                        $ST_detail->delete();
+                    }
+                    $no_doku = $data->no_doku_real;
+                    return redirect()->route('admin.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dihapus!');
+                } elseif ($data->halaman == 'SL') {
+                    $RB = Reimbursement::findOrFail($id);
+                    if ($RB) {
+                        $ST_detail = Support_Lembur_Detail::where('fk_support_lembur', $id);
+                        $RB->delete();
+                        $ST_detail->delete();
+                    }
+                    $no_doku = $data->no_doku_real;
+                    return redirect()->route('admin.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dihapus!');
+                } elseif ($data->halaman == 'TS') {
+                    $RB = Reimbursement::findOrFail($id);
+                    if ($RB) {
+                        $ST_detail = Timesheet_Project_Detail::where('fk_timesheet_project', $id);
+                        $RB->delete();
+                        $ST_detail->delete();
+                    }
+                    $no_doku = $data->no_doku_real;
+                    return redirect()->route('admin.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dihapus!');
+                }
+            }
+        } catch (Exception $e) {
+            dd($e->getMessage());
         }
     }
 }

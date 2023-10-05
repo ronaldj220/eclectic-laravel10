@@ -73,7 +73,7 @@
                         </script>
                     @endif
 
-                    <div style="margin-bottom: 20px; margin-top: 20px; margin-left: 100px;">
+                    <div style="margin-bottom: 5px; margin-top: 20px; margin-left: 100px;">
                         <span class="label-input100">
                             <input class="form-check-input" type="checkbox" id="remember" name="remember"
                                 style="margin-left: -100px">
@@ -81,7 +81,11 @@
                                 Keep Me Logged In
                             </label>
                         </span>
-
+                        <div class="text-right" style="margin-top: -25px">
+                            <a href="#">
+                                Forgot password?
+                            </a>
+                        </div>
                     </div>
 
                     <div class="container-login100-form-btn p-t-20" style="padding-bottom: 10px">

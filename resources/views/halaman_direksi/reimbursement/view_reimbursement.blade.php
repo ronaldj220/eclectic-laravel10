@@ -352,18 +352,7 @@
         <div class="d-flex justify-content-center" style="margin-top: 20px">
 
             @if ($reimbursement->status_approved == 'pending' && $reimbursement->status_paid == 'pending')
-                @if ($reimbursement->pemohon == Auth::guard('direksi')->user()->nama)
-                @elseif ($reimbursement->menyetujui == Auth::guard('direksi')->user()->nama)
-                    <a href="{{ route('direksi.reimbursement.setujui_reimbursement', $reimbursement->id) }}"
-                        class="btn btn-primary"><i class="fa-solid fa-square-check fa-beat"></i>&nbsp;Setujui</a>
-                    &nbsp; &nbsp;
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdrop"><i class="fa-solid fa-xmark fa-beat"></i>&nbsp;
-                        Tolak
-                    </button>
-                    &nbsp; &nbsp;
-                @endif
+                if
             @elseif ($reimbursement->status_approved == 'approved' && $reimbursement->status_paid == 'pending')
 
             @elseif ($reimbursement->status_approved == 'rejected' && $reimbursement->status_paid == 'rejected')
