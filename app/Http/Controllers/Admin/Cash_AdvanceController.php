@@ -28,22 +28,6 @@ class Cash_AdvanceController extends Controller
                 ->leftJoin('admin_cash_advance_report as b', 'admin_cash_advance.no_doku', '=', 'b.tipe_ca')
                 ->orderBy('admin_cash_advance.no_doku', 'desc')
                 ->paginate(100);
-        } elseif ($request->has('bulan') && $request->has('search')) {
-            $bulan = $request->bulan;
-            $search = $request->search;
-
-            $dataCashAdvance = DB::table('admin_cash_advance')
-                ->select('admin_cash_advance.id', 'admin_cash_advance.no_doku', 'admin_cash_advance.tgl_diajukan', 'admin_cash_advance.judul_doku', 'admin_cash_advance.pemohon', 'b.id as id_car', 'b.no_doku as tipe_car', 'admin_cash_advance.status_approved', 'admin_cash_advance.status_paid')
-                ->leftJoin('admin_cash_advance_report as b', 'admin_cash_advance.no_doku', '=', 'b.tipe_ca')
-                ->whereMonth('admin_cash_advance.tgl_diajukan', date('m', strtotime($bulan)))
-                ->whereYear('admin_cash_advance.tgl_diajukan', date('Y', strtotime($bulan)))
-                ->where(function ($query) use ($search) {
-                    $query->where('admin_cash_advance.no_doku', 'like', '%' . $search . '%')
-                        ->orWhere('admin_cash_advance.judul_doku', 'like', '%' . $search . '%')
-                        ->orWhere('admin_cash_advance.pemohon', 'like', '%' . $search . '%');
-                })
-                ->orderBy('admin_cash_advance.no_doku', 'asc')
-                ->paginate(100);
         } elseif ($request->has('bulan')) {
             $bulan = $request->bulan;
 
@@ -110,6 +94,11 @@ class Cash_AdvanceController extends Controller
     }
     public function simpan_CA(Request $request)
     {
+        $request->validate([
+            'judul_doku' => 'required'
+        ], [
+            'judul_doku.required' => 'Judul Dokumen Harap Diisi!'
+        ]);
         $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
         $tgl_diajukan = $tanggal->format('Y-m-d');
         $tgl_diajukan2 = isset($request->tgl_diajukan2) ? $request->tgl_diajukan2 : null;
@@ -127,11 +116,11 @@ class Cash_AdvanceController extends Controller
             'menyetujui' => $request->nama_menyetujui,
             'no_telp' => $request->no_telp
         ]);
-        return redirect()->route('admin.cash_advance')->with('success', 'Data Cash Advance Berhasil Diajukan!');
+        return redirect()->route('admin.cash_advance')->with('success', 'Data CA Berhasil Diajukan!');
     }
     public function view_CA($id)
     {
-        $title = 'Lihat Cash Advance';
+        $title = 'Lihat CA';
         $cash_advance = Cash_Advance::find($id);
         $nominal_CA = DB::table('admin_cash_advance')->where('id', $id)->sum('nominal');
         return view('halaman_admin.admin.cash_advance.view_cash_advance', [
@@ -188,7 +177,7 @@ class Cash_AdvanceController extends Controller
     }
     public function print_CA($id)
     {
-        $title = 'Cetak Cash Advance';
+        $title = 'Cetak CA';
         $cash_advance = Cash_Advance::find($id);
         $nominal_CA = DB::table('admin_cash_advance')->where('id', $id)->sum('nominal');
 
@@ -206,37 +195,51 @@ class Cash_AdvanceController extends Controller
     public function edit_CA($id)
     {
         $CA = DB::table('admin_cash_advance')->where('id', $id)->first();
-        $title = 'Edit Reimbursement';
-        $menyetujui = DB::select('SELECT * from menyetujui');
+        $title = 'Edit CA';
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->orderBy('nama', 'asc')
+            ->get();
         $currency = DB::select('SELECT * FROM kurs');
+
+        $originalDate = $CA->tgl_diajukan;
+        $formattedDate = date('d/m/Y', strtotime($originalDate));
+
 
         return view('halaman_admin.admin.cash_advance.edit_CA', [
             'title' => $title,
             'CA' => $CA,
             'kurs' => $currency,
-            'menyetujui' => $menyetujui
+            'menyetujui' => $menyetujui,
+            'tgl_diajukan' => $formattedDate
         ]);
     }
     public function update_CA($id, Request $request)
     {
-        $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
-        $tgl_diajukan = $tanggal->format('Y-m-d');
-        $tgl_diajukan2 = isset($request->tgl_diajukan2) ? $request->tgl_diajukan2 : null;
+        $data = DB::table('admin_cash_advance')->where('id', $id)->first();
+        try {
+            $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+            $tgl_diajukan = $tanggal->format('Y-m-d');
+            $tgl_diajukan2 = isset($request->tgl_diajukan2) ? $request->tgl_diajukan2 : null;
 
-        DB::table('admin_cash_advance')->where('id', $id)
-            ->update([
-                'no_doku' => $request->no_doku,
-                'tgl_diajukan' => $tgl_diajukan,
-                'tgl_diajukan2' => $tgl_diajukan2,
-                'judul_doku' => $request->judul_doku,
-                'curr' => $request->kurs,
-                'nominal' => $request->nominal,
-                'pemohon' => $request->pemohon,
-                'accounting' => $request->accounting,
-                'kasir' => $request->kasir,
-                'menyetujui' => $request->nama_menyetujui
-            ]);
-        return redirect()->route('admin.cash_advance')->with('success', 'Data Cash Advance Berhasil Diperbarui!');
+            DB::table('admin_cash_advance')->where('id', $id)
+                ->update([
+                    'no_doku' => $request->no_doku,
+                    'tgl_diajukan' => $tgl_diajukan,
+                    'tgl_diajukan2' => $tgl_diajukan2,
+                    'judul_doku' => $request->judul_doku,
+                    'curr' => $request->kurs,
+                    'nominal' => $request->nominal,
+                    'pemohon' => $request->pemohon,
+                    'accounting' => $request->accounting,
+                    'kasir' => $request->kasir,
+                    'menyetujui' => $request->nama_menyetujui
+                ]);
+            $no_doku = $data->no_doku;
+            return redirect()->route('admin.cash_advance')->with('success', 'Data dengan no dokumen ' . $no_doku . ' Berhasil Diperbarui!');
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
     // Untuk Menyetujui Aris
     public function approved_CA($id)
@@ -334,7 +337,7 @@ class Cash_AdvanceController extends Controller
         try {
             DB::table('admin_cash_advance')->where('id', $id)->delete();
 
-            return redirect()->route('admin.beranda')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dihapus.');
+            return redirect()->route('admin.cash_advance')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dihapus.');
         } catch (\Throwable $th) {
             DB::rollBack();
 

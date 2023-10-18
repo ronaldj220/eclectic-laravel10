@@ -78,6 +78,9 @@ Route::post('reset-password', [ForgotPasswordManager::class, 'resetPasswordPost'
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/beranda', [BerandaController::class, 'index'])->name('admin.beranda');
 
+    // Route untuk Ubah Password
+    Route::get('/change-password/{id}', [BerandaController::class, 'change_pwd'])->name('admin.change-pwd');
+
     // Route Admin
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.admin');
     Route::get('/admin/tambah_admin', [AdminController::class, 'tambah_admin'])->name('admin.admin.tambah_admin');
@@ -85,6 +88,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/edit_admin/{id}', [AdminController::class, 'edit_admin'])->name('admin.admin.edit_admin');
     Route::post('/admin/edit_admin/{id}', [AdminController::class, 'update_admin'])->name('admin.admin.update_admin');
     Route::get('/admin/hapus_admin/{id}', [AdminController::class, 'hapus_admin'])->name('admin.admin.hapus_admin');
+
 
     // Route Karyawan
     Route::get('/karyawan', [KaryawanController::class, 'index'])->name('admin.karyawan');
@@ -281,6 +285,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // Route untuk Pak Aris
     Route::get('/purchase_request/acc_PR/{id}', [PurchaseRequestController::class, 'acc_PR'])->name('admin.purchase_request.acc_PR');
     Route::get('/purchase_request/tolak_PR/{id}', [PurchaseRequestController::class, 'tolak_PR'])->name('admin.purchase_request.tolak_PR');
+
+    // Route untuk edit PR
     Route::get('/purchase_request/edit_PR/{id}', [PurchaseRequestController::class, 'edit_PR'])->name('admin.purchase_request.edit_PR');
     Route::post('/purchase_request/update_PR/{id}', [PurchaseRequestController::class, 'update_PR'])->name('admin.purchase_request.update_PR');
     // Hapus Data PR
@@ -335,6 +341,10 @@ Route::prefix('karyawan')->middleware(['karyawan'])->group(function () {
     Route::get('/beranda/profile', [KaryawanBerandaController::class, 'profile'])->name('karyawan.beranda.profile');
     Route::get('/beranda/profile/update_profile', [KaryawanBerandaController::class, 'update_profile'])->name('karyawan.beranda.profile.update_profile');
     Route::post('/beranda/profile/update_profile/{id}', [KaryawanBerandaController::class, 'update_profile_karyawan'])->name('karyawan.beranda.profile.update_profile_karyawan');
+
+    // Route untuk ubah password
+    Route::get('/ubah_password', [KaryawanBerandaController::class, 'change_password'])->name('karyawan.change_pwd');
+    Route::post('/update_pwd/{id}', [KaryawanBerandaController::class, 'update_pwd'])->name('karyawan.update_pwd');
 
     // Route untuk Supplier
     Route::get('/supplier', [KaryawanSupplierController::class, 'index'])->name('karyawan.supplier');

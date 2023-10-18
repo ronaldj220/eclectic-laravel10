@@ -12,8 +12,10 @@ use App\Models\Admin\Timesheet_Project_Detail;
 use App\Models\User;
 use DateTime;
 use Exception;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ReimbursementController extends Controller
@@ -144,7 +146,7 @@ class ReimbursementController extends Controller
 
     public function new_doc_RB()
     {
-        $title = 'Tambah Reimbursement';
+        $title = 'Tambah RB';
         // $no_dokumen = $this->new_num_generated();
         $accounting = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
             ->where('fk_role', 2)
@@ -183,56 +185,20 @@ class ReimbursementController extends Controller
         ], [
             'judul_doku.required' => 'Judul Dokumen tidak boleh kosong',
         ]);
-        if ($request->input('draftAction') == 'true') {
-            // Tombol "Draft" ditekan
-            // Lakukan tindakan yang sesuai untuk pengajuan
-            $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
-            $tgl_diajukan = $tanggal->format('Y-m-d');
 
-            $reimbursement = new Reimbursement();
-            $reimbursement->no_doku_real = null;
-            $reimbursement->no_doku_draft = $this->new_no_doku();
-            $reimbursement->tgl_diajukan = $tgl_diajukan;
-            $reimbursement->judul_doku = $request->judul_doku;
-            $reimbursement->pemohon = $request->pemohon;
-            $reimbursement->accounting = $request->accounting;
-            $reimbursement->kasir = $request->kasir;
-            $reimbursement->menyetujui = $request->nama_menyetujui;
-            $reimbursement->no_telp_direksi = $request->no_telp;
-            $reimbursement->halaman = 'RB';
+        $validator = Validator::make($request->all(), [
+            'project.*' => 'required'
+        ], [
+            'project.*.required' => 'Project ke-:index harap diisi'
+        ]);
 
-            // Menentukan status apabila save as draft
-            $reimbursement->status_approved = 'hold';
-            $reimbursement->status_paid = 'hold';
-            $reimbursement->save();
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-            foreach ($request->deskripsi as $deskripsi => $value) {
-                $rb_detail = new Rb_Detail();
-                $rb_detail->deskripsi = $value;
-
-                if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
-                    $file = $request->file('foto')[$deskripsi];
-
-                    // Menyimpan gambar asli tanpa kompresi
-                    $filePath = 'bukti_RB_admin/' . time() . '.' . $file->getClientOriginalExtension();
-                    $file->move(public_path('bukti_RB_admin'), $filePath);
-                    $fileName = basename($filePath);
-
-                    $rb_detail->bukti_reim = $fileName;
-                }
-
-                $rb_detail->no_bukti = $request->nobu[$deskripsi];
-                $rb_detail->curr = $request->kurs_rb[$deskripsi];
-                $rb_detail->nominal = $request->nom_rb[$deskripsi];
-                $rb_detail->tanggal_1 = $request->tgl1[$deskripsi];
-                $rb_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
-                $rb_detail->keperluan = $request->project[$deskripsi];
-                $rb_detail->fk_rb = $reimbursement->id;
-                $rb_detail->save();
-            }
-        } elseif ($request->input('submitAction') == 'true') {
-            // Tombol "Draft" ditekan
-            // Lakukan tindakan yang sesuai untuk penyimpanan draft
+        if ($request->input('submitAction') == 'true') {
             $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
             $tgl_diajukan = $tanggal->format('Y-m-d');
 
@@ -257,16 +223,7 @@ class ReimbursementController extends Controller
                 $rb_detail = new Rb_Detail();
                 $rb_detail->deskripsi = $value;
 
-                if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
-                    $file = $request->file('foto')[$deskripsi];
-
-                    // Menyimpan gambar asli tanpa kompresi
-                    $filePath = 'bukti_RB_admin/' . time() . '.' . $file->getClientOriginalExtension();
-                    $file->move(public_path('bukti_RB_admin'), $filePath);
-                    $fileName = basename($filePath);
-
-                    $rb_detail->bukti_reim = $fileName;
-                }
+                $rb_detail->bukti_reim = null;
 
                 $rb_detail->no_bukti = $request->nobu[$deskripsi];
                 $rb_detail->curr = $request->kurs_rb[$deskripsi];
@@ -277,11 +234,9 @@ class ReimbursementController extends Controller
                 $rb_detail->fk_rb = $reimbursement->id;
                 $rb_detail->save();
             }
-        } else {
-            // Tidak ada tombol yang ditekan
-            return "No action detected.";
+
+            return redirect()->route('admin.reimbursement')->with('success', 'Data RB berhasil diajukan!');
         }
-        return redirect()->route('admin.reimbursement')->with('success', 'Data berhasil diajukan!');
     }
     public function edit_doc_RB($id)
     {
@@ -294,7 +249,10 @@ class ReimbursementController extends Controller
             ->union(DB::table('kasir')->select('nama'))
             ->orderBy('nama')
             ->get();
-        $menyetujui = DB::select('SELECT * from menyetujui ORDER by nama ASC');
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->orderBy('nama', 'asc')
+            ->get();
         $rb_detail = DB::table('admin_rb_detail')->where('fk_rb', $id)->get();
         $nominal = DB::table('admin_rb_detail')->where('fk_rb', $id)->sum('nominal');
 
@@ -442,7 +400,10 @@ class ReimbursementController extends Controller
             ->union(DB::table('kasir')->select('nama'))
             ->orderBy('nama')
             ->get();
-        $menyetujui = DB::select('SELECT * from menyetujui ORDER by nama ASC');
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->orderBy('nama', 'asc')
+            ->get();
         $rb_detail = DB::table('admin_rb_detail')->where('fk_rb', $id)->get();
         $originalDate = $reimbursement->tgl_diajukan;
         $formattedDate = date('d/m/Y', strtotime($originalDate));
@@ -514,8 +475,8 @@ class ReimbursementController extends Controller
                     // $rbDetails[] = $rb_detail;
                     $rb_detail->save();
                 }
-                $halaman = $data->halaman;
-                return redirect()->route('admin.reimbursement')->with('success', 'Data ' . $halaman . ' Berhasil Diperbarui');
+                $no_doku = $data->no_doku_real;
+                return redirect()->route('admin.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil diperbarui!');
             } catch (Exception $e) {
                 return redirect()->route('admin.reimbursement')->with('gagal', $e->getMessage());
             }
@@ -527,17 +488,19 @@ class ReimbursementController extends Controller
         $title = 'Edit TS';
         $reimbursement = Reimbursement::find($id);
         $currency = DB::select('SELECT * FROM kurs');
-        $karyawan = DB::table('karyawan')
-            ->select('nama')
-            ->union(DB::table('menyetujui')->select('nama'))
-            ->union(DB::table('kasir')->select('nama'))
-            ->orderBy('nama')
+        $karyawan = User::all();
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->orderBy('nama', 'asc')
             ->get();
-        $menyetujui = DB::select('SELECT * from menyetujui ORDER by nama ASC');
         $originalDate = $reimbursement->tgl_diajukan;
         $formattedDate = date('d/m/Y', strtotime($originalDate));
 
         $ts_detail = DB::table('admin_timesheet_project_detail')->where('fk_timesheet_project', $id)->get();
+
+        // dd($ts_detail);
+
+        $nominal_awal = DB::select('SELECT * FROM fee_timesheet');
 
         return view('halaman_admin.admin.reimbursement.TS.edit_TS', [
             'title' => $title,
@@ -545,10 +508,228 @@ class ReimbursementController extends Controller
             'kurs' => $currency,
             'karyawan' => $karyawan,
             'menyetujui' => $menyetujui,
+            'nominal_awal' => $nominal_awal,
             'ts_detail' => $ts_detail,
             'tgl_diajukan' => $formattedDate,
-            'count' => count($ts_detail)
+            'count' => count($ts_detail),
         ]);
+    }
+
+    public function update_TS(Request $request, $id)
+    {
+        if ($request->input('submitAction') == 'true') {
+            try {
+                $data = DB::table('admin_reimbursement')->where('id', $id)->first();
+                $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+                $tgl_diajukan = $tanggal->format('Y-m-d');
+
+                $reimbursement = [
+                    'no_doku_real' => $request->no_doku,
+                    'no_doku_draft' => null,
+                    'tgl_diajukan' => $tgl_diajukan,
+                    'judul_doku' => $request->judul_doku,
+                    'pemohon' => $request->pemohon,
+                    'accounting' => $request->accounting,
+                    'kasir' => $request->kasir,
+                    'menyetujui' => $request->nama_menyetujui,
+                    'no_telp_direksi' => $request->no_telp,
+                    'halaman' => 'TS',
+                    'status_approved' => 'rejected',
+                    'status_paid' => 'rejected'
+                ];
+
+                DB::table('admin_reimbursement')->where('id', $id)->update($reimbursement);
+
+                foreach ($request->karyawan_ts as $deskripsi => $nama_karyawan) {
+                    if ($request->flag[$deskripsi] == 'u') {
+                        $idItem = $request->id[$deskripsi];
+                        $ts_detail = Timesheet_Project_Detail::find($idItem);
+                    } elseif ($request->flag[$deskripsi] == 'i') {
+                        $ts_detail = new Timesheet_Project_Detail();
+                    }
+                    $ts_detail->nama_karyawan = $nama_karyawan;
+                    $ts_detail->curr = $request->kurs[$deskripsi];
+                    $ts_detail->nominal_awal = $request->nom_ts[$deskripsi];
+                    $ts_detail->hari_awal = $request->hari[$deskripsi];
+                    $ts_detail->hari = $request->hari_ts[$deskripsi];
+                    if ($ts_detail->hari >= 19) {
+                        $nominal = $ts_detail->nominal_awal;
+                    } else {
+                        $nominal = ($ts_detail->nominal_awal / $ts_detail->hari_awal) * $ts_detail->hari;
+                    }
+                    $ts_detail->nominal = $nominal;
+                    $ts_detail->fk_timesheet_project = $id;
+
+                    $ts_detail->save();
+                }
+                $no_doku = $data->no_doku_real;
+                return redirect()->route('admin.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil diperbarui!');
+            } catch (Exception $e) {
+                return $e->getMessage();
+            }
+        }
+    }
+    // Fungsi untuk Edit ST
+    public function edit_ST($id)
+    {
+        $title = 'Edit TS';
+        $reimbursement = Reimbursement::find($id);
+        $currency = DB::select('SELECT * FROM kurs');
+        $karyawan = User::all();
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->orderBy('nama', 'asc')
+            ->get();
+        $originalDate = $reimbursement->tgl_diajukan;
+        $formattedDate = date('d/m/Y', strtotime($originalDate));
+
+        $nominal_project = DB::select('SELECT * FROM fee_project');
+        $aliases = DB::select('SELECT * FROM client');
+
+        $st_detail = DB::table('admin_support_ticket_detail')->where('fk_support_ticket', $id)->get();
+
+        return view('halaman_admin.admin.reimbursement.ST.edit_ST', [
+            'title' => $title,
+            'reimbursement' => $reimbursement,
+            'kurs' => $currency,
+            'tgl_diajukan' => $formattedDate,
+            'karyawan' => $karyawan,
+            'menyetujui' => $menyetujui,
+            'nominal_project' => $nominal_project,
+            'aliases' => $aliases,
+            'st_detail' => $st_detail,
+            'count' => count($st_detail)
+        ]);
+    }
+    public function update_ST(Request $request, $id)
+    {
+        if ($request->input('submitAction') == 'true') {
+            try {
+                $data = DB::table('admin_reimbursement')->where('id', $id)->first();
+                $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+                $tgl_diajukan = $tanggal->format('Y-m-d');
+
+                $reimbursement = [
+                    'no_doku_real' => $request->no_doku,
+                    'no_doku_draft' => null,
+                    'tgl_diajukan' => $tgl_diajukan,
+                    'judul_doku' => $request->judul_doku,
+                    'pemohon' => $request->pemohon,
+                    'accounting' => $request->accounting,
+                    'kasir' => $request->kasir,
+                    'menyetujui' => $request->nama_menyetujui,
+                    'no_telp_direksi' => $request->no_telp,
+                    'halaman' => 'ST',
+                    'status_approved' => 'rejected',
+                    'status_paid' => 'rejected'
+                ];
+
+                DB::table('admin_reimbursement')->where('id', $id)->update($reimbursement);
+
+                foreach ($request->karyawan_st as $deskripsi => $nama_karyawan) {
+                    if ($request->flag[$deskripsi] == 'u') {
+                        $idItem = $request->id[$deskripsi];
+                        $st_detail = Support_Ticket_Detail::find($idItem);
+                    } elseif ($request->flag[$deskripsi] == 'i') {
+                        $st_detail = new Support_Ticket_Detail();
+                    }
+                    $st_detail->nama_karyawan = $nama_karyawan;
+                    $st_detail->aliases = $request->aliases[$deskripsi];
+                    $st_detail->curr = $request->kurs_st[$deskripsi];
+                    $st_detail->nominal_awal = $request->nom_st[$deskripsi];
+                    $st_detail->jam = $request->jam_st[$deskripsi];
+                    $st_detail->fk_support_ticket = $id;
+
+                    // dd($st_detail);
+
+                    $st_detail->save();
+                }
+                $no_doku = $data->no_doku_real;
+                return redirect()->route('admin.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil diperbarui!');
+            } catch (Exception $e) {
+                return $e->getMessage();
+            }
+        }
+    }
+    // Fungsi untuk edit Support Lembur
+    public function edit_SL($id)
+    {
+        $title = 'Edit SL';
+        $reimbursement = Reimbursement::find($id);
+        $currency = DB::select('SELECT * FROM kurs');
+        $karyawan = User::all();
+        $menyetujui = User::join('role_has_user', 'user.id', '=', 'role_has_user.fk_user')
+            ->where('fk_role', 4)
+            ->orderBy('nama', 'asc')
+            ->get();
+        $originalDate = $reimbursement->tgl_diajukan;
+        $formattedDate = date('d/m/Y', strtotime($originalDate));
+
+        $nominal_project = DB::select('SELECT * FROM fee_project');
+        $aliases = DB::select('SELECT * FROM client');
+
+        $sl_detail = DB::table('admin_support_lembur_detail')->where('fk_support_lembur', $id)->get();
+
+        return view('halaman_admin.admin.reimbursement.SL.edit_SL', [
+            'title' => $title,
+            'reimbursement' => $reimbursement,
+            'kurs' => $currency,
+            'tgl_diajukan' => $formattedDate,
+            'karyawan' => $karyawan,
+            'menyetujui' => $menyetujui,
+            'nominal_project' => $nominal_project,
+            'aliases' => $aliases,
+            'sl_detail' => $sl_detail,
+            'count' => count($sl_detail)
+        ]);
+    }
+    // Proses Edit Support Lembur
+    public function update_SL(Request $request, $id)
+    {
+        if ($request->input('submitAction') == 'true') {
+            try {
+                $data = DB::table('admin_reimbursement')->where('id', $id)->first();
+                $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+                $tgl_diajukan = $tanggal->format('Y-m-d');
+
+                $reimbursement = [
+                    'no_doku_real' => $request->no_doku,
+                    'no_doku_draft' => null,
+                    'tgl_diajukan' => $tgl_diajukan,
+                    'judul_doku' => $request->judul_doku,
+                    'pemohon' => $request->pemohon,
+                    'accounting' => $request->accounting,
+                    'kasir' => $request->kasir,
+                    'menyetujui' => $request->nama_menyetujui,
+                    'no_telp_direksi' => $request->no_telp,
+                    'halaman' => 'SL',
+                    'status_approved' => 'rejected',
+                    'status_paid' => 'rejected'
+                ];
+                DB::table('admin_reimbursement')->where('id', $id)->update($reimbursement);
+
+                foreach ($request->karyawan_sl as $deskripsi => $nama_karyawan) {
+                    if ($request->flag[$deskripsi] == 'u') {
+                        $idItem = $request->id[$deskripsi];
+                        $sl_detail = Support_Lembur_Detail::find($idItem);
+                    } elseif ($request->flag[$deskripsi] == 'i') {
+                        $sl_detail = new Support_Lembur_Detail();
+                    }
+                    $sl_detail->nama_karyawan = $nama_karyawan;
+                    $sl_detail->aliases = $request->aliases[$deskripsi];
+                    $sl_detail->curr = $request->kurs_sl[$deskripsi];
+                    $sl_detail->nominal_awal = $request->nom_sl[$deskripsi];
+                    $sl_detail->jam = $request->jam_sl[$deskripsi];
+                    $sl_detail->fk_support_lembur = $id;
+
+                    $sl_detail->save();
+                }
+                $no_doku = $data->no_doku_real;
+                return redirect()->route('admin.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil diperbarui!');
+            } catch (Exception $e) {
+                return $e->getMessage();
+            }
+        }
     }
     public function getNomor(Request $request)
     {
@@ -575,7 +756,7 @@ class ReimbursementController extends Controller
     }
     public function tambah_reimbursement()
     {
-        $title = 'Tambah Reimbursement';
+        $title = 'Tambah RB';
         $AWAL = 'RB';
 
         $bulanRomawi = array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
@@ -725,87 +906,6 @@ class ReimbursementController extends Controller
     {
         return Excel::download(new ReimbursementExport($id), 'reimbursement_' . $id . '.xlsx');
     }
-    public function view_reimbursement($id)
-    {
-        // Data Reimbursement
-        $reimbursement = Reimbursement::find($id);
-        if ($reimbursement->halaman == 'RB') {
-            $title = 'Lihat Reimbursement';
-            $rb_detail = DB::table('admin_rb_detail')->where('fk_rb', $id)->get();
-            $nominal = DB::table('admin_rb_detail')->where('fk_rb', $id)->sum('nominal');
-
-            return view('halaman_admin.admin.reimbursement.view_reimbursement', [
-                'title' => $title,
-                'reimbursement' => $reimbursement,
-                'rb_detail' => $rb_detail,
-                'nominal' => $nominal,
-            ]);
-        } elseif ($reimbursement->halaman == 'TS') {
-            $title = 'Lihat Timesheet Support';
-            // Data Timesheet Project
-            $timesheet_project_detail = DB::table('admin_timesheet_project_detail')
-                ->where('fk_timesheet_project', $id)
-                ->get();
-
-            $results_TS = []; // Array untuk menyimpan hasil perhitungan masing-masing item
-
-            foreach ($timesheet_project_detail as $item) {
-                if ($item->hari >= 19) {
-                    $result = $item->nominal_awal;
-                } else {
-                    $result = ($item->nominal_awal / $item->hari_awal) * $item->hari;
-                }
-                $results_TS[] = round($result); // Tambahkan hasil ke array
-            }
-            $total_TS = array_sum($results_TS);
-            return view('halaman_admin.admin.reimbursement.view_reimbursement', [
-                'title' => $title,
-                'reimbursement' => $reimbursement,
-                'timesheet_project_detail' => $timesheet_project_detail,
-                'results_TS' => $results_TS,
-                'total_TS' => $total_TS,
-
-            ]);
-        } elseif ($reimbursement->halaman == 'ST') {
-            $title = 'Lihat Support Ticket';
-            $support_ticket_detail = DB::table('admin_support_ticket_detail')->where('fk_support_ticket', $id)->get();
-            $results = []; // Array untuk menyimpan hasil perhitungan masing-masing item
-
-            foreach ($support_ticket_detail as $item) {
-                $result = $item->nominal_awal * $item->jam;
-                $results[] = $result; // Tambahkan hasil ke array
-            }
-
-            $total = array_sum($results);
-
-            return view('halaman_admin.admin.reimbursement.view_reimbursement', [
-                'title' => $title,
-                'reimbursement' => $reimbursement,
-                'support_ticket_detail' => $support_ticket_detail,
-                'results' => $results,
-                'total' => $total
-            ]);
-        } elseif ($reimbursement->halaman == 'SL') {
-            $title = 'Lihat Support Lembur';
-            $support_lembur_detail = DB::table('admin_support_lembur_detail')->where('fk_support_lembur', $id)->get();
-            $results = []; // Array untuk menyimpan hasil perhitungan masing-masing item
-
-            foreach ($support_lembur_detail as $item) {
-                $result = $item->nominal_awal * $item->jam;
-                $results[] = $result; // Tambahkan hasil ke array
-            }
-
-            $total = array_sum($results);
-
-            return view('halaman_admin.admin.reimbursement.view_reimbursement', [
-                'title' => $title,
-                'reimbursement' => $reimbursement,
-                'support_lembur_detail' => $support_lembur_detail,
-                'results' => $results,
-                'total_ST' => $total
-            ]);
-        }
-    }
     public function setujui_reimbursement($id)
     {
         try {
@@ -860,7 +960,7 @@ class ReimbursementController extends Controller
     {
         $reimbursement = Reimbursement::find($id);
         if ($reimbursement->halaman == 'RB') {
-            $title = 'Lihat Reimbursement';
+            $title = 'Lihat RB';
             $rb_detail = DB::table('admin_rb_detail')->where('fk_rb', $id)->get();
             $nominal = DB::table('admin_rb_detail')->where('fk_rb', $id)->sum('nominal');
 
@@ -873,7 +973,7 @@ class ReimbursementController extends Controller
 
             ]);
         } elseif ($reimbursement->halaman == 'TS') {
-            $title = 'Lihat Timesheet Support';
+            $title = 'Lihat TS';
             // Data Timesheet Project
             $timesheet_project_detail = DB::table('admin_timesheet_project_detail')
                 ->where('fk_timesheet_project', $id)
@@ -898,7 +998,7 @@ class ReimbursementController extends Controller
                 'total_TS' => $total_TS,
             ]);
         } elseif ($reimbursement->halaman == 'ST') {
-            $title = 'Lihat Support Ticket';
+            $title = 'Lihat ST';
             $support_ticket_detail = DB::table('admin_support_ticket_detail')->where('fk_support_ticket', $id)->get();
             $results = []; // Array untuk menyimpan hasil perhitungan masing-masing item
 
@@ -917,7 +1017,7 @@ class ReimbursementController extends Controller
                 'total' => $total
             ]);
         } elseif ($reimbursement->halaman == 'SL') {
-            $title = 'Lihat Support Lembur';
+            $title = 'Lihat SL';
             $support_lembur_detail = DB::table('admin_support_lembur_detail')->where('fk_support_lembur', $id)->get();
             $results = []; // Array untuk menyimpan hasil perhitungan masing-masing item
 
@@ -1027,18 +1127,6 @@ class ReimbursementController extends Controller
                 'title' => $title,
                 'reimbursement' => $reimbursement,
                 'rb_detail' => $rb_detail,
-            ]);
-        } elseif ($reimbursement->halaman == 'TS') {
-            $title = 'Lihat Bukti Timesheet Support';
-            // Data Timesheet Project
-            $timesheet_project_detail = DB::table('admin_timesheet_project_detail')
-                ->where('fk_timesheet_project', $id)
-                ->get();
-
-            return view('halaman_admin.admin.reimbursement.print_bukti_reimbursement', [
-                'title' => $title,
-                'reimbursement' => $reimbursement,
-                'timesheet_project_detail' => $timesheet_project_detail
             ]);
         }
     }
@@ -1170,8 +1258,8 @@ class ReimbursementController extends Controller
                         $RB->delete();
                         $RB_detail->delete();
                     }
-                    $halaman = $data->halaman;
-                    return redirect()->route('admin.reimbursement')->with('success', 'Data ' . $halaman . ' berhasil dihapus!');
+                    $no_doku = $data->no_doku_real;
+                    return redirect()->route('admin.reimbursement')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dihapus!');
                 } elseif ($data->halaman == 'ST') {
                     $RB = Reimbursement::findOrFail($id);
                     if ($RB) {

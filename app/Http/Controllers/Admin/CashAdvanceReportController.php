@@ -13,6 +13,7 @@ use DateTime;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use Intervention\Image\ImageManagerStatic as Image;
 
@@ -129,49 +130,76 @@ class CashAdvanceReportController extends Controller
     }
     public function simpan_CAR(Request $request)
     {
-        $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
-        $tgl_diajukan = $tanggal->format('Y-m-d');
 
-        $cashAdvance = new CashAdvanceReport();
-        $cashAdvance->no_doku = $request->no_doku;
-        $cashAdvance->tgl_diajukan = $tgl_diajukan;
-        $cashAdvance->tipe_ca = $request->tipe_ca_id;
-        // Hapus tanda koma (',') dari nominal_ca sebelum menyimpannya
-        $nominalCa = str_replace(',', '', $request->nominal_ca);
-        $cashAdvance->nominal_ca = $nominalCa;
-        $cashAdvance->judul_doku = $request->judul_doku;
-        $cashAdvance->pemohon = $request->pemohon;
-        $cashAdvance->accounting = $request->accounting;
-        $cashAdvance->kasir = $request->kasir;
-        $cashAdvance->menyetujui = $request->nama_menyetujui;
-        $cashAdvance->no_telp = $request->no_telp;
-        $cashAdvance->save();
 
-        foreach ($request->deskripsi as $deskripsi => $value) {
-            $CA_detail =  new CashAdvanceReportDetail();
-            $CA_detail->deskripsi = $value;
+        $validator = Validator::make($request->all(), [
+            'keperluan.*' => 'required',
+            'tipe_ca_id' => 'required'
+        ], [
+            'tipe_ca_id.required' => 'Silahkan Pilih Tipe CA'
+        ]);
 
-            if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
-                $file = $request->file('foto')[$deskripsi];
+        if ($validator->fails()) {
+            $messages = $validator->errors();
 
-                // Menyimpan gambar asli tanpa kompresi
-                $filePath = 'bukti_CAR_admin/' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('bukti_CAR_admin'), $filePath);
-                $fileName = basename($filePath);
-
-                $CA_detail->bukti_ca = $fileName;
+            foreach ($messages->get('keperluan') as $index => $message) {
+                $newMessage = "Project ke-" . ($index + 1) . " harap diisi";
+                $messages->get('keperluan')[$index] = $newMessage;
             }
 
-            $CA_detail->no_bukti = $request->nobu[$deskripsi];
-            $CA_detail->curr = $request->kurs[$deskripsi];
-            $CA_detail->nominal = $request->nom[$deskripsi];
-            $CA_detail->tanggal_1 = $request->tgl1[$deskripsi];
-            $CA_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
-            $CA_detail->keperluan = $request->keperluan[$deskripsi];
-            $CA_detail->fk_ca = $cashAdvance->id;
-            $CA_detail->save();
+            return redirect()->back()
+                ->withErrors($messages)
+                ->withInput();
         }
-        return redirect()->route('admin.cash_advance_report')->with('success', 'Data Cash Advance Report Berhasil Diajukan!');
+
+        try {
+            $tanggal = DateTime::createFromFormat('d/m/Y', $request->tgl_diajukan);
+            $tgl_diajukan = $tanggal->format('Y-m-d');
+
+            $cashAdvance = new CashAdvanceReport();
+            $cashAdvance->no_doku = $request->no_doku;
+            $cashAdvance->tgl_diajukan = $tgl_diajukan;
+            $cashAdvance->tipe_ca = $request->tipe_ca_id;
+            $nominalCa = str_replace(',', '', $request->nominal_ca);
+            $cashAdvance->nominal_ca = $nominalCa;
+            $cashAdvance->judul_doku = $request->judul_doku;
+            $cashAdvance->pemohon = $request->pemohon;
+            $cashAdvance->accounting = $request->accounting;
+            $cashAdvance->kasir = $request->kasir;
+            $cashAdvance->menyetujui = $request->nama_menyetujui;
+            $cashAdvance->no_telp = $request->no_telp;
+            $cashAdvance->save();
+
+            foreach ($request->deskripsi as $deskripsi => $value) {
+                $CA_detail =  new CashAdvanceReportDetail();
+                $CA_detail->deskripsi = $value;
+
+                if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
+                    $file = $request->file('foto')[$deskripsi];
+
+                    // Menyimpan gambar asli tanpa kompresi
+                    $filePath = 'bukti_CAR_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('bukti_CAR_admin'), $filePath);
+                    $fileName = basename($filePath);
+
+                    $CA_detail->bukti_ca = $fileName;
+                } else {
+                    $CA_detail->bukti_ca = null;
+                }
+
+                $CA_detail->no_bukti = $request->nobu[$deskripsi];
+                $CA_detail->curr = $request->kurs[$deskripsi];
+                $CA_detail->nominal = $request->nom[$deskripsi];
+                $CA_detail->tanggal_1 = $request->tgl1[$deskripsi];
+                $CA_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
+                $CA_detail->keperluan = $request->keperluan[$deskripsi];
+                $CA_detail->fk_ca = $cashAdvance->id;
+                $CA_detail->save();
+            }
+            return redirect()->route('admin.cash_advance_report')->with('success', 'Data CAR Berhasil Diajukan!');
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
     public function excel_cash_advance_report($id)
     {
@@ -273,17 +301,17 @@ class CashAdvanceReportController extends Controller
     public function hapus_CAR($id)
     {
         $data = DB::table('admin_cash_advance_report')->where('id', $id)->first();
-        $no_doku = $data->no_doku;
         try {
-            DB::table('admin_cash_advance_report')->where('id', $id)->delete();
-            DB::table('admin_cash_advance_report_detail')->where('fk_ca', $id)->delete();
-
-            return redirect()->route('admin.beranda')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dihapus.');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-
-            // Tangani jika terjadi kesalahan
-            return redirect()->route('admin.cash_advance')->with('error', 'Gagal menghapus CA terkait.');
+            $RB = CashAdvanceReport::findOrFail($id);
+            if ($RB) {
+                $RB_detail = CashAdvanceReportDetail::where('fk_ca', $id);
+                $RB->delete();
+                $RB_detail->delete();
+            }
+            $no_doku = $data->no_doku;
+            return redirect()->route('admin.cash_advance_report')->with('success', 'Data dengan no dokumen ' . $no_doku . ' berhasil dihapus.');
+        } catch (Exception $e) {
+            return $e->getMessage() . ' at line ' . $e->getLine();
         }
     }
     public function print_cash_advance_report($id)
@@ -370,26 +398,25 @@ class CashAdvanceReportController extends Controller
                     } elseif ($request->flag[$deskripsi] == 'i') {
                         $CAR_detail = new CashAdvanceReportDetail();
                     }
-                    dd($CAR_detail);
-                    // $CAR_detail->deskripsi = $value;
+                    $CAR_detail->deskripsi = $value;
 
-                    // if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
-                    //     $file = $request->file('foto')[$deskripsi];
+                    if ($request->hasFile('foto') && $request->file('foto')[$deskripsi]->isValid()) {
+                        $file = $request->file('foto')[$deskripsi];
 
-                    //     // Menyimpan gambar asli tanpa kompresi
-                    //     $filePath = 'bukti_CAR_admin/' . time() . '.' . $file->getClientOriginalExtension();
-                    //     $file->move(public_path('bukti_CAR_admin'), $filePath);
-                    //     $fileName = basename($filePath);
+                        // Menyimpan gambar asli tanpa kompresi
+                        $filePath = 'bukti_CAR_admin/' . time() . '.' . $file->getClientOriginalExtension();
+                        $file->move(public_path('bukti_CAR_admin'), $filePath);
+                        $fileName = basename($filePath);
 
-                    //     $CAR_detail->bukti_ca = $fileName;
-                    // }
-                    // $CAR_detail->no_bukti = $request->nobu[$deskripsi];
-                    // $CAR_detail->curr = $request->kurs_rb[$deskripsi];
-                    // $CAR_detail->nominal = $request->nom_rb[$deskripsi];
-                    // $CAR_detail->tanggal_1 = $request->tgl1[$deskripsi];
-                    // $CAR_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
-                    // $CAR_detail->keperluan = $request->project[$deskripsi];
-                    // $CAR_detail->fk_ca = $id;
+                        $CAR_detail->bukti_ca = $fileName;
+                    }
+                    $CAR_detail->no_bukti = $request->nobu[$deskripsi];
+                    $CAR_detail->curr = $request->kurs_rb[$deskripsi];
+                    $CAR_detail->nominal = $request->nom_rb[$deskripsi];
+                    $CAR_detail->tanggal_1 = $request->tgl1[$deskripsi];
+                    $CAR_detail->tanggal_2 = isset($request->tgl2[$deskripsi]) ? $request->tgl2[$deskripsi] : null;
+                    $CAR_detail->keperluan = $request->project[$deskripsi];
+                    $CAR_detail->fk_ca = $id;
 
                     // $rbDetails[] = $CAR_detail;
 
@@ -400,7 +427,7 @@ class CashAdvanceReportController extends Controller
                 $no_doku = $data->no_doku;
                 return redirect()->route('admin.cash_advance_report')->with('success', 'Data ' . $no_doku . ' Berhasil Diperbarui');
             } catch (Exception $e) {
-                dd($e->getMessage());
+                return $e->getMessage() . ' at line ' . $e->getLine();
             }
         }
     }
